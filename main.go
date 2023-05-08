@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	_ "fmt"
 
 	"github.com/eiannone/keyboard"
 )
 
 const (
 	width  = 100
-	height = 40
+	height = 20
 )
 
 var (
@@ -27,13 +26,15 @@ const (
 
 func main() {
 
-	charmap.add(0, '#')
+	charmap.add(0, 9639) //wall
 	charmap.add(1, ' ')
+	charmap.add(2, '.')
+	charmap.add(4, ':')
 	var rooms []Point
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 4; i++ {
 		for {
-			position, err := d.createRandomRoom(getRandomPoint(&d), 15, 15)
+			position, err := d.createRandomRoom(getRandomPoint(&d), 20, 20)
 
 			if err != nil {
 				continue
@@ -50,12 +51,16 @@ func main() {
 	}
 	connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
 
+	p = newPlayer()
 	p.position = getEmptyPoint(&d)
 
 	currentState = gameState{}
 
 	for {
-		d.print(charmap, p)
+
+		grindToPrint := render(&d, &p)
+
+		fmt.Println(string(grindToPrint))
 		fmt.Println(p)
 		char, _, err := keyboard.GetSingleKey()
 		if err != nil {

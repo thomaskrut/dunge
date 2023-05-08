@@ -5,22 +5,30 @@ import (
 )
 
 var (
-	None      = Direction{varX: 0, varY: 0}
-	North     = Direction{varX: 0, varY: -1}
-	South     = Direction{varX: 0, varY: 1}
-	East      = Direction{varX: 1, varY: 0}
-	West      = Direction{varX: -1, varY: 0}
-	NorthWest = Direction{varX: -1, varY: -1}
-	NorthEast = Direction{varX: 1, varY: -1}
-	SouthWest = Direction{varX: -1, varY: 1}
-	SouthEast = Direction{varX: 1, varY: 1}
+	None      = direction{varX: 0, varY: 0}
+	North     = direction{varX: 0, varY: -1}
+	South     = direction{varX: 0, varY: 1}
+	East      = direction{varX: 1, varY: 0}
+	West      = direction{varX: -1, varY: 0}
+	NorthWest = direction{varX: -1, varY: -1}
+	NorthEast = direction{varX: 1, varY: -1}
+	SouthWest = direction{varX: -1, varY: 1}
+	SouthEast = direction{varX: 1, varY: 1}
 )
 
-type Direction struct {
+type direction struct {
 	varX, varY int
 }
 
-func (d *Direction) toNonDiagonal() {
+func getAllDirections() []direction {
+	return []direction{North, South, East, West, NorthWest, NorthEast, SouthWest, SouthEast}
+}
+
+func getNonDiagonalDirections() []direction {
+	return []direction{North, South, East, West}
+}
+
+func (d *direction) toNonDiagonal() {
 	r := rand.Intn(2)
 	switch *d {
 	case NorthWest:
@@ -53,10 +61,10 @@ func (d *Direction) toNonDiagonal() {
 		}
 
 	}
-	
+
 }
 
-func (dir *Direction) directionTowards(from, to Point) (newDir *Direction) {
+func (dir *direction) directionTowards(from, to Point) (newDir *direction) {
 	switch {
 	case to.x == from.x && to.y < from.y:
 		*dir = North
@@ -76,12 +84,12 @@ func (dir *Direction) directionTowards(from, to Point) (newDir *Direction) {
 		*dir = SouthWest
 	}
 	return dir
-	
+
 }
 
-func randomDirection(currentDirection Direction, allowOpposite bool, allowDiagonal bool) Direction {
+func randomDirection(currentDirection direction, allowOpposite bool, allowDiagonal bool) direction {
 	var r int
-	var newDirection Direction
+	var newDirection direction
 	if allowDiagonal {
 		r = 8
 	} else {
@@ -112,6 +120,6 @@ func randomDirection(currentDirection Direction, allowOpposite bool, allowDiagon
 	return newDirection
 }
 
-func (d Direction) opposite() Direction {
-	return Direction{varX: -d.varX, varY: -d.varY}
+func (d direction) opposite() direction {
+	return direction{varX: -d.varX, varY: -d.varY}
 }

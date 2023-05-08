@@ -6,24 +6,25 @@ import (
 	"math/rand"
 )
 
-type Dungeon struct {
-	grid [][]int
+type dungeon struct {
+	grid          [][]int
+	width, height int
 }
 
-func newDungeon(width, height int) Dungeon {
-	zeroedGrid := make([][]int, height)
+func newDungeon(width, height int) dungeon {
+	zeroedGrid := make([][]int, width)
 	for i := range zeroedGrid {
-		zeroedGrid[i] = make([]int, width)
+		zeroedGrid[i] = make([]int, height)
 	}
-	return Dungeon{grid: zeroedGrid}
+	return dungeon{grid: zeroedGrid, width: width, height: height}
 }
 
-func (d Dungeon) print(charmap characterMapper, p player) {
+func (d dungeon) print(charmap characterMapper, p player) {
 	fmt.Println()
-	for y, row := range d.grid {
-		for x, cell := range row {
+	for x, row := range d.grid {
+		for y, cell := range row {
 			if p.position.overlaps(Point{x: x, y: y}) {
-				fmt.Printf("%c", '@')
+				fmt.Printf("%c", p.getChar())
 			} else {
 				fmt.Printf("%c", charmap.chars[cell])
 			}
@@ -34,15 +35,15 @@ func (d Dungeon) print(charmap characterMapper, p player) {
 	fmt.Println()
 }
 
-func (d *Dungeon) setPoint(point Point, value int) {
+func (d *dungeon) setPoint(point Point, value int) {
 	d.grid[point.x][point.y] = value
 }
 
-func (d *Dungeon) getPoint(point Point) int {
+func (d *dungeon) getPoint(point Point) int {
 	return d.grid[point.x][point.y]
 }
 
-func getEmptyPoint(d *Dungeon) (point Point) {
+func getEmptyPoint(d *dungeon) (point Point) {
 	for {
 		x := rand.Intn(len(d.grid))
 		y := rand.Intn(len(d.grid[0]))
@@ -52,9 +53,9 @@ func getEmptyPoint(d *Dungeon) (point Point) {
 	}
 }
 
-func connectWithCorridor(d *Dungeon, origin, destination Point) {
+func connectWithCorridor(d *dungeon, origin, destination Point) {
 	currentPosition := origin
-	var newDirection Direction
+	var newDirection direction
 
 	for {
 
@@ -71,7 +72,7 @@ func connectWithCorridor(d *Dungeon, origin, destination Point) {
 	}
 }
 
-func (d *Dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int) (position Point, err error) {
+func (d *dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int) (position Point, err error) {
 	startingPoint.move(SouthEast)
 	roomWidth := rand.Intn(maxWidth) + 4
 	roomHeight := rand.Intn(maxHeight) + 4
@@ -82,7 +83,7 @@ func (d *Dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int)
 
 }
 
-func (d *Dungeon) createRoom(startingPoint Point, width, height int) (position Point, err error) {
+func (d *dungeon) createRoom(startingPoint Point, width, height int) (position Point, err error) {
 
 	for i := startingPoint.x; i < startingPoint.x+width; i++ {
 		for j := startingPoint.y; j < startingPoint.y+height; j++ {

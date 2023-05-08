@@ -23,23 +23,23 @@ type gameState struct {
 func (g gameState) keyPressed(char rune) {
 	switch char {
 	case northKey:
-		p.position.move(North)
+		p.move(North)
 	case southKey:
-		p.position.move(South)
+		p.move(South)
 	case eastKey:
-		p.position.move(East)
+		p.move(East)
 	case westKey:
-		p.position.move(West)
+		p.move(West)
 	case northWestKey:
-		p.position.move(NorthWest)
+		p.move(NorthWest)
 	case northEastKey:
-		p.position.move(NorthEast)
+		p.move(NorthEast)
 	case southWestKey:
-		p.position.move(SouthWest)
+		p.move(SouthWest)
 	case southEastKey:
-		p.position.move(SouthEast)
+		p.move(SouthEast)
 	case restKey:
-		p.position.move(None)
+		p.move(None)
 	
 }
 }
