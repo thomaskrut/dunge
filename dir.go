@@ -21,7 +21,7 @@ type direction struct {
 }
 
 func getAllDirections() []direction {
-	return []direction{North, South, East, West, NorthWest, NorthEast, SouthWest, SouthEast}
+	return []direction{North, South, East, West, NorthWest, NorthEast, SouthWest, SouthEast, None}
 }
 
 func getNonDiagonalDirections() []direction {
@@ -64,7 +64,7 @@ func (d *direction) toNonDiagonal() {
 
 }
 
-func (dir *direction) directionTowards(from, to Point) (newDir *direction) {
+func (dir *direction) directionTowards(from, to Point) *direction {
 	switch {
 	case to.x == from.x && to.y < from.y:
 		*dir = North

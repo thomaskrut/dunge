@@ -1,26 +1,25 @@
 package main
 
 const (
-	northKey = 56
-	southKey = 50
-	eastKey  = 54
-	westKey  = 52
+	northKey     = 56
+	southKey     = 50
+	eastKey      = 54
+	westKey      = 52
 	northWestKey = 55
 	northEastKey = 57
 	southWestKey = 49
 	southEastKey = 51
-	restKey = 53
+	restKey      = 53
 )
 
 type keyProcessor interface {
-	keyPressed(char rune)
+	processKey(char rune)
 }
 
 type gameState struct {
-
 }
 
-func (g gameState) keyPressed(char rune) {
+func (g gameState) processKey(char rune) {
 	switch char {
 	case northKey:
 		p.move(North)
@@ -40,6 +39,6 @@ func (g gameState) keyPressed(char rune) {
 		p.move(SouthEast)
 	case restKey:
 		p.move(None)
-	
-}
+
+	}
 }

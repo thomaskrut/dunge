@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/eiannone/keyboard"
 )
 
@@ -19,6 +18,7 @@ var (
 )
 
 const (
+	wall  = 0
 	empty = 1 << iota
 	visited
 	lit
@@ -26,10 +26,13 @@ const (
 
 func main() {
 
-	charmap.add(0, 9639) //wall
-	charmap.add(1, ' ')
-	charmap.add(2, '.')
-	charmap.add(4, ':')
+	charmap.add(wall, ' ')
+	charmap.add(empty, ' ')
+	charmap.add(empty|visited, ' ')
+	charmap.add(empty|lit, '.')
+	charmap.add(visited|wall, 9637)
+	charmap.add(lit|wall, 9639)
+
 	var rooms []Point
 
 	for i := 0; i < 4; i++ {
@@ -49,24 +52,22 @@ func main() {
 			connectWithCorridor(&d, value, rooms[index+1])
 		}
 	}
-	connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
+	//connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
 
 	p = newPlayer()
-	p.position = getEmptyPoint(&d)
-
+	p.setPosition(getEmptyPoint(&d))
+	p.move(None)
 	currentState = gameState{}
 
 	for {
 
 		grindToPrint := render(&d, &p)
-
 		fmt.Println(string(grindToPrint))
-		fmt.Println(p)
 		char, _, err := keyboard.GetSingleKey()
 		if err != nil {
 			panic(err)
 		}
-		currentState.keyPressed(char)
+		currentState.processKey(char)
 
 	}
 

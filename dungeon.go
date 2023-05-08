@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 )
 
@@ -19,35 +18,19 @@ func newDungeon(width, height int) dungeon {
 	return dungeon{grid: zeroedGrid, width: width, height: height}
 }
 
-func (d dungeon) print(charmap characterMapper, p player) {
-	fmt.Println()
-	for x, row := range d.grid {
-		for y, cell := range row {
-			if p.position.overlaps(Point{x: x, y: y}) {
-				fmt.Printf("%c", p.getChar())
-			} else {
-				fmt.Printf("%c", charmap.chars[cell])
-			}
-
-		}
-		println()
-	}
-	fmt.Println()
+func (d *dungeon) setPoint(p Point, value int) {
+	d.grid[p.x][p.y] = value
 }
 
-func (d *dungeon) setPoint(point Point, value int) {
-	d.grid[point.x][point.y] = value
+func (d *dungeon) getPoint(p Point) int {
+	return d.grid[p.x][p.y]
 }
 
-func (d *dungeon) getPoint(point Point) int {
-	return d.grid[point.x][point.y]
-}
-
-func getEmptyPoint(d *dungeon) (point Point) {
+func getEmptyPoint(d *dungeon) Point {
 	for {
 		x := rand.Intn(len(d.grid))
 		y := rand.Intn(len(d.grid[0]))
-		if d.grid[x][y] == 1 {
+		if d.grid[x][y] == empty {
 			return Point{x, y}
 		}
 	}
@@ -83,22 +66,22 @@ func (d *dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int)
 
 }
 
-func (d *dungeon) createRoom(startingPoint Point, width, height int) (position Point, err error) {
+func (d *dungeon) createRoom(startingPoint Point, width, height int) (center Point, err error) {
 
 	for i := startingPoint.x; i < startingPoint.x+width; i++ {
 		for j := startingPoint.y; j < startingPoint.y+height; j++ {
 			if i == startingPoint.x+width-(width/2) {
-				position.x = i
+				center.x = i
 			}
 			if j == startingPoint.y+height-(height/2) {
-				position.y = j
+				center.y = j
 			}
 
 			if (d.getPoint(Point{x: i, y: j}) == empty) {
-				return position, errors.New("space already empty")
+				return center, errors.New("space already empty")
 			}
 			d.setPoint(Point{x: i, y: j}, empty)
 		}
 	}
-	return position, nil
+	return center, nil
 }
