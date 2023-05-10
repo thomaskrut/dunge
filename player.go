@@ -6,12 +6,14 @@ type player struct {
 	lightsource int
 }
 
-func (p *player) move(dir direction) {
+func (p *player) move(dir direction) bool {
 	if p.position.getPossibleDirections(&d)[dir] {
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)
 		p.position.move(dir)
 		alterAreaVisibility(&d, p.position, lit, p.lightsource)
+		return true
 	}
+	return false
 }
 
 func alterAreaVisibility(d *dungeon, p Point, value int, currentDepth int) {
@@ -43,6 +45,6 @@ func (p player) getChar() rune {
 	return p.char
 }
 
-func newPlayer() player {
-	return player{char: '@', lightsource: 4}
+func newPlayer(char rune) player {
+	return player{char: char, lightsource: 4}
 }

@@ -14,31 +14,7 @@ const (
 
 type keyProcessor interface {
 	processKey(char rune)
+	processTurn()
 }
 
-type gameState struct {
-}
 
-func (g gameState) processKey(char rune) {
-	switch char {
-	case northKey:
-		p.move(North)
-	case southKey:
-		p.move(South)
-	case eastKey:
-		p.move(East)
-	case westKey:
-		p.move(West)
-	case northWestKey:
-		p.move(NorthWest)
-	case northEastKey:
-		p.move(NorthEast)
-	case southWestKey:
-		p.move(SouthWest)
-	case southEastKey:
-		p.move(SouthEast)
-	case restKey:
-		p.move(None)
-
-	}
-}
