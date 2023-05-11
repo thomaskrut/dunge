@@ -26,6 +26,7 @@ type monster struct {
 
 func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
+	fmt.Println(m.Name, "took", damage, "damage and has", m.Hp, "hp left")
 }
 
 func (m *monster) moveCounter() float32 {

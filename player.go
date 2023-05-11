@@ -12,9 +12,10 @@ func (p *player) move(dir direction) bool {
 	if p.position.getPossibleDirections(&d)[dir] {
 		newPoint := p.position
 		newPoint.new(dir)
-		for _, m := range activeMonsters {
+		for i := range activeMonsters {
+			m := &activeMonsters[i]
 			if m.getPosition().overlaps(newPoint) {
-				p.attack(&m)
+				p.attack(m)
 				return true
 			}
 		}
@@ -68,7 +69,7 @@ func newPlayer(char rune) player {
 	return player{
 		char:        char,
 		lightsource: 4,
-		strength:    1,
+		strength:    8,
 		hp:          16,
 	}
 }
