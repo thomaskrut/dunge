@@ -30,6 +30,10 @@ func (p *player) move(dir direction) bool {
 
 func (p *player) attack(m *monster) {
 	m.takeDamage(p.strength)
+	messages.addMessage("You hit the " + m.Name)
+	if m.Hp <= 0 {
+		messages.addMessage("You killed the " + m.Name)
+	}
 }
 
 func (p *player) takeDamage(damage int) {

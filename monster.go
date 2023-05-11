@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 )
 
@@ -27,6 +28,13 @@ type monster struct {
 func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
 	fmt.Println(m.Name, "took", damage, "damage and has", m.Hp, "hp left")
+}
+
+func (m *monster) attack(p *player) {
+	if (m.Hp > 0) {
+		messages.addMessage(m.Name + " " + m.Attack[rand.Intn(len(m.Attack))] + " you")
+		p.takeDamage(m.Str)
+	}
 }
 
 func (m *monster) moveCounter() float32 {
@@ -57,6 +65,7 @@ func (m *monster) move(dir direction) bool {
 		newPoint := m.position
 		newPoint.new(dir)
 		if (newPoint.overlaps(p.position)) {
+			m.attack(&p)
 			return true
 		}
 

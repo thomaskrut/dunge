@@ -17,6 +17,7 @@ var (
 	d                dungeon
 	p                player
 	currentState     keyProcessor
+	messages         messagePrompt
 	rooms            []Point
 	monsterTemplates monsterList
 	activeMonsters   []monster
@@ -50,7 +51,7 @@ func init() {
 }
 
 func moveMonsters() {
-	
+
 	for i := range activeMonsters {
 		m := &activeMonsters[i]
 		if m.moveCounter() >= 1 {
@@ -61,14 +62,13 @@ func moveMonsters() {
 			}
 			fmt.Println(m.position)
 		}
-		
 
 	}
 }
 
 func checkMonsterHealth() {
 	for i, m := range activeMonsters {
-		if (m.Hp <= 0) {
+		if m.Hp <= 0 {
 			activeMonsters = append(activeMonsters[:i], activeMonsters[i+1:]...)
 		}
 	}
@@ -123,13 +123,27 @@ func main() {
 	for {
 
 		grindToPrint := render(&d, p, activeMonsters)
+
 		fmt.Println(string(grindToPrint))
+		fmt.Println("HP:", p.hp)
+
+		if len(messages.messageQueue) == 1 {
+			fmt.Print(messages.messageQueue[0])
+			messages.messageQueue = messages.messageQueue[1:]
+			currentState = gamePlay{}
+		} else if len(messages.messageQueue) > 1 {
+			fmt.Print(messages.messageQueue[0])
+			messages.messageQueue = messages.messageQueue[1:]
+			fmt.Print(" - more - ")
+			currentState = messages
+		}
+
 		char, _, err := keyboard.GetSingleKey()
 		if err != nil {
 			panic(err)
 		}
-		currentState.processKey(char)
 
+		currentState.processKey(char)
 	}
 
 }
