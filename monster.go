@@ -52,9 +52,15 @@ func (m monster) getChar() rune {
 
 func (m *monster) move(dir direction) bool {
 	if m.position.getPossibleDirections(&d)[dir] {
-		fmt.Println("Monster moved from ", m.position)
+		
+		newPoint := m.position
+		newPoint.new(dir)
+		if (newPoint.overlaps(p.position)) {
+			return true
+		}
+
 		m.position.new(dir)
-		fmt.Println("to ", m.position)
+		
 		return true
 	}
 	return false

@@ -5,6 +5,7 @@ type gamePlay struct {
 
 func (g gamePlay) processTurn() {
 	moveMonsters()
+	checkMonsterHealth()
 }
 
 func (g gamePlay) processKey(char rune) {

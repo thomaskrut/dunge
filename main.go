@@ -66,6 +66,14 @@ func moveMonsters() {
 	}
 }
 
+func checkMonsterHealth() {
+	for i, m := range activeMonsters {
+		if (m.Hp <= 0) {
+			activeMonsters = append(activeMonsters[:i], activeMonsters[i+1:]...)
+		}
+	}
+}
+
 func generateMonsters(numberOfIterations int) []monster {
 
 	var monsterSlice []monster

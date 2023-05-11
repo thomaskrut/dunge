@@ -10,13 +10,14 @@ type player struct {
 
 func (p *player) move(dir direction) bool {
 	if p.position.getPossibleDirections(&d)[dir] {
-
-		/*for _, m := range activeMonsters {
-			if m.getPosition().overlaps(p.position) {
+		newPoint := p.position
+		newPoint.new(dir)
+		for _, m := range activeMonsters {
+			if m.getPosition().overlaps(newPoint) {
 				p.attack(&m)
 				return true
 			}
-		}*/
+		}
 
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)
 		p.position.new(dir)
