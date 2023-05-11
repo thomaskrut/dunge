@@ -21,6 +21,7 @@ var (
 	rooms            []Point
 	monsterTemplates monsterList
 	activeMonsters   []monster
+	validKeyPressed  bool
 )
 
 const (
@@ -57,7 +58,7 @@ func moveMonsters() {
 		if m.moveCounter() >= 1 {
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
-			for !m.move(newDirection) {
+			for i:=0; !m.move(newDirection) && i < 10; i++ {
 				newDirection = randomDirection(newDirection, true, true)
 			}
 			fmt.Println(m.position)
@@ -122,28 +123,33 @@ func main() {
 
 	for {
 
+		validKeyPressed = false
+
 		grindToPrint := render(&d, p, activeMonsters)
 
 		fmt.Println(string(grindToPrint))
 		fmt.Println("HP:", p.hp)
 
 		if len(messages.messageQueue) == 1 {
-			fmt.Print(messages.messageQueue[0])
-			messages.messageQueue = messages.messageQueue[1:]
+			fmt.Print(messages.getOldestMessage())
+			messages.deleteOldestMessage()
 			currentState = gamePlay{}
 		} else if len(messages.messageQueue) > 1 {
-			fmt.Print(messages.messageQueue[0])
-			messages.messageQueue = messages.messageQueue[1:]
-			fmt.Print(" - more - ")
+			fmt.Print(messages.getOldestMessage())
+			messages.deleteOldestMessage()
+			fmt.Print(" (press space for more...)")
 			currentState = messages
 		}
 
-		char, _, err := keyboard.GetSingleKey()
-		if err != nil {
-			panic(err)
+		for !validKeyPressed {
+			char, _, err := keyboard.GetSingleKey()
+			if err != nil {
+				panic(err)
+			}
+
+			currentState.processKey(char)
 		}
 
-		currentState.processKey(char)
 	}
 
 }

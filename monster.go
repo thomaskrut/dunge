@@ -68,6 +68,11 @@ func (m *monster) move(dir direction) bool {
 			m.attack(&p)
 			return true
 		}
+		for _, m := range activeMonsters {
+			if m.position.overlaps(newPoint) {
+				return false
+			}
+		}
 
 		m.position.new(dir)
 		

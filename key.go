@@ -10,11 +10,10 @@ const (
 	southWestKey = 49
 	southEastKey = 51
 	restKey      = 53
+	spacebar     = 0
 )
 
 type keyProcessor interface {
 	processKey(char rune)
 	processTurn()
 }
-
-

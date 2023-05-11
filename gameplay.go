@@ -4,6 +4,7 @@ type gamePlay struct {
 }
 
 func (g gamePlay) processTurn() {
+	validKeyPressed = true
 	moveMonsters()
 	checkMonsterHealth()
 }
