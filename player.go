@@ -4,16 +4,34 @@ type player struct {
 	position    Point
 	char        rune
 	lightsource int
+	strength    int
+	hp          int
 }
 
 func (p *player) move(dir direction) bool {
 	if p.position.getPossibleDirections(&d)[dir] {
+
+		/*for _, m := range activeMonsters {
+			if m.getPosition().overlaps(p.position) {
+				p.attack(&m)
+				return true
+			}
+		}*/
+
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)
-		p.position.move(dir)
+		p.position.new(dir)
 		alterAreaVisibility(&d, p.position, lit, p.lightsource)
 		return true
 	}
 	return false
+}
+
+func (p *player) attack(m *monster) {
+	m.takeDamage(p.strength)
+}
+
+func (p *player) takeDamage(damage int) {
+	p.hp -= damage
 }
 
 func alterAreaVisibility(d *dungeon, p Point, value int, currentDepth int) {
@@ -22,8 +40,8 @@ func alterAreaVisibility(d *dungeon, p Point, value int, currentDepth int) {
 	}
 	for _, dir := range getAllDirections() {
 		newPoint := p
-		newPoint.move(dir)
-		if d.grid[newPoint.x][newPoint.y] & empty == empty {
+		newPoint.new(dir)
+		if d.grid[newPoint.x][newPoint.y]&empty == empty {
 			d.grid[newPoint.x][newPoint.y] = empty | value
 			alterAreaVisibility(d, newPoint, value, currentDepth-1)
 		} else {
@@ -46,5 +64,10 @@ func (p player) getChar() rune {
 }
 
 func newPlayer(char rune) player {
-	return player{char: char, lightsource: 4}
+	return player{
+		char:        char,
+		lightsource: 4,
+		strength:    1,
+		hp:          16,
+	}
 }

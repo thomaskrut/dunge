@@ -8,7 +8,7 @@ func (g gamePlay) processTurn() {
 }
 
 func (g gamePlay) processKey(char rune) {
-	var playerMoved bool
+	var playerMoved bool = false
 	switch char {
 	case northKey:
 		playerMoved = p.move(North)

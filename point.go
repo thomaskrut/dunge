@@ -1,6 +1,7 @@
 package main
 
 import (
+
 	"math/rand"
 )
 
@@ -12,11 +13,12 @@ func (p Point) getPossibleDirections(d *dungeon) map[direction]bool {
 	directions := make(map[direction]bool)
 	for _, dir := range getAllDirections() {
 		newPoint := p
-		newPoint.move(dir)
-		if d.grid[newPoint.x][newPoint.y] & empty == empty {
+		newPoint.new(dir)
+		if d.grid[newPoint.x][newPoint.y]&empty == empty {
 			directions[dir] = true
 		}
 	}
+	
 	return directions
 }
 
@@ -28,9 +30,11 @@ func getRandomPoint(d *dungeon) Point {
 	return Point{x: rand.Intn(len(d.grid)), y: rand.Intn(len(d.grid[0]))}
 }
 
-func (p *Point) move(dir direction) {
+func (p *Point) new(dir direction) {
+	
 	p.x += dir.varX
 	p.y += dir.varY
+	
 }
 
 func (p Point) isOutOfBounds(d *dungeon, margin int) bool {

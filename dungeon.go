@@ -42,9 +42,9 @@ func connectWithCorridor(d *dungeon, origin, destination Point) {
 
 	for {
 
-		newDirection.directionTowards(currentPosition, destination).toNonDiagonal()
+		newDirection.connect(currentPosition, destination).toNonDiagonal()
 
-		currentPosition.move(newDirection)
+		currentPosition.new(newDirection)
 		if currentPosition.isOutOfBounds(d, 1) {
 			break
 		}
@@ -56,7 +56,7 @@ func connectWithCorridor(d *dungeon, origin, destination Point) {
 }
 
 func (d *dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int) (position Point, err error) {
-	startingPoint.move(SouthEast)
+	startingPoint.new(SouthEast)
 	roomWidth := rand.Intn(maxWidth) + 4
 	roomHeight := rand.Intn(maxHeight) + 4
 	if p := (Point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(d, 2) {

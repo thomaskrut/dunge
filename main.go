@@ -19,7 +19,7 @@ var (
 	currentState     keyProcessor
 	rooms            []Point
 	monsterTemplates monsterList
-	activeMonsters   []entity
+	activeMonsters   []monster
 )
 
 const (
@@ -50,21 +50,25 @@ func init() {
 }
 
 func moveMonsters() {
-	for _, m := range activeMonsters {
+	
+	for i := range activeMonsters {
+		m := &activeMonsters[i]
 		if m.moveCounter() >= 1 {
 			var newDirection direction
-			newDirection.directionTowards(m.getPosition(), p.getPosition())
+			newDirection.connect(m.getPosition(), p.getPosition())
 			for !m.move(newDirection) {
 				newDirection = randomDirection(newDirection, true, true)
 			}
+			fmt.Println(m.position)
 		}
+		
 
 	}
 }
 
-func generateMonsters(numberOfIterations int) []entity {
+func generateMonsters(numberOfIterations int) []monster {
 
-	var monsterSlice []entity
+	var monsterSlice []monster
 
 	for i := 0; i < numberOfIterations; i++ {
 
@@ -72,10 +76,9 @@ func generateMonsters(numberOfIterations int) []entity {
 
 		for _, m := range monsterTemplates.Monsters {
 			if rand < m.Prob {
-
 				newMonster := m
 				newMonster.setPosition(getEmptyPoint(&d))
-				monsterSlice = append(monsterSlice, &newMonster)
+				monsterSlice = append(monsterSlice, newMonster)
 			}
 		}
 
@@ -111,7 +114,7 @@ func main() {
 
 	for {
 
-		grindToPrint := render(&d, p, activeMonsters...)
+		grindToPrint := render(&d, p, activeMonsters)
 		fmt.Println(string(grindToPrint))
 		char, _, err := keyboard.GetSingleKey()
 		if err != nil {

@@ -1,17 +1,17 @@
 package main
 
-func render(d *dungeon, p player, entities ...entity) (toPrint []rune) {
+func render(d *dungeon, p player, monsters []monster) (toPrint []rune) {
 
 	
 	for y := 0; y < d.height; y++ {
 		for x := 0; x < d.width; x++ {
 			var char rune
-			for _, entity := range entities {
+			for _, m := range monsters {
 				if p.getPosition().overlaps(Point{x, y}) {
 					char = p.getChar()
 					break
-				} else if entity.getPosition().overlaps(Point{x, y}) {
-					char = entity.getChar()
+				} else if m.getPosition().overlaps(Point{x, y}) {
+					char = m.getChar()
 					break
 				}
 			}

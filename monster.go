@@ -24,11 +24,15 @@ type monster struct {
 	moveCounterValue float32
 }
 
+func (m *monster) takeDamage(damage int) {
+	m.Hp -= damage
+}
+
 func (m *monster) moveCounter() float32 {
 	if m.moveCounterValue >= 1 {
 		m.moveCounterValue -= 1
 	}
-	
+
 	m.moveCounterValue += m.Speed
 
 	return m.moveCounterValue
@@ -48,7 +52,9 @@ func (m monster) getChar() rune {
 
 func (m *monster) move(dir direction) bool {
 	if m.position.getPossibleDirections(&d)[dir] {
-		m.position.move(dir)
+		fmt.Println("Monster moved from ", m.position)
+		m.position.new(dir)
+		fmt.Println("to ", m.position)
 		return true
 	}
 	return false
