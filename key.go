@@ -14,6 +14,6 @@ const (
 )
 
 type keyProcessor interface {
-	processKey(char rune)
+	processKey(char rune) bool
 	processTurn()
 }

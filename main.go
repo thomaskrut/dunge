@@ -147,7 +147,7 @@ func main() {
 				panic(err)
 			}
 
-			currentState.processKey(char)
+			validKeyPressed = currentState.processKey(char)
 		}
 
 	}

@@ -4,12 +4,11 @@ type gamePlay struct {
 }
 
 func (g gamePlay) processTurn() {
-	validKeyPressed = true
 	moveMonsters()
 	checkMonsterHealth()
 }
 
-func (g gamePlay) processKey(char rune) {
+func (g gamePlay) processKey(char rune) bool {
 	var playerMoved bool = false
 	switch char {
 	case northKey:
@@ -33,5 +32,7 @@ func (g gamePlay) processKey(char rune) {
 	}
 	if playerMoved {
 		g.processTurn()
+		return true
 	}
+	return false
 }

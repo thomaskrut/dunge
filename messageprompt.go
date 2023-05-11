@@ -17,14 +17,16 @@ func (m *messagePrompt) deleteOldestMessage() {
 }
 
 func (m messagePrompt) processTurn() {
-	validKeyPressed = true
+	
 }
 
-func (m messagePrompt) processKey(char rune) {
+func (m messagePrompt) processKey(char rune) bool {
 	
 	switch char {
 		case 0: {
-			m.processTurn()
+			
+			return true
 		}
 	}
+	return false
 }
