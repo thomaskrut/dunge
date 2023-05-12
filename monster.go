@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
 	"os"
 )
 
@@ -22,6 +21,7 @@ type monster struct {
 	Moves            bool     `json:"moves"`
 	Aggressive       bool     `json:"aggressive"`
 	Speed            float32  `json:"speed"`
+	Movesdiagonally  bool     `json:"movesdiagonally"`
 	moveCounterValue float32
 }
 
@@ -31,7 +31,7 @@ func (m *monster) takeDamage(damage int) {
 
 func (m *monster) attack(p *player) {
 	if (m.Hp > 0) {
-		messages.addMessage(m.Name + " " + m.Attack[rand.Intn(len(m.Attack))] + " you")
+		messages.addMessage(m.Name + " " + m.Attack[randomNumber(len(m.Attack))] + " you")
 		p.takeDamage(m.Str)
 	}
 }

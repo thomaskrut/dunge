@@ -9,6 +9,7 @@
             "hp": 10,
             "moves": true,
             "aggressive": false,
+            "movesdiagonally": true,
             "speed": 1.3
         },
         {
@@ -20,6 +21,7 @@
             "hp": 40,
             "moves": true,
             "aggressive": true,
+            "movesdiagonally": false,
             "speed": 0.3
         }
     ]

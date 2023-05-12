@@ -1,9 +1,5 @@
 package main
 
-import (
-	"math/rand"
-)
-
 var (
 	None      = direction{varX: 0, varY: 0}
 	North     = direction{varX: 0, varY: -1}
@@ -29,7 +25,7 @@ func getNonDiagonalDirections() []direction {
 }
 
 func (d *direction) toNonDiagonal() {
-	r := rand.Intn(2)
+	r := randomNumber(2)
 	switch *d {
 	case NorthWest:
 		switch r {
@@ -96,7 +92,7 @@ func randomDirection(currentDirection direction, allowOpposite bool, allowDiagon
 	} else {
 		r = 4
 	}
-	switch rand.Intn(r) {
+	switch randomNumber(r) {
 	case 0:
 		newDirection = North
 	case 1:

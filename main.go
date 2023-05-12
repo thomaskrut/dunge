@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
+	
 
 	"github.com/eiannone/keyboard"
 )
@@ -58,8 +58,12 @@ func moveMonsters() {
 		if m.moveCounter() >= 1 {
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
+			if !m.Movesdiagonally {
+				newDirection.toNonDiagonal()
+			}
 			for i:=0; !m.move(newDirection) && i < 10; i++ {
-				newDirection = randomDirection(newDirection, true, true)
+				fmt.Println(m.Movesdiagonally)
+				newDirection = randomDirection(newDirection, false, m.Movesdiagonally)
 			}
 		}
 
@@ -80,7 +84,7 @@ func generateMonsters(numberOfIterations int) []monster {
 
 	for i := 0; i < numberOfIterations; i++ {
 
-		rand := rand.Intn(1000)
+		rand := randomNumber(1000)
 
 		for _, m := range monsterTemplates.Monsters {
 			if rand < m.Prob {

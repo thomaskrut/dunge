@@ -1,10 +1,5 @@
 package main
 
-import (
-
-	"math/rand"
-)
-
 type Point struct {
 	x, y int
 }
@@ -27,7 +22,7 @@ func (p1 Point) overlaps(p2 Point) bool {
 }
 
 func getRandomPoint(d *dungeon) Point {
-	return Point{x: rand.Intn(len(d.grid)), y: rand.Intn(len(d.grid[0]))}
+	return Point{x: randomNumber(len(d.grid)), y: randomNumber(len(d.grid[0]))}
 }
 
 func (p *Point) new(dir direction) {

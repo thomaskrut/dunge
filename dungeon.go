@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"math/rand"
 )
 
 type dungeon struct {
@@ -28,8 +27,8 @@ func (d *dungeon) getPoint(p Point) int {
 
 func getEmptyPoint(d *dungeon) Point {
 	for {
-		x := rand.Intn(len(d.grid))
-		y := rand.Intn(len(d.grid[0]))
+		x := randomNumber(len(d.grid))
+		y := randomNumber(len(d.grid[0]))
 		if d.grid[x][y] == empty {
 			return Point{x, y}
 		}
@@ -57,8 +56,8 @@ func connectWithCorridor(d *dungeon, origin, destination Point) {
 
 func (d *dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int) (position Point, err error) {
 	startingPoint.new(SouthEast)
-	roomWidth := rand.Intn(maxWidth) + 4
-	roomHeight := rand.Intn(maxHeight) + 4
+	roomWidth := randomNumber(maxWidth) + 4
+	roomHeight := randomNumber(maxHeight) + 4
 	if p := (Point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(d, 2) {
 		return Point{}, errors.New("room out of bounds")
 	}
