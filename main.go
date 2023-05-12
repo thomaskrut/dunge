@@ -144,12 +144,12 @@ func generateItems(numberOfIterations int) []item {
 func initDungeon() {
 	for i := 0; i < 4; i++ {
 		for {
-			position, err := d.createRandomRoom(getRandomPoint(&d), 20, 20)
+			roomCenterPos, err := d.createRandomRoom(getRandomPoint(&d), 20, 20)
 
 			if err != nil {
 				continue
 			}
-			rooms = append(rooms, position)
+			rooms = append(rooms, roomCenterPos)
 			break
 		}
 	}
