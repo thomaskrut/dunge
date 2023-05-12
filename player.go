@@ -9,6 +9,7 @@ type player struct {
 }
 
 func (p *player) move(dir direction) bool {
+	
 	if p.position.getPossibleDirections(&d)[dir] {
 		newPoint := p.position
 		newPoint.new(dir)

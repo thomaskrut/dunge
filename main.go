@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	
+	"strconv"
 
 	"github.com/eiannone/keyboard"
 )
@@ -73,6 +73,23 @@ func moveMonsters() {
 	}
 }
 
+func checkForItems() {
+	count := 0
+	var itemsMessage = "You have stumbled upon"
+	for i := range activeItems {
+		item := activeItems[i]
+		if item.getPosition().overlaps(p.getPosition()) {
+			count++
+			itemsMessage = itemsMessage + ", " + strconv.Itoa(count) + ": " + item.Prefix + " " + item.Name
+		}
+	}
+	if count > 0 {
+		itemsMessage = itemsMessage + ". Pick up which? (or press space)"
+		messages.addMessage(itemsMessage)
+		currentState = newPickupState(count)
+	}
+}
+
 func checkMonsterHealth() {
 	for i, m := range activeMonsters {
 		if m.Hp <= 0 {
@@ -110,8 +127,11 @@ func generateItems(numberOfIterations int) []item {
 
 		if rand < i.Prob {
 				newItem := i
+				newItem2 := i
 				newItem.setPosition(getEmptyPoint(&d))
+				newItem2.setPosition(newItem.position)
 				itemSlice = append(itemSlice, newItem)
+				itemSlice = append(itemSlice, newItem2)
 			}
 		}
 
@@ -156,6 +176,8 @@ func main() {
 		fmt.Println(string(grindToPrint))
 		fmt.Println("HP:", p.hp)
 
+		checkForItems()
+
 		if len(messages.messageQueue) == 1 {
 			fmt.Print(messages.getOldestMessage())
 			messages.deleteOldestMessage()
@@ -166,6 +188,8 @@ func main() {
 			fmt.Print(" (press space for more...)")
 			currentState = messages
 		}
+
+		
 
 		for !validKeyPressed {
 			char, _, err := keyboard.GetSingleKey()
