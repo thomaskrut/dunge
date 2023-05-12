@@ -6,6 +6,7 @@ type player struct {
 	lightsource int
 	strength    int
 	hp          int
+	inventory	[]item
 }
 
 func (p *player) move(dir direction) bool {

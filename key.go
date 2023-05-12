@@ -10,8 +10,9 @@ const (
 	southWestKey = 49
 	southEastKey = 51
 	restKey      = 53
-	notAChar     = 0
-	q 			 = 113
+	spacebar     = 0
+	q            = 113
+	i            = 105
 )
 
 type keyProcessor interface {

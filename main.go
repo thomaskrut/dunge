@@ -94,21 +94,27 @@ func checkForItems() int {
 
 func pickUpItem(itemDigit int) {
 	
-	count := 1
+	count := 0
 	for i := range activeItems {
 		
 			item := activeItems[i]
 			if item.getPosition().overlaps(p.getPosition()) {
+				count++
 				if count == itemDigit {
 					messages.addMessage("You have " + item.Prefix + " " + item.Name)
 					activeItems = append(activeItems[:i], activeItems[i+1:]...)
+					p.inventory = append(p.inventory, item)
 					break
 			}
-			count++
+			
 		}
 		
 	}
 
+}
+
+func showInventory() {
+	fmt.Println(p.inventory)
 }
 
 func checkMonsterHealth() {
@@ -208,12 +214,9 @@ func main() {
 			currentState = messages
 		}
 
-		if numberOfItemsFound > 0 {
+		if numberOfItemsFound > 0 && len(messages.messageQueue) == 0 {
 			currentState = newPickupState(numberOfItemsFound)
-			numberOfItemsFound = 0
 		}
-
-		
 
 		for !validKeyPressed {
 			char, _, err := keyboard.GetSingleKey()

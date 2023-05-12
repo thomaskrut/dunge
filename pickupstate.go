@@ -9,7 +9,7 @@ type pickupState struct {
 }
 
 func (p pickupState) processTurn() {
-	
+
 }
 
 func newPickupState(count int) pickupState {
@@ -17,12 +17,13 @@ func newPickupState(count int) pickupState {
 }
 
 func (p pickupState) processKey(char rune) bool {
-	
+
 	switch char {
 	case q:
-		os.Exit(0) 
-	case notAChar :
+		os.Exit(0)
+	case spacebar:
 		currentState = gamePlay{}
+		numberOfItemsFound = 0
 		return true
 	}
 
@@ -30,9 +31,11 @@ func (p pickupState) processKey(char rune) bool {
 
 	if digit > 0 && digit <= p.numberOfItems {
 		pickUpItem(digit)
-		currentState = gamePlay{}
+		
+		numberOfItemsFound = checkForItems()
+		
 		return true
 	}
-	
+
 	return false
 }

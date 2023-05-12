@@ -1,7 +1,7 @@
 package main
 
 import (
-
+	"fmt"
 	"os"
 )
 type gamePlay struct {
@@ -14,11 +14,13 @@ func (g gamePlay) processTurn() {
 }
 
 func (g gamePlay) processKey(char rune) bool {
-	
+	fmt.Println(char)
 	var playerMoved bool = false
 	switch char {
 	case q:
 		os.Exit(0)
+	case i:
+		showInventory()
 	case northKey:
 		playerMoved = p.move(North)
 	case southKey:
