@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "name": "Apple",
+            "prefix": "an",
+            "char": "o",
+            "prob": 550,
+            "value": 10,
+            "verb": "Eat"
+        },
+        {
+            "name": "Fudge",
+            "prefix": "a",
+            "char": "#",
+            "prob": 610,
+            "value": 10,
+            "verb": "Eat"
+        }
+    ]
+}

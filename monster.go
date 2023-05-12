@@ -82,21 +82,21 @@ func (m *monster) move(dir direction) bool {
 
 func readMonsterTemplate() monsterList {
 
-	data, err := os.ReadFile("templates.json")
+	data, err := os.ReadFile("monsters.json")
 	if err != nil {
 		panic(err)
 	}
 
 	fileAsString := string(data)
 
-	monsterTemplates := monsterList{}
+	template := monsterList{}
 
-	if err := json.Unmarshal([]byte(fileAsString), &monsterTemplates); err != nil {
+	if err := json.Unmarshal([]byte(fileAsString), &template); err != nil {
 		panic(err)
 	}
 
-	fmt.Println(monsterTemplates)
+	fmt.Println(template)
 
-	return monsterTemplates
+	return template
 
 }

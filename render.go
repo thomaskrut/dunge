@@ -1,17 +1,28 @@
 package main
 
-func render(d *dungeon, p player, monsters []monster) (toPrint []rune) {
+
+
+func render(d *dungeon, p player, monsters []monster, items []item) (toPrint []rune) {
 
 	
 	for y := 0; y < d.height; y++ {
 		for x := 0; x < d.width; x++ {
 			var char rune
+
 			for _, m := range monsters {
 				if m.getPosition().overlaps(Point{x, y}) && d.grid[x][y]&lit == lit {
 					char = m.getChar()
 					break
 				}
 			}
+
+			for _, i := range items {
+				if i.getPosition().overlaps(Point{x, y}) {
+					char = i.getChar()
+					break
+				}
+			}
+
 			if char == 0 {
 				char = charmap.chars[(d.getPoint(Point{x, y}))]
 			}

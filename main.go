@@ -20,7 +20,9 @@ var (
 	messages         messagePrompt
 	rooms            []Point
 	monsterTemplates monsterList
+	itemTemplates	 itemList
 	activeMonsters   []monster
+	activeItems	  	 []item
 	validKeyPressed  bool
 )
 
@@ -47,7 +49,9 @@ func init() {
 	currentState = gamePlay{}
 
 	monsterTemplates = readMonsterTemplate()
+	itemTemplates = readItemsTemplate()
 	activeMonsters = generateMonsters(10)
+	activeItems = generateItems(10)
 
 }
 
@@ -97,6 +101,24 @@ func generateMonsters(numberOfIterations int) []monster {
 	return monsterSlice
 }
 
+func generateItems(numberOfIterations int) []item {
+	var itemSlice []item
+
+	for i:=1; i < numberOfIterations; i++ {
+		rand := randomNumber(1000)
+		for _, i := range itemTemplates.Items {
+
+		if rand < i.Prob {
+				newItem := i
+				newItem.setPosition(getEmptyPoint(&d))
+				itemSlice = append(itemSlice, newItem)
+			}
+		}
+
+	}
+	return itemSlice
+}
+
 func initDungeon() {
 	for i := 0; i < 4; i++ {
 		for {
@@ -123,11 +145,13 @@ func main() {
 	p.setPosition(getEmptyPoint(&d))
 	p.move(None)
 
+
+
 	for {
 
 		validKeyPressed = false
 
-		grindToPrint := render(&d, p, activeMonsters)
+		grindToPrint := render(&d, p, activeMonsters, activeItems)
 
 		fmt.Println(string(grindToPrint))
 		fmt.Println("HP:", p.hp)
@@ -150,6 +174,7 @@ func main() {
 			}
 
 			validKeyPressed = currentState.processKey(char)
+			
 		}
 
 	}
