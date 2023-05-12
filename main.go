@@ -94,8 +94,21 @@ func checkForItems() int {
 
 func pickUpItem(itemDigit int) {
 	
+	count := 1
+	for i := range activeItems {
+		
+			item := activeItems[i]
+			if item.getPosition().overlaps(p.getPosition()) {
+				if count == itemDigit {
+					messages.addMessage("You have " + item.Prefix + " " + item.Name)
+					activeItems = append(activeItems[:i], activeItems[i+1:]...)
+					break
+			}
+			count++
+		}
+		
+	}
 
-	
 }
 
 func checkMonsterHealth() {
