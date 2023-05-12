@@ -7,7 +7,7 @@ func render(d *dungeon, p player, monsters []monster) (toPrint []rune) {
 		for x := 0; x < d.width; x++ {
 			var char rune
 			for _, m := range monsters {
-				if m.getPosition().overlaps(Point{x, y}) {
+				if m.getPosition().overlaps(Point{x, y}) && d.grid[x][y]&lit == lit {
 					char = m.getChar()
 					break
 				}

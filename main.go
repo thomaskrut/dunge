@@ -62,7 +62,6 @@ func moveMonsters() {
 				newDirection.toNonDiagonal()
 			}
 			for i:=0; !m.move(newDirection) && i < 10; i++ {
-				fmt.Println(m.Movesdiagonally)
 				newDirection = randomDirection(newDirection, false, m.Movesdiagonally)
 			}
 		}
