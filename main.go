@@ -9,7 +9,7 @@ import (
 
 const (
 	width  = 100
-	height = 20
+	height = 40
 )
 
 var (
@@ -61,7 +61,6 @@ func moveMonsters() {
 			for i:=0; !m.move(newDirection) && i < 10; i++ {
 				newDirection = randomDirection(newDirection, true, true)
 			}
-			fmt.Println(m.position)
 		}
 
 	}

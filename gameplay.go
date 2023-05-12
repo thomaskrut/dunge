@@ -1,5 +1,9 @@
 package main
 
+import (
+
+	"os"
+)
 type gamePlay struct {
 }
 
@@ -9,8 +13,11 @@ func (g gamePlay) processTurn() {
 }
 
 func (g gamePlay) processKey(char rune) bool {
+	
 	var playerMoved bool = false
 	switch char {
+		case q:
+			os.Exit(0)
 	case northKey:
 		playerMoved = p.move(North)
 	case southKey:
