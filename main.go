@@ -92,6 +92,12 @@ func checkForItems() int {
 	return 0
 }
 
+func pickUpItem(itemDigit int) {
+	
+
+	
+}
+
 func checkMonsterHealth() {
 	for i, m := range activeMonsters {
 		if m.Hp <= 0 {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -18,11 +17,19 @@ func newPickupState(count int) pickupState {
 }
 
 func (p pickupState) processKey(char rune) bool {
-	fmt.Println(char)
+	
 	switch char {
 	case q:
 		os.Exit(0) 
 	case notAChar :
+		currentState = gamePlay{}
+		return true
+	}
+
+	digit := int(convertToDigit(char))
+
+	if digit > 0 && digit <= p.numberOfItems {
+		pickUpItem(digit)
 		currentState = gamePlay{}
 		return true
 	}
