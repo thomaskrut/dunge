@@ -24,6 +24,7 @@ var (
 	activeMonsters   []monster
 	activeItems	  	 []item
 	validKeyPressed  bool
+	numberOfItemsFound int
 )
 
 const (
@@ -73,7 +74,7 @@ func moveMonsters() {
 	}
 }
 
-func checkForItems() {
+func checkForItems() int {
 	count := 0
 	var itemsMessage = "You have stumbled upon"
 	for i := range activeItems {
@@ -84,10 +85,11 @@ func checkForItems() {
 		}
 	}
 	if count > 0 {
-		itemsMessage = itemsMessage + ". Pick up which? (or press space)"
+		itemsMessage = itemsMessage + ". Pick up which? (or press space to continue)"
 		messages.addMessage(itemsMessage)
-		currentState = newPickupState(count)
+		return count
 	}
+	return 0
 }
 
 func checkMonsterHealth() {
@@ -176,8 +178,6 @@ func main() {
 		fmt.Println(string(grindToPrint))
 		fmt.Println("HP:", p.hp)
 
-		checkForItems()
-
 		if len(messages.messageQueue) == 1 {
 			fmt.Print(messages.getOldestMessage())
 			messages.deleteOldestMessage()
@@ -187,6 +187,11 @@ func main() {
 			messages.deleteOldestMessage()
 			fmt.Print(" (press space for more...)")
 			currentState = messages
+		}
+
+		if numberOfItemsFound > 0 {
+			currentState = newPickupState(numberOfItemsFound)
+			numberOfItemsFound = 0
 		}
 
 		

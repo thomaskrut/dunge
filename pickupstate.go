@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type pickupState struct {
 	numberOfItems int
@@ -16,6 +19,13 @@ func newPickupState(count int) pickupState {
 
 func (p pickupState) processKey(char rune) bool {
 	fmt.Println(char)
-	currentState = gamePlay{}
-	return true
+	switch char {
+	case q:
+		os.Exit(0) 
+	case notAChar :
+		currentState = gamePlay{}
+		return true
+	}
+	
+	return false
 }
