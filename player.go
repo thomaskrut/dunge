@@ -14,12 +14,10 @@ func (p *player) move(dir direction) bool {
 	if p.position.getPossibleDirections(&d)[dir] {
 		newPoint := p.position
 		newPoint.new(dir)
-		for i := range activeMonsters {
-			m := &activeMonsters[i]
-			if m.getPosition().overlaps(newPoint) {
-				p.attack(m)
-				return true
-			}
+
+		if m, ok := activeMonsters[newPoint]; ok {
+			p.attack(&m)
+			return true
 		}
 
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)

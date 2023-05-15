@@ -21,7 +21,7 @@ var (
 	rooms            []Point
 	monsterTemplates monsterList
 	itemTemplates	 itemList
-	activeMonsters   []monster
+	activeMonsters   map[Point]monster
 	activeItems	  	 []item
 	validKeyPressed  bool
 	numberOfItemsFound int
@@ -36,6 +36,7 @@ const (
 
 func init() {
 
+	activeMonsters = make(map[Point]monster)
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -51,15 +52,15 @@ func init() {
 
 	monsterTemplates = readMonsterTemplate()
 	itemTemplates = readItemsTemplate()
-	activeMonsters = generateMonsters(10)
+	generateMonsters(10)
 	activeItems = generateItems(10)
 
 }
 
 func moveMonsters() {
 
-	for i := range activeMonsters {
-		m := &activeMonsters[i]
+	for i, m := range activeMonsters {
+		
 		if m.moveCounter() >= 1 {
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
@@ -69,6 +70,8 @@ func moveMonsters() {
 			for i:=0; !m.move(newDirection) && i < 10; i++ {
 				newDirection = randomDirection(newDirection, false, m.Movesdiagonally)
 			}
+			delete(activeMonsters, i)
+			activeMonsters[m.getPosition()] = m
 		}
 
 	}
@@ -120,14 +123,12 @@ func showInventory() {
 func checkMonsterHealth() {
 	for i, m := range activeMonsters {
 		if m.Hp <= 0 {
-			activeMonsters = append(activeMonsters[:i], activeMonsters[i+1:]...)
+			delete(activeMonsters, i)
 		}
 	}
 }
 
-func generateMonsters(numberOfIterations int) []monster {
-
-	var monsterSlice []monster
+func generateMonsters(numberOfIterations int) {
 
 	for i := 0; i < numberOfIterations; i++ {
 
@@ -137,12 +138,12 @@ func generateMonsters(numberOfIterations int) []monster {
 			if rand < m.Prob {
 				newMonster := m
 				newMonster.setPosition(getEmptyPoint(&d))
-				monsterSlice = append(monsterSlice, newMonster)
+				activeMonsters[newMonster.position] = newMonster
 			}
 		}
 
 	}
-	return monsterSlice
+	
 }
 
 func generateItems(numberOfIterations int) []item {
