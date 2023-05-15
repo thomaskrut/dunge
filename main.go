@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
-
 	"github.com/eiannone/keyboard"
 )
 
@@ -22,9 +20,8 @@ var (
 	monsterTemplates monsterList
 	itemTemplates	 itemList
 	activeMonsters   map[Point]*monster
-	activeItems	  	 []item
+	activeItems	  	 map[Point]*item
 	validKeyPressed  bool
-	numberOfItemsFound int
 )
 
 const (
@@ -37,6 +34,7 @@ const (
 func init() {
 
 	activeMonsters = make(map[Point]*monster)
+	activeItems = make(map[Point]*item)
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -53,7 +51,7 @@ func init() {
 	monsterTemplates = readMonsterTemplate()
 	itemTemplates = readItemsTemplate()
 	generateMonsters(10)
-	activeItems = generateItems(10)
+	generateItems(10)
 
 }
 
@@ -77,41 +75,20 @@ func moveMonsters() {
 	}
 }
 
-func checkForItems() int {
-	count := 0
-	var itemsMessage = "You have stumbled upon"
-	for i := range activeItems {
-		item := activeItems[i]
-		if item.getPosition().overlaps(p.getPosition()) {
-			count++
-			itemsMessage = itemsMessage + ", " + strconv.Itoa(count) + ": " + item.Prefix + " " + item.Name
-		}
+func checkForItems() {
+	
+	if i, ok := activeItems[p.position]; ok {
+		messages.addMessage("There is " + i.Prefix + " " + i.Name + " here, press 5 to pick up")
 	}
-	if count > 0 {
-		itemsMessage = itemsMessage + ". Pick up which? (or press space to continue)"
-		messages.addMessage(itemsMessage)
-		return count
-	}
-	return 0
+
 }
 
-func pickUpItem(itemDigit int) {
+func pickUpItem() {
 	
-	count := 0
-	for i := range activeItems {
-		
-			item := activeItems[i]
-			if item.getPosition().overlaps(p.getPosition()) {
-				count++
-				if count == itemDigit {
-					messages.addMessage("You have " + item.Prefix + " " + item.Name)
-					activeItems = append(activeItems[:i], activeItems[i+1:]...)
-					p.inventory = append(p.inventory, item)
-					break
-			}
-			
-		}
-		
+	if i, ok := activeItems[p.position]; ok {
+		p.inventory = append(p.inventory, *i)
+		delete(activeItems, p.position)
+		messages.addMessage("You picked up " + i.Prefix + " " + i.Name)
 	}
 
 }
@@ -146,25 +123,24 @@ func generateMonsters(numberOfIterations int) {
 	
 }
 
-func generateItems(numberOfIterations int) []item {
-	var itemSlice []item
+func generateItems(numberOfIterations int) {
+	
 
 	for i:=1; i < numberOfIterations; i++ {
+
 		rand := randomNumber(1000)
+
 		for _, i := range itemTemplates.Items {
 
 		if rand < i.Prob {
 				newItem := i
-				newItem2 := i
 				newItem.setPosition(getEmptyPoint(&d))
-				newItem2.setPosition(newItem.position)
-				itemSlice = append(itemSlice, newItem)
-				itemSlice = append(itemSlice, newItem2)
+				activeItems[newItem.position] = &newItem
 			}
 		}
 
 	}
-	return itemSlice
+	
 }
 
 func initDungeon() {
@@ -213,10 +189,6 @@ func main() {
 			messages.deleteOldestMessage()
 			fmt.Print(" (press space for more...)")
 			currentState = messages
-		}
-
-		if numberOfItemsFound > 0 && len(messages.messageQueue) == 0 {
-			currentState = newPickupState(numberOfItemsFound)
 		}
 
 		for !validKeyPressed {

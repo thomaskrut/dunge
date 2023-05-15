@@ -10,7 +10,7 @@ type gamePlay struct {
 func (g gamePlay) processTurn() {
 	moveMonsters()
 	checkMonsterHealth()
-	numberOfItemsFound = checkForItems()
+	checkForItems()
 }
 
 func (g gamePlay) processKey(char rune) bool {
@@ -38,6 +38,7 @@ func (g gamePlay) processKey(char rune) bool {
 	case southEastKey:
 		playerMoved = p.move(SouthEast)
 	case restKey:
+		pickUpItem()
 		playerMoved = p.move(None)
 	}
 	if playerMoved {
