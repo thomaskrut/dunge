@@ -16,7 +16,6 @@ func (p *player) move(dir direction) bool {
 		newPoint.new(dir)
 
 		if m, ok := activeMonsters[newPoint]; ok {
-	
 			p.attack(m)
 			return true
 		}

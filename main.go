@@ -61,7 +61,6 @@ func moveMonsters() {
 
 	for i, m := range activeMonsters {
 		
-		
 		if m.moveCounter() >= 1 {
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
