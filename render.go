@@ -1,7 +1,7 @@
 package main
 
 
-func render(d *dungeon, p player, monsters map[Point]monster, items []item) (toPrint []rune) {
+func render(d *dungeon, p player, monsters map[Point]*monster, items []item) (toPrint []rune) {
 
 	
 	for y := 0; y < d.height; y++ {

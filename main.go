@@ -21,7 +21,7 @@ var (
 	rooms            []Point
 	monsterTemplates monsterList
 	itemTemplates	 itemList
-	activeMonsters   map[Point]monster
+	activeMonsters   map[Point]*monster
 	activeItems	  	 []item
 	validKeyPressed  bool
 	numberOfItemsFound int
@@ -36,7 +36,7 @@ const (
 
 func init() {
 
-	activeMonsters = make(map[Point]monster)
+	activeMonsters = make(map[Point]*monster)
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -60,6 +60,7 @@ func init() {
 func moveMonsters() {
 
 	for i, m := range activeMonsters {
+		
 		
 		if m.moveCounter() >= 1 {
 			var newDirection direction
@@ -138,7 +139,7 @@ func generateMonsters(numberOfIterations int) {
 			if rand < m.Prob {
 				newMonster := m
 				newMonster.setPosition(getEmptyPoint(&d))
-				activeMonsters[newMonster.position] = newMonster
+				activeMonsters[newMonster.position] = &newMonster
 			}
 		}
 
