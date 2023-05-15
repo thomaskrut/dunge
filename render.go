@@ -11,7 +11,7 @@ func render(d *dungeon, p player, monsters map[Point]*monster, items []item) (to
 			
 			if m, ok := monsters[Point{x, y}]; ok {
 					char = m.getChar()
-				}
+			}
 
 			for _, i := range items {
 				if i.getPosition().overlaps(Point{x, y}) {
