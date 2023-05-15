@@ -9,7 +9,7 @@ func render(d *dungeon, p player, monsters map[Point]*monster, items []item) (to
 
 			var char rune
 			
-			if m, ok := monsters[Point{x, y}]; ok {
+			if m, ok := monsters[Point{x, y}]; ok && d.grid[x][y]&lit == lit {
 					char = m.getChar()
 			}
 
