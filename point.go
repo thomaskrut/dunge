@@ -8,7 +8,7 @@ func (p point) getPossibleDirections(d *dungeon) map[direction]bool {
 	directions := make(map[direction]bool)
 	for _, dir := range getAllDirections() {
 		newPoint := p
-		newPoint.new(dir)
+		newPoint.move(dir)
 		if d.grid[newPoint.x][newPoint.y]&empty == empty {
 			directions[dir] = true
 		}
@@ -17,15 +17,11 @@ func (p point) getPossibleDirections(d *dungeon) map[direction]bool {
 	return directions
 }
 
-func (p1 point) overlaps(p2 point) bool {
-	return p1.x == p2.x && p1.y == p2.y
-}
-
 func getRandomPoint(d *dungeon) point {
 	return point{x: randomNumber(len(d.grid)), y: randomNumber(len(d.grid[0]))}
 }
 
-func (p *point) new(dir direction) {
+func (p *point) move(dir direction) {
 
 	p.x += dir.varX
 	p.y += dir.varY

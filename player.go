@@ -13,7 +13,7 @@ func (p *player) move(dir direction) bool {
 
 	if p.position.getPossibleDirections(&d)[dir] {
 		newPoint := p.position
-		newPoint.new(dir)
+		newPoint.move(dir)
 
 		if m, ok := activeMonsters[newPoint]; ok {
 			p.attack(m)
@@ -21,7 +21,7 @@ func (p *player) move(dir direction) bool {
 		}
 
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)
-		p.position.new(dir)
+		p.position.move(dir)
 		alterAreaVisibility(&d, p.position, lit, p.lightsource)
 		return true
 	}
@@ -47,7 +47,7 @@ func alterAreaVisibility(d *dungeon, p point, value int, currentDepth int) {
 	}
 	for _, dir := range getAllDirections() {
 		newPoint := p
-		newPoint.new(dir)
+		newPoint.move(dir)
 		if d.grid[newPoint.x][newPoint.y]&empty == empty {
 			d.grid[newPoint.x][newPoint.y] = empty | value
 			alterAreaVisibility(d, newPoint, value, currentDepth-1)

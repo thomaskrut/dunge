@@ -11,22 +11,20 @@ type monsterList struct {
 }
 
 type monster struct {
+	position point
 
-	position         point
-
-	Char             string   `json:"char"`
-	Name             string   `json:"name"`
-	Prob             int      `json:"prob"`
-	AttackVerbs      []string `json:"attack"`
-	Str              int      `json:"str"`
-	Hp               int      `json:"hp"`
-	Moves            bool     `json:"moves"`
-	Aggressive       bool     `json:"aggressive"`
-	Speed            float32  `json:"speed"`
-	Movesdiagonally  bool     `json:"movesdiagonally"`
+	Char            string   `json:"char"`
+	Name            string   `json:"name"`
+	Prob            int      `json:"prob"`
+	AttackVerbs     []string `json:"attack"`
+	Str             int      `json:"str"`
+	Hp              int      `json:"hp"`
+	Moves           bool     `json:"moves"`
+	Aggressive      bool     `json:"aggressive"`
+	Speed           float32  `json:"speed"`
+	Movesdiagonally bool     `json:"movesdiagonally"`
 
 	moveCounterValue float32
-
 }
 
 func (m *monster) takeDamage(damage int) {
@@ -66,7 +64,7 @@ func (m *monster) move(dir direction) bool {
 	if m.position.getPossibleDirections(&d)[dir] {
 
 		newPoint := m.position
-		newPoint.new(dir)
+		newPoint.move(dir)
 		if newPoint == p.position {
 			m.attack(&p)
 			return true
@@ -77,7 +75,7 @@ func (m *monster) move(dir direction) bool {
 			}
 		}
 
-		m.position.new(dir)
+		m.position.move(dir)
 
 		return true
 	}
