@@ -17,6 +17,7 @@ var (
 	p                player
 	currentState     keyProcessor
 	messages         messagePrompt
+	gameplay         gamePlay
 	rooms            []point
 	monsterTemplates monsterList
 	itemTemplates    itemList
@@ -47,12 +48,10 @@ func init() {
 	d = newDungeon(width, height)
 	initDungeon()
 	p = newPlayer('@')
-	currentState = gamePlay{}
+	currentState = gameplay
 
-	monsterTemplates = readMonsterTemplate()
-	itemTemplates = readItemsTemplate()
-	generateMonsters(10)
-	generateItems(10)
+	generateMonsters(readMonsterTemplate(), 10)
+	generateItems(readItemsTemplate(), 10)
 
 }
 
@@ -98,13 +97,13 @@ func showInventory() {
 	fmt.Println(p.inventory)
 }
 
-func generateMonsters(numberOfIterations int) {
+func generateMonsters(list monsterList, numberOfIterations int) {
 
 	for i := 0; i < numberOfIterations; i++ {
 
 		rand := randomNumber(1000)
 
-		for _, m := range monsterTemplates.Monsters {
+		for _, m := range list.Monsters {
 			if rand < m.Prob {
 				newMonster := m
 				newMonster.setPosition(getEmptyPoint(&d))
@@ -116,13 +115,13 @@ func generateMonsters(numberOfIterations int) {
 
 }
 
-func generateItems(numberOfIterations int) {
+func generateItems(list itemList, numberOfIterations int) {
 
 	for i := 1; i < numberOfIterations; i++ {
 
 		rand := randomNumber(1000)
 
-		for _, i := range itemTemplates.Items {
+		for _, i := range list.Items {
 
 			if rand < i.Prob {
 				newItem := i
@@ -173,7 +172,7 @@ func main() {
 
 		case len(messages.messageQueue) == 1:
 			fmt.Print(messages.pop())
-			currentState = gamePlay{}
+			currentState = gameplay
 
 		case len(messages.messageQueue) > 1:
 			fmt.Print(messages.pop())

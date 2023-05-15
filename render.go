@@ -19,7 +19,7 @@ func render(d *dungeon, p player, monsters map[point]*monster, items map[point]*
 				char = charmap.chars[(d.getPoint(point{x, y}))]
 			}
 
-			if p.getPosition().overlaps(point{x, y}) {
+			if p.getPosition() == (point{x, y}) {
 				char = p.getChar()
 			}
 			toPrint = append(toPrint, char)
