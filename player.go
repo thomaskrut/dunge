@@ -1,16 +1,16 @@
 package main
 
 type player struct {
-	position    Point
+	position    point
 	char        rune
 	lightsource int
 	strength    int
 	hp          int
-	inventory	[]item
+	inventory   []item
 }
 
 func (p *player) move(dir direction) bool {
-	
+
 	if p.position.getPossibleDirections(&d)[dir] {
 		newPoint := p.position
 		newPoint.new(dir)
@@ -30,9 +30,10 @@ func (p *player) move(dir direction) bool {
 
 func (p *player) attack(m *monster) {
 	m.takeDamage(p.strength)
-	messages.addMessage("You hit the " + m.Name)
+	messages.push("You hit the " + m.Name)
 	if m.Hp <= 0 {
-		messages.addMessage("You killed the " + m.Name)
+		messages.push("You killed the " + m.Name)
+		delete(activeMonsters, m.position)
 	}
 }
 
@@ -40,7 +41,7 @@ func (p *player) takeDamage(damage int) {
 	p.hp -= damage
 }
 
-func alterAreaVisibility(d *dungeon, p Point, value int, currentDepth int) {
+func alterAreaVisibility(d *dungeon, p point, value int, currentDepth int) {
 	if currentDepth == 0 {
 		return
 	}
@@ -57,16 +58,16 @@ func alterAreaVisibility(d *dungeon, p Point, value int, currentDepth int) {
 
 }
 
-func (p player) getPosition() Point {
-	return p.position
+func (pl player) getPosition() point {
+	return pl.position
 }
 
-func (p *player) setPosition(point Point) {
-	p.position = point
+func (pl *player) setPosition(p point) {
+	pl.position = p
 }
 
-func (p player) getChar() rune {
-	return p.char
+func (pl player) getChar() rune {
+	return pl.char
 }
 
 func newPlayer(char rune) player {

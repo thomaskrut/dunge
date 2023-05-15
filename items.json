@@ -1,7 +1,7 @@
 {
     "items": [
         {
-            "name": "Apple",
+            "name": "apple",
             "prefix": "an",
             "char": "o",
             "prob": 550,
@@ -9,7 +9,7 @@
             "verb": "Eat"
         },
         {
-            "name": "Fudge",
+            "name": "fudge",
             "prefix": "a",
             "char": "#",
             "prob": 610,

@@ -11,7 +11,7 @@ type monsterList struct {
 }
 
 type monster struct {
-	position         Point
+	position         point
 	Char             string   `json:"char"`
 	Name             string   `json:"name"`
 	Prob             int      `json:"prob"`
@@ -30,8 +30,8 @@ func (m *monster) takeDamage(damage int) {
 }
 
 func (m *monster) attack(p *player) {
-	if (m.Hp > 0) {
-		messages.addMessage(m.Name + " " + m.Attack[randomNumber(len(m.Attack))] + " you")
+	if m.Hp > 0 {
+		messages.push(m.Name + " " + m.Attack[randomNumber(len(m.Attack))] + " you")
 		p.takeDamage(m.Str)
 	}
 }
@@ -46,12 +46,12 @@ func (m *monster) moveCounter() float32 {
 	return m.moveCounterValue
 }
 
-func (m monster) getPosition() Point {
+func (m monster) getPosition() point {
 	return m.position
 }
 
-func (m *monster) setPosition(point Point) {
-	m.position = point
+func (m *monster) setPosition(p point) {
+	m.position = p
 }
 
 func (m monster) getChar() rune {
@@ -60,10 +60,10 @@ func (m monster) getChar() rune {
 
 func (m *monster) move(dir direction) bool {
 	if m.position.getPossibleDirections(&d)[dir] {
-		
+
 		newPoint := m.position
 		newPoint.new(dir)
-		if (newPoint.overlaps(p.position)) {
+		if newPoint.overlaps(p.position) {
 			m.attack(&p)
 			return true
 		}
@@ -74,7 +74,7 @@ func (m *monster) move(dir direction) bool {
 		}
 
 		m.position.new(dir)
-		
+
 		return true
 	}
 	return false

@@ -4,29 +4,26 @@ type messagePrompt struct {
 	messageQueue []string
 }
 
-func (m *messagePrompt) addMessage(message string) {
+func (m *messagePrompt) push(message string) {
 	m.messageQueue = append(m.messageQueue, message)
 }
 
-func (m *messagePrompt) getOldestMessage() string {
-	return m.messageQueue[0]
-}
-
-func (m *messagePrompt) deleteOldestMessage() {
+func (m *messagePrompt) pop() string {
+	message := m.messageQueue[0]
 	messages.messageQueue = messages.messageQueue[1:]
+	return message
 }
 
 func (m messagePrompt) processTurn() {
-	
+
 }
 
 func (m messagePrompt) processKey(char rune) bool {
-	
+
 	switch char {
-		case 0: {
-			
-			return true
-		}
+	case 0:
+		return true
+	default:
+		return false
 	}
-	return false
 }

@@ -11,20 +11,20 @@ type itemList struct {
 }
 
 type item struct {
-	position Point
+	position point
 	Name     string `json:"name"`
 	Prefix   string `json:"prefix"`
 	Char     string `json:"char"`
 	Prob     int    `json:"prob"`
-	Value	 int    `json:"value"`
-	Verb	 string `json:"verb"`
+	Value    int    `json:"value"`
+	Verb     string `json:"verb"`
 }
 
-func (i *item) setPosition(p Point) {
+func (i *item) setPosition(p point) {
 	i.position = p
 }
 
-func (i item) getPosition() Point {
+func (i item) getPosition() point {
 	return i.position
 }
 

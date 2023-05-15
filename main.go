@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/eiannone/keyboard"
 )
 
@@ -16,11 +17,11 @@ var (
 	p                player
 	currentState     keyProcessor
 	messages         messagePrompt
-	rooms            []Point
+	rooms            []point
 	monsterTemplates monsterList
-	itemTemplates	 itemList
-	activeMonsters   map[Point]*monster
-	activeItems	  	 map[Point]*item
+	itemTemplates    itemList
+	activeMonsters   map[point]*monster
+	activeItems      map[point]*item
 	validKeyPressed  bool
 )
 
@@ -33,8 +34,8 @@ const (
 
 func init() {
 
-	activeMonsters = make(map[Point]*monster)
-	activeItems = make(map[Point]*item)
+	activeMonsters = make(map[point]*monster)
+	activeItems = make(map[point]*item)
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -58,14 +59,14 @@ func init() {
 func moveMonsters() {
 
 	for i, m := range activeMonsters {
-		
+
 		if m.moveCounter() >= 1 {
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
 			if !m.Movesdiagonally {
 				newDirection.toNonDiagonal()
 			}
-			for i:=0; !m.move(newDirection) && i < 10; i++ {
+			for i := 0; !m.move(newDirection) && i < 10; i++ {
 				newDirection = randomDirection(newDirection, false, m.Movesdiagonally)
 			}
 			delete(activeMonsters, i)
@@ -76,33 +77,25 @@ func moveMonsters() {
 }
 
 func checkForItems() {
-	
+
 	if i, ok := activeItems[p.position]; ok {
-		messages.addMessage("There is " + i.Prefix + " " + i.Name + " here, press 5 to pick up")
+		messages.push("There is " + i.Prefix + " " + i.Name + " here, press 5 to pick up")
 	}
 
 }
 
 func pickUpItem() {
-	
+
 	if i, ok := activeItems[p.position]; ok {
 		p.inventory = append(p.inventory, *i)
 		delete(activeItems, p.position)
-		messages.addMessage("You picked up " + i.Prefix + " " + i.Name)
+		messages.push("You picked up " + i.Prefix + " " + i.Name)
 	}
 
 }
 
 func showInventory() {
 	fmt.Println(p.inventory)
-}
-
-func checkMonsterHealth() {
-	for i, m := range activeMonsters {
-		if m.Hp <= 0 {
-			delete(activeMonsters, i)
-		}
-	}
 }
 
 func generateMonsters(numberOfIterations int) {
@@ -120,27 +113,25 @@ func generateMonsters(numberOfIterations int) {
 		}
 
 	}
-	
+
 }
 
 func generateItems(numberOfIterations int) {
-	
 
-	for i:=1; i < numberOfIterations; i++ {
+	for i := 1; i < numberOfIterations; i++ {
 
 		rand := randomNumber(1000)
 
 		for _, i := range itemTemplates.Items {
 
-		if rand < i.Prob {
+			if rand < i.Prob {
 				newItem := i
 				newItem.setPosition(getEmptyPoint(&d))
 				activeItems[newItem.position] = &newItem
 			}
 		}
-
 	}
-	
+
 }
 
 func initDungeon() {
@@ -169,8 +160,6 @@ func main() {
 	p.setPosition(getEmptyPoint(&d))
 	p.move(None)
 
-
-
 	for {
 
 		validKeyPressed = false
@@ -180,15 +169,17 @@ func main() {
 		fmt.Println(string(grindToPrint))
 		fmt.Println("HP:", p.hp)
 
-		if len(messages.messageQueue) == 1 {
-			fmt.Print(messages.getOldestMessage())
-			messages.deleteOldestMessage()
+		switch {
+
+		case len(messages.messageQueue) == 1:
+			fmt.Print(messages.pop())
 			currentState = gamePlay{}
-		} else if len(messages.messageQueue) > 1 {
-			fmt.Print(messages.getOldestMessage())
-			messages.deleteOldestMessage()
+
+		case len(messages.messageQueue) > 1:
+			fmt.Print(messages.pop())
 			fmt.Print(" (press space for more...)")
 			currentState = messages
+
 		}
 
 		for !validKeyPressed {
@@ -196,9 +187,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-
 			validKeyPressed = currentState.processKey(char)
-			
 		}
 
 	}

@@ -9,39 +9,38 @@ type gamePlay struct {
 
 func (g gamePlay) processTurn() {
 	moveMonsters()
-	checkMonsterHealth()
 	checkForItems()
 }
 
 func (g gamePlay) processKey(char rune) bool {
 	fmt.Println(char)
-	var playerMoved bool = false
+	var moveSuccessful bool = false
 	switch char {
 	case q:
 		os.Exit(0)
 	case i:
 		showInventory()
 	case northKey:
-		playerMoved = p.move(North)
+		moveSuccessful = p.move(North)
 	case southKey:
-		playerMoved = p.move(South)
+		moveSuccessful = p.move(South)
 	case eastKey:
-		playerMoved = p.move(East)
+		moveSuccessful = p.move(East)
 	case westKey:
-		playerMoved = p.move(West)
+		moveSuccessful = p.move(West)
 	case northWestKey:
-		playerMoved = p.move(NorthWest)
+		moveSuccessful = p.move(NorthWest)
 	case northEastKey:
-		playerMoved = p.move(NorthEast)
+		moveSuccessful = p.move(NorthEast)
 	case southWestKey:
-		playerMoved = p.move(SouthWest)
+		moveSuccessful = p.move(SouthWest)
 	case southEastKey:
-		playerMoved = p.move(SouthEast)
+		moveSuccessful = p.move(SouthEast)
 	case restKey:
 		pickUpItem()
-		playerMoved = p.move(None)
+		moveSuccessful = p.move(None)
 	}
-	if playerMoved {
+	if moveSuccessful {
 		g.processTurn()
 		return true
 	}

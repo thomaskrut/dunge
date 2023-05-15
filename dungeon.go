@@ -17,25 +17,25 @@ func newDungeon(width, height int) dungeon {
 	return dungeon{grid: zeroedGrid, width: width, height: height}
 }
 
-func (d *dungeon) setPoint(p Point, value int) {
+func (d *dungeon) setPoint(p point, value int) {
 	d.grid[p.x][p.y] = value
 }
 
-func (d *dungeon) getPoint(p Point) int {
+func (d *dungeon) getPoint(p point) int {
 	return d.grid[p.x][p.y]
 }
 
-func getEmptyPoint(d *dungeon) Point {
+func getEmptyPoint(d *dungeon) point {
 	for {
 		x := randomNumber(len(d.grid))
 		y := randomNumber(len(d.grid[0]))
 		if d.grid[x][y] == empty {
-			return Point{x, y}
+			return point{x, y}
 		}
 	}
 }
 
-func connectWithCorridor(d *dungeon, origin, destination Point) {
+func connectWithCorridor(d *dungeon, origin, destination point) {
 	currentPosition := origin
 	var newDirection direction
 
@@ -54,18 +54,18 @@ func connectWithCorridor(d *dungeon, origin, destination Point) {
 	}
 }
 
-func (d *dungeon) createRandomRoom(startingPoint Point, maxWidth, maxHeight int) (position Point, err error) {
+func (d *dungeon) createRandomRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
 	startingPoint.new(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 4
 	roomHeight := randomNumber(maxHeight) + 4
-	if p := (Point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(d, 2) {
-		return Point{}, errors.New("room out of bounds")
+	if p := (point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(d, 2) {
+		return point{}, errors.New("room out of bounds")
 	}
 	return d.createRoom(startingPoint, roomWidth, roomHeight)
 
 }
 
-func (d *dungeon) createRoom(startingPoint Point, width, height int) (center Point, err error) {
+func (d *dungeon) createRoom(startingPoint point, width, height int) (center point, err error) {
 
 	for i := startingPoint.x; i < startingPoint.x+width; i++ {
 		for j := startingPoint.y; j < startingPoint.y+height; j++ {
@@ -76,10 +76,10 @@ func (d *dungeon) createRoom(startingPoint Point, width, height int) (center Poi
 				center.y = j
 			}
 
-			if (d.getPoint(Point{x: i, y: j}) == empty) {
+			if (d.getPoint(point{x: i, y: j}) == empty) {
 				return center, errors.New("space already empty")
 			}
-			d.setPoint(Point{x: i, y: j}, empty)
+			d.setPoint(point{x: i, y: j}, empty)
 		}
 	}
 	return center, nil

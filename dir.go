@@ -60,7 +60,7 @@ func (d *direction) toNonDiagonal() {
 
 }
 
-func (dir *direction) connect(from, to Point) *direction {
+func (dir *direction) connect(from, to point) *direction {
 	switch {
 	case to.x == from.x && to.y < from.y:
 		*dir = North
@@ -84,7 +84,7 @@ func (dir *direction) connect(from, to Point) *direction {
 }
 
 func randomDirection(currentDirection direction, allowOpposite bool, allowDiagonal bool) direction {
-	
+
 	var r int
 	var newDirection direction
 	if allowDiagonal {
