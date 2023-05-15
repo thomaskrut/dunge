@@ -71,7 +71,7 @@ func moveMonsters() {
 				newDirection = randomDirection(newDirection, false, m.Movesdiagonally)
 			}
 			delete(activeMonsters, i)
-			activeMonsters[m.getPosition()] = m
+			activeMonsters[m.position] = m
 		}
 
 	}

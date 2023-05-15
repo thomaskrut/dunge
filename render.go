@@ -8,7 +8,7 @@ func render(d *dungeon, p player, monsters map[Point]monster, items []item) (toP
 		for x := 0; x < d.width; x++ {
 
 			var char rune
-
+			
 			if m, ok := monsters[Point{x, y}]; ok {
 					char = m.getChar()
 				}
