@@ -22,8 +22,10 @@ func (it itemSelect) processKey(char rune) bool {
 
 	if char > 48 && char < 58 {
 		index := convertToDigit(char)
-		if inventoryMenu.getItemByNumber(int(index)) != nil {
-			itemAction(it.verb, inventoryMenu.getItemByNumber(int(index)))
+		if item, err := inventoryMenu.getItemByNumber(int(index)); err != nil {
+			return false
+		} else {
+			itemAction(it.verb, item)
 			currentState = gameplay
 			return true
 		}

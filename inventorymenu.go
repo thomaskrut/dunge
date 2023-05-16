@@ -1,5 +1,9 @@
 package main
 
+import (
+	"errors"
+)
+
 type inventorymenu struct {
 	items map[string]int
 }
@@ -22,29 +26,28 @@ func (im *inventorymenu) update() {
 
 }
 
-func (im *inventorymenu) getItemByNumber(n int) *item {
+func (im *inventorymenu) getItemByNumber(n int) (*item, error) {
 	count := 1
 	for itemName, _ := range inventoryMenu.items {
 		if count == n {
-			return im.getItemByName(itemName)
+			item, err := im.getItemByName(itemName)
+			if err != nil {
+				return nil, err
+			} else {
+				return item, nil
+			}
 		}
 		count++
 	}
-	return nil
+	return nil, errors.New("No item found")
 }
 
-func (im *inventorymenu) getItemByName(itemName string) *item {
-
+func (im *inventorymenu) getItemByName(itemName string) (*item, error) {
 	for _, i := range p.inventory {
-
 		if i.Name == itemName {
-
-			return &i
-
+			return &i, nil
 		}
-
 	}
-
-	return nil
+	return nil, errors.New("No item found")
 
 }
