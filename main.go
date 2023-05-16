@@ -107,8 +107,19 @@ func dropItem(item *item) {
 
 	for i, currentItem := range p.inventory {
 		if currentItem.Name == item.Name {
-			currentItem.setPosition(p.position)
-			activeItems[p.position] = &currentItem
+
+			newPosition := p.getPosition()
+
+			for activeItems[newPosition] != nil {
+				fmt.Println("Error: Item already there")
+				dir := randomDirection(None, true, true)
+				if newPosition.getPossibleDirections(&d)[dir] {
+					newPosition.move(dir)
+				}
+			}
+
+			currentItem.setPosition(newPosition)
+			activeItems[currentItem.position] = &currentItem
 			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
 			inventoryMenu.update()
 			messages.push("You dropped " + currentItem.Prefix + " " + currentItem.Name)

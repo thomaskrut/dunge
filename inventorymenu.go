@@ -28,7 +28,7 @@ func (im *inventorymenu) update() {
 
 func (im *inventorymenu) getItemByNumber(n int) (*item, error) {
 	count := 1
-	for itemName, _ := range inventoryMenu.items {
+	for itemName := range inventoryMenu.items {
 		if count == n {
 			item, err := im.getItemByName(itemName)
 			if err != nil {
@@ -39,7 +39,7 @@ func (im *inventorymenu) getItemByNumber(n int) (*item, error) {
 		}
 		count++
 	}
-	return nil, errors.New("No item found")
+	return nil, errors.New("no item found")
 }
 
 func (im *inventorymenu) getItemByName(itemName string) (*item, error) {
@@ -48,6 +48,6 @@ func (im *inventorymenu) getItemByName(itemName string) (*item, error) {
 			return &i, nil
 		}
 	}
-	return nil, errors.New("No item found")
+	return nil, errors.New("no item found")
 
 }
