@@ -22,6 +22,7 @@ var (
 	rooms           []point
 	activeMonsters  map[point]*monster
 	activeItems     map[point]*item
+	inventoryMenu   inventorymenu
 	validKeyPressed bool
 )
 
@@ -36,6 +37,7 @@ func init() {
 
 	activeMonsters = make(map[point]*monster)
 	activeItems = make(map[point]*item)
+	inventoryMenu = newInventoryMenu()
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -86,56 +88,44 @@ func pickUpItem() {
 
 	if i, ok := activeItems[p.position]; ok {
 		p.inventory = append(p.inventory, *i)
+		inventoryMenu.update()
 		delete(activeItems, p.position)
 		messages.push("You picked up " + i.Prefix + " " + i.Name)
 	}
 
 }
 
-func itemAction(verb string, itemName string) {
+func itemAction(verb string, item *item) {
 
 	switch verb {
 	case "drop":
-		dropItem(itemName)
+		dropItem(item)
 }
 }
 
-func dropItem(itemName string) {
+func dropItem(item *item) {
 
-	for i, item := range p.inventory {
-		if item.Name == itemName {
-			item.setPosition(p.position)
-			activeItems[p.position] = &item
+	for i, currentItem := range p.inventory {
+		if currentItem.Name == item.Name {
+			currentItem.setPosition(p.position)
+			activeItems[p.position] = &currentItem
 			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
-			messages.push("You dropped " + item.Prefix + " " + item.Name)
+			inventoryMenu.update()
+			messages.push("You dropped " + currentItem.Prefix + " " + currentItem.Name)
+			return
 		}
 	}
 
 }
 
-func generateInventory() map[int]string {
+func printInventory(message string, filter string) {
 
-	numberOfEachItem := make(map[string]int)
-
-	for _, item := range p.inventory {
-		numberOfEachItem[item.Name]++
-	}
-
-	menu := make(map[int]string)
-	menuItem := 1
-
-	for key, value := range numberOfEachItem {
-		menu[menuItem] = strconv.Itoa(menuItem) + ": " + key + " (" + strconv.Itoa(value) + ")"
-		menuItem++
-	}
-	return menu
-}
-
-func printInventory(menu map[int]string, message string, filter string) {
 	fmt.Println(message)
-
-	for i := 1; i <= len(menu); i++ {
-		fmt.Println(menu[i])
+	fmt.Println(len(inventoryMenu.items))
+	count := 1
+	for itemName, numberOfItems := range inventoryMenu.items {
+		fmt.Println(strconv.Itoa(count) + ": " + itemName + " (" + strconv.Itoa(numberOfItems) + ")")
+		count++
 	}
 }
 
@@ -238,7 +228,7 @@ func main() {
 			printMessages()
 
 		case itemSelect:
-			printInventory(cs.currentMenu, "Select an item to "+cs.verb+":", cs.verb)
+			printInventory("Select an item to "+cs.verb+":", cs.verb)
 		}
 
 		for !validKeyPressed {

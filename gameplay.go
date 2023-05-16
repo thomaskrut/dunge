@@ -20,7 +20,7 @@ func (g gamePlay) processKey(char rune) bool {
 	case quitKey:
 		os.Exit(0)
 	case inventoryKey:
-		printInventory(generateInventory(), "Inventory", "all")
+		printInventory("Inventory", "all")
 	case dropKey:
 		currentState = newItemSelect("drop")
 		return true

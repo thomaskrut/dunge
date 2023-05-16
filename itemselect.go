@@ -2,12 +2,10 @@ package main
 
 type itemSelect struct {
 	verb string
-	currentMenu map[int]string
 }
 
 func newItemSelect(v string) itemSelect {
-	menu := generateInventory()
-	return itemSelect{verb: v, currentMenu: menu}
+	return itemSelect{verb: v}
 }
 
 func (it itemSelect) processTurn() {
@@ -24,10 +22,12 @@ func (it itemSelect) processKey(char rune) bool {
 
 	if char > 48 && char < 58 {
 		index := convertToDigit(char)
-		if _, ok := it.currentMenu[int(index)]; ok {
-			itemAction(it.verb, it.currentMenu[int(index)])
+		if inventoryMenu.getItemByNumber(int(index)) != nil {
+			itemAction(it.verb, inventoryMenu.getItemByNumber(int(index)))
+			currentState = gameplay
 			return true
 		}
+
 	}
 	return false
 }
