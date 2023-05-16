@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+
 	"github.com/eiannone/keyboard"
 )
 
@@ -91,20 +92,30 @@ func pickUpItem() {
 
 }
 
-func showInventory(message string, filter string) {
+func generateInventory() map[int]string {
+
+	numberOfEachItem := make(map[string]int)
+
+	for _, item := range p.inventory {
+		numberOfEachItem[item.Name]++
+	}
+
+	menu := make(map[int]string)
+	menuItem := 1
+
+	for key, value := range numberOfEachItem {
+		menu[menuItem] = strconv.Itoa(menuItem) + ": " + key + " (" + strconv.Itoa(value) + ")"
+		menuItem++
+	}
+	return menu
+}
+
+func printInventory(menu map[int]string, message string, filter string) {
 	fmt.Println(message)
 
-	if filter == "all" || filter == "drop" || filter == "throw" {
-
-		for index, item := range p.inventory {
-			fmt.Println(strconv.Itoa(index) + ": " + item.Prefix + " " + item.Name)
-		}
-
-
-	} 
-
-
-	fmt.Println(p.inventory)
+	for i := 1; i <= len(menu); i++ {
+		fmt.Println(menu[i])
+	}
 }
 
 func generateMonsters(list monsterList, numberOfIterations int) {
@@ -167,7 +178,7 @@ func initDungeon() {
 func printDungeon() {
 	grindToPrint := render(&d, p, activeMonsters, activeItems)
 	fmt.Println(string(grindToPrint))
-	
+
 }
 
 func printStats() {
@@ -206,9 +217,9 @@ func main() {
 			printMessages()
 
 		case itemSelect:
-			showInventory("Select an item to " + cs.verb + ":", cs.verb)
+			printInventory(cs.currentMenu, "Select an item to "+cs.verb+":", cs.verb)
 		}
-		
+
 		for !validKeyPressed {
 			char, _, err := keyboard.GetSingleKey()
 			if err != nil {
