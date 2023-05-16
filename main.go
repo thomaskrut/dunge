@@ -49,7 +49,6 @@ func init() {
 	d = newDungeon(width, height)
 	initDungeon()
 	p = newPlayer('@')
-	currentState = gameplay
 
 	generateMonsters(readMonsterTemplate(), 10)
 	generateItems(readItemsTemplate(), 10)
@@ -223,6 +222,8 @@ func printMessages() {
 }
 
 func main() {
+
+	currentState = gameplay
 
 	p.setPosition(getEmptyPoint(&d))
 	p.attemptMove(None)
