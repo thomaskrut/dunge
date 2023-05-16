@@ -92,6 +92,27 @@ func pickUpItem() {
 
 }
 
+func itemAction(verb string, itemName string) {
+
+	switch verb {
+	case "drop":
+		dropItem(itemName)
+}
+}
+
+func dropItem(itemName string) {
+
+	for i, item := range p.inventory {
+		if item.Name == itemName {
+			item.setPosition(p.position)
+			activeItems[p.position] = &item
+			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
+			messages.push("You dropped " + item.Prefix + " " + item.Name)
+		}
+	}
+
+}
+
 func generateInventory() map[int]string {
 
 	numberOfEachItem := make(map[string]int)

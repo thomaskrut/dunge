@@ -20,7 +20,14 @@ func (it itemSelect) processKey(char rune) bool {
 	case 0, dropKey:
 		currentState = gameplay
 		return true
-	default:
-		return false
 	}
+
+	if char > 48 && char < 58 {
+		index := convertToDigit(char)
+		if _, ok := it.currentMenu[int(index)]; ok {
+			itemAction(it.verb, it.currentMenu[int(index)])
+			return true
+		}
+	}
+	return false
 }
