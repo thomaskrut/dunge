@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"strconv"
-
 	"github.com/eiannone/keyboard"
 )
 
 const (
-	width  = 100
-	height = 40
+	width  = 200
+	height = 140
 )
 
 var (
@@ -95,7 +94,6 @@ func pickUpItem() {
 }
 
 func itemAction(verb string, item *item) {
-
 	switch verb {
 	case "drop":
 		dropItem(item)
@@ -110,7 +108,6 @@ func dropItem(item *item) {
 			newPosition := p.getPosition()
 
 			for activeItems[newPosition] != nil {
-				
 				dir := randomDirection(None, true, true)
 				if newPosition.getPossibleDirections(&d)[dir] {
 					newPosition.move(dir)
@@ -125,7 +122,6 @@ func dropItem(item *item) {
 			return
 		}
 	}
-
 }
 
 func printInventory(message string, filter string) {
@@ -152,9 +148,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 				activeMonsters[newMonster.position] = &newMonster
 			}
 		}
-
 	}
-
 }
 
 func generateItems(list itemList, numberOfIterations int) {
@@ -176,7 +170,7 @@ func generateItems(list itemList, numberOfIterations int) {
 }
 
 func initDungeon() {
-	for i := 0; i < 4; i++ {
+	for i := 0; i < width / 10; i++ {
 		for {
 			roomCenterPos, err := d.createRandomRoom(getRandomPoint(&d), 20, 20)
 
@@ -189,15 +183,15 @@ func initDungeon() {
 	}
 
 	for index, value := range rooms {
-		if index < len(rooms)-1 {
-			connectWithCorridor(&d, value, rooms[index+1])
+		if index < len(rooms) && index & 2 == 0 {
+			connectWithCorridor(&d, value, rooms[index+2])
 		}
 	}
 	//connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, activeMonsters, activeItems)
+	grindToPrint := renderAll(&d, p, activeMonsters, activeItems)
 	fmt.Println(string(grindToPrint))
 
 }
@@ -208,7 +202,6 @@ func printStats() {
 
 func printMessages() {
 	switch {
-
 	case len(messages.messageQueue) == 1:
 		fmt.Print(messages.pop())
 		currentState = gameplay
@@ -226,7 +219,7 @@ func main() {
 	currentState = gameplay
 
 	p.setPosition(getEmptyPoint(&d))
-	p.attemptMove(None)
+	//p.attemptMove(None)
 
 	for {
 
