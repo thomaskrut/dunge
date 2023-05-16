@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-
+	"strconv"
 	"github.com/eiannone/keyboard"
 )
 
@@ -12,18 +12,16 @@ const (
 )
 
 var (
-	charmap          characterMapper
-	d                dungeon
-	p                player
-	currentState     keyProcessor
-	messages         messagePrompt
-	gameplay         gamePlay
-	rooms            []point
-	monsterTemplates monsterList
-	itemTemplates    itemList
-	activeMonsters   map[point]*monster
-	activeItems      map[point]*item
-	validKeyPressed  bool
+	charmap         characterMapper
+	d               dungeon
+	p               player
+	currentState    keyProcessor
+	messages        messagePrompt
+	gameplay        gamePlay
+	rooms           []point
+	activeMonsters  map[point]*monster
+	activeItems     map[point]*item
+	validKeyPressed bool
 )
 
 const (
@@ -93,7 +91,19 @@ func pickUpItem() {
 
 }
 
-func showInventory() {
+func showInventory(message string, filter string) {
+	fmt.Println(message)
+
+	if filter == "all" || filter == "drop" || filter == "throw" {
+
+		for index, item := range p.inventory {
+			fmt.Println(strconv.Itoa(index) + ": " + item.Prefix + " " + item.Name)
+		}
+
+
+	} 
+
+
 	fmt.Println(p.inventory)
 }
 
@@ -154,33 +164,51 @@ func initDungeon() {
 	//connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
 }
 
+func printDungeon() {
+	grindToPrint := render(&d, p, activeMonsters, activeItems)
+	fmt.Println(string(grindToPrint))
+	
+}
+
+func printStats() {
+	fmt.Println("HP:", p.hp)
+}
+
+func printMessages() {
+	switch {
+
+	case len(messages.messageQueue) == 1:
+		fmt.Print(messages.pop())
+		currentState = gameplay
+
+	case len(messages.messageQueue) > 1:
+		fmt.Print(messages.pop())
+		fmt.Print(" (press space for more...)")
+		currentState = messages
+
+	}
+}
+
 func main() {
 
 	p.setPosition(getEmptyPoint(&d))
-	p.move(None)
+	p.attemptMove(None)
 
 	for {
 
 		validKeyPressed = false
 
-		grindToPrint := render(&d, p, activeMonsters, activeItems)
+		switch cs := currentState.(type) {
 
-		fmt.Println(string(grindToPrint))
-		fmt.Println("HP:", p.hp)
+		case gamePlay, messagePrompt:
+			printDungeon()
+			printStats()
+			printMessages()
 
-		switch {
-
-		case len(messages.messageQueue) == 1:
-			fmt.Print(messages.pop())
-			currentState = gameplay
-
-		case len(messages.messageQueue) > 1:
-			fmt.Print(messages.pop())
-			fmt.Print(" (press space for more...)")
-			currentState = messages
-
+		case itemSelect:
+			showInventory("Select an item to " + cs.verb + ":", cs.verb)
 		}
-
+		
 		for !validKeyPressed {
 			char, _, err := keyboard.GetSingleKey()
 			if err != nil {

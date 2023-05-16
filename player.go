@@ -9,7 +9,7 @@ type player struct {
 	inventory   []item
 }
 
-func (p *player) move(dir direction) bool {
+func (p *player) attemptMove(dir direction) bool {
 
 	if p.position.getPossibleDirections(&d)[dir] {
 		newPoint := p.position

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 )
+
 type gamePlay struct {
 }
 
@@ -16,29 +17,32 @@ func (g gamePlay) processKey(char rune) bool {
 	fmt.Println(char)
 	var moveSuccessful bool = false
 	switch char {
-	case q:
+	case quitKey:
 		os.Exit(0)
-	case i:
-		showInventory()
+	case inventoryKey:
+		showInventory("Inventory", "all")
+	case dropKey:
+		currentState = newItemSelect("drop")
+		return true
 	case northKey:
-		moveSuccessful = p.move(North)
+		moveSuccessful = p.attemptMove(North)
 	case southKey:
-		moveSuccessful = p.move(South)
+		moveSuccessful = p.attemptMove(South)
 	case eastKey:
-		moveSuccessful = p.move(East)
+		moveSuccessful = p.attemptMove(East)
 	case westKey:
-		moveSuccessful = p.move(West)
+		moveSuccessful = p.attemptMove(West)
 	case northWestKey:
-		moveSuccessful = p.move(NorthWest)
+		moveSuccessful = p.attemptMove(NorthWest)
 	case northEastKey:
-		moveSuccessful = p.move(NorthEast)
+		moveSuccessful = p.attemptMove(NorthEast)
 	case southWestKey:
-		moveSuccessful = p.move(SouthWest)
+		moveSuccessful = p.attemptMove(SouthWest)
 	case southEastKey:
-		moveSuccessful = p.move(SouthEast)
+		moveSuccessful = p.attemptMove(SouthEast)
 	case restKey:
 		pickUpItem()
-		moveSuccessful = p.move(None)
+		moveSuccessful = p.attemptMove(None)
 	}
 	if moveSuccessful {
 		g.processTurn()
