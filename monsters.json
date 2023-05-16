@@ -10,6 +10,7 @@
             "moves": true,
             "aggressive": false,
             "movesdiagonally": true,
+            "carriesitems": true,
             "speed": 1
         },
         {
@@ -22,6 +23,7 @@
             "moves": true,
             "aggressive": true,
             "movesdiagonally": false,
+            "carriesitems": false,
             "speed": 0.3
         }
     ]

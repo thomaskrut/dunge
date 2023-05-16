@@ -62,11 +62,11 @@ func moveMonsters() {
 		if m.moveCounter() >= 1 {
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
-			if !m.Movesdiagonally {
+			if !m.MovesDiagonally {
 				newDirection.toNonDiagonal()
 			}
 			for i := 0; !m.move(newDirection) && i < 10; i++ {
-				newDirection = randomDirection(newDirection, false, m.Movesdiagonally)
+				newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
 			}
 			delete(activeMonsters, i)
 			activeMonsters[m.position] = m
@@ -99,7 +99,7 @@ func itemAction(verb string, item *item) {
 	switch verb {
 	case "drop":
 		dropItem(item)
-}
+	}
 }
 
 func dropItem(item *item) {
@@ -110,7 +110,7 @@ func dropItem(item *item) {
 			newPosition := p.getPosition()
 
 			for activeItems[newPosition] != nil {
-				fmt.Println("Error: Item already there")
+				
 				dir := randomDirection(None, true, true)
 				if newPosition.getPossibleDirections(&d)[dir] {
 					newPosition.move(dir)

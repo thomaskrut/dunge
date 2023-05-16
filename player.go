@@ -29,12 +29,8 @@ func (p *player) attemptMove(dir direction) bool {
 }
 
 func (p *player) attack(m *monster) {
-	m.takeDamage(p.strength)
 	messages.push("You hit the " + m.Name)
-	if m.Hp <= 0 {
-		messages.push("You killed the " + m.Name)
-		delete(activeMonsters, m.position)
-	}
+	m.takeDamage(p.strength)
 }
 
 func (p *player) takeDamage(damage int) {

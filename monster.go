@@ -11,7 +11,9 @@ type monsterList struct {
 }
 
 type monster struct {
-	position point
+	moveCounterValue float32
+	inventory        []item
+	position         point
 
 	Char            string   `json:"char"`
 	Name            string   `json:"name"`
@@ -22,13 +24,40 @@ type monster struct {
 	Moves           bool     `json:"moves"`
 	Aggressive      bool     `json:"aggressive"`
 	Speed           float32  `json:"speed"`
-	Movesdiagonally bool     `json:"movesdiagonally"`
-
-	moveCounterValue float32
+	MovesDiagonally bool     `json:"movesdiagonally"`
+	CarriesItems    bool     `json:"carriesitems"`
 }
 
 func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
+	if m.Hp <= 0 {
+		messages.push("You killed the " + m.Name)
+		if len(m.inventory) > 0 {
+			m.dropAllItems()
+			messages.push("The " + m.Name + " scattered its belongings on the floor")
+		} 
+		delete(activeMonsters, m.position)
+	}
+}
+
+func (m *monster) dropAllItems() {
+
+	fmt.Println(m.inventory)
+
+	for index := range m.inventory {
+		currentItem := m.inventory[index]
+		newPosition := m.getPosition()
+			for activeItems[newPosition] != nil {
+				
+				dir := randomDirection(None, true, true)
+				if newPosition.getPossibleDirections(&d)[dir] {
+					newPosition.move(dir)
+				}
+			}
+			currentItem.setPosition(newPosition)
+			activeItems[currentItem.position] = &currentItem
+	}
+	m.inventory = nil
 }
 
 func (m *monster) attack(p *player) {
@@ -76,6 +105,15 @@ func (m *monster) move(dir direction) bool {
 		}
 
 		m.position.move(dir)
+
+		if item, ok := activeItems[m.position]; ok && m.CarriesItems {
+			if d.grid[m.position.x][m.position.y]&lit == lit {
+				messages.push("The " + m.Name + " picked up " + item.Prefix + " " + item.Name)
+			}
+			
+			m.inventory = append(m.inventory, *item)
+			delete(activeItems, m.position)
+		}
 
 		return true
 	}
