@@ -46,7 +46,7 @@ func connectWithCorridor(d *dungeon, origin, destination point) {
 		}
 
 		currentPosition.move(newDirection)
-		if currentPosition.isOutOfBounds(d, 1) {
+		if currentPosition.isOutOfBounds(d, 2) {
 			break
 		}
 		d.setPoint(currentPosition, empty)
