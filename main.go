@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"github.com/eiannone/keyboard"
+	"strconv"
 )
 
 const (
@@ -170,24 +170,34 @@ func generateItems(list itemList, numberOfIterations int) {
 }
 
 func initDungeon() {
-	for i := 0; i < width / 10; i++ {
-		for {
-			roomCenterPos, err := d.createRandomRoom(getRandomPoint(&d), 20, 20)
 
+	var previousRoom point
+	var nextRoom point
+	var err error
+
+	for {
+		previousRoom, err = d.createRandomRoom(getRandomPoint(&d), 20, 20)
+		if err != nil {
+			continue
+		}
+		break
+	}
+
+	for i := 0; i < 10; i++ {
+
+		for {
+			nextRoom, err = d.createRandomRoom(getRandomPoint(&d), 20, 20)
 			if err != nil {
 				continue
 			}
-			rooms = append(rooms, roomCenterPos)
 			break
 		}
+
+		connectWithCorridor(&d, previousRoom, nextRoom)
+		previousRoom = nextRoom
+
 	}
 
-	for index, value := range rooms {
-		if index < len(rooms) / 2  {
-			connectWithCorridor(&d, value, rooms[index + len(rooms) / 2])
-		}
-	}
-	//connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
 }
 
 func printDungeon() {
