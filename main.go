@@ -183,8 +183,8 @@ func initDungeon() {
 	}
 
 	for index, value := range rooms {
-		if index < len(rooms) && index & 2 == 0 {
-			connectWithCorridor(&d, value, rooms[index+2])
+		if index < len(rooms) / 2  {
+			connectWithCorridor(&d, value, rooms[index + len(rooms) / 2])
 		}
 	}
 	//connectWithCorridor(&d, getEmptyPoint(&d), getEmptyPoint(&d))
