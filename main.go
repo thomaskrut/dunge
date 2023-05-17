@@ -201,7 +201,7 @@ func initDungeon() {
 }
 
 func printDungeon() {
-	grindToPrint := renderAll(&d, p, activeMonsters, activeItems)
+	grindToPrint := render(&d, p, 40, 40, activeMonsters, activeItems)
 	fmt.Println(string(grindToPrint))
 
 }
@@ -229,7 +229,7 @@ func main() {
 	currentState = gameplay
 
 	p.setPosition(getEmptyPoint(&d))
-	//p.attemptMove(None)
+	p.attemptMove(None)
 
 	for {
 

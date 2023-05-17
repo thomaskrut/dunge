@@ -1,9 +1,17 @@
 package main
 
-func render(d *dungeon, p player, monsters map[point]*monster, items map[point]*item) (toPrint []rune) {
+func render(d *dungeon, p player, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item) (toPrint []rune) {
 
-	for y := 0; y < d.height; y++ {
-		for x := 0; x < d.width; x++ {
+	viewportHeight /= 2
+	viewportWidth /= 2
+
+	for y := p.position.y - viewportHeight; y < p.position.y + viewportHeight; y++ {
+		for x := p.position.x - viewportWidth; x < p.position.x + viewportWidth; x++ {
+
+			if x < 0 || x >= d.width || y < 0 || y >= d.height {
+				toPrint = append(toPrint, ' ')
+				continue
+			}
 
 			var char rune
 
