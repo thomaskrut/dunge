@@ -15,12 +15,12 @@ func (it itemSelect) processTurn() {
 func (it itemSelect) processKey(char rune) bool {
 
 	switch char {
-	case 0, dropKey:
+	case 0:
 		currentState = gameplay
 		return true
 	}
 
-	if char > 48 && char < 58 {
+	if (char > 48 && char < 58) || (char > 96 && char < 123) {
 		index := convertToDigit(char)
 		if item, err := inventoryMenu.getItemByNumber(int(index)); err != nil {
 			return false
