@@ -9,6 +9,7 @@ type gamePlay struct {
 }
 
 func (g gamePlay) processTurn() {
+	gridOverlay = nil
 	moveMonsters()
 	checkForItems()
 }
@@ -20,7 +21,8 @@ func (g gamePlay) processKey(char rune) bool {
 	case quitKey:
 		os.Exit(0)
 	case inventoryKey:
-		printInventory("Inventory", "all")
+		generateInventoryOverlay()
+		return true
 	case dropKey:
 		currentState = newItemSelect("drop")
 		return true

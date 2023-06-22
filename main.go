@@ -18,11 +18,10 @@ var (
 	currentState    keyProcessor
 	messages        messagePrompt
 	gameplay        gamePlay
-	rooms           []point
 	activeMonsters  map[point]*monster
 	activeItems     map[point]*item
-	inventoryMenu   inventorymenu
 	validKeyPressed bool
+	gridOverlay		[]string
 )
 
 const (
@@ -36,7 +35,6 @@ func init() {
 
 	activeMonsters = make(map[point]*monster)
 	activeItems = make(map[point]*item)
-	inventoryMenu = newInventoryMenu()
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -86,7 +84,6 @@ func pickUpItem() {
 
 	if i, ok := activeItems[p.position]; ok {
 		p.inventory = append(p.inventory, *i)
-		inventoryMenu.update()
 		delete(activeItems, p.position)
 		messages.push("You picked up " + i.Prefix + " " + i.Name)
 	}
@@ -117,21 +114,9 @@ func dropItem(item *item) {
 			currentItem.setPosition(newPosition)
 			activeItems[currentItem.position] = &currentItem
 			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
-			inventoryMenu.update()
 			messages.push("You dropped " + currentItem.Prefix + " " + currentItem.Name)
 			return
 		}
-	}
-}
-
-func printInventory(message string, filter string) {
-
-	fmt.Println(message)
-	fmt.Println(len(inventoryMenu.items))
-	count := 1
-	for itemName, numberOfItems := range inventoryMenu.items {
-		fmt.Println(strconv.Itoa(count) + ": " + itemName + " (" + strconv.Itoa(numberOfItems) + ")")
-		count++
 	}
 }
 
@@ -148,6 +133,13 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 				activeMonsters[newMonster.position] = &newMonster
 			}
 		}
+	}
+}
+
+func generateInventoryOverlay() {
+	gridOverlay = append(gridOverlay, "INVENTORY")
+	for index, item := range p.inventory {
+		gridOverlay = append(gridOverlay, strconv.Itoa(index) + ": " + item.Prefix + " " + item.Name)
 	}
 }
 
@@ -201,9 +193,8 @@ func initDungeon() {
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, 40, 40, activeMonsters, activeItems)
+	grindToPrint := render(&d, p, gridOverlay, 40, 40, activeMonsters, activeItems)
 	fmt.Println(string(grindToPrint))
-
 }
 
 func printStats() {
@@ -235,7 +226,7 @@ func main() {
 
 		validKeyPressed = false
 
-		switch cs := currentState.(type) {
+		/*switch cs := currentState.(type) {
 
 		case gamePlay, messagePrompt:
 			printDungeon()
@@ -243,8 +234,12 @@ func main() {
 			printMessages()
 
 		case itemSelect:
-			printInventory("Select an item to "+cs.verb+":", cs.verb)
-		}
+			printStats()
+		}*/
+
+		printDungeon()
+		printStats()
+		printMessages()
 
 		for !validKeyPressed {
 			char, _, err := keyboard.GetSingleKey()

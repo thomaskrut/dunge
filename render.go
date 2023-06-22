@@ -1,12 +1,24 @@
 package main
 
-func render(d *dungeon, p player, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item) (toPrint []rune) {
+func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
 
+	rowCounter := 0
+	charCounter := 0
+
 	for y := p.position.y - viewportHeight; y < p.position.y + viewportHeight; y++ {
+
 		for x := p.position.x - viewportWidth; x < p.position.x + viewportWidth; x++ {
+
+			if len(overlay) > rowCounter {
+				if len(overlay[rowCounter]) > charCounter {
+					toPrint = append(toPrint, rune(overlay[rowCounter][charCounter]))
+					charCounter++
+					continue
+				}
+			}
 
 			if x < 0 || x >= d.width || y < 0 || y >= d.height {
 				toPrint = append(toPrint, ' ')
@@ -33,6 +45,8 @@ func render(d *dungeon, p player, viewportWidth, viewportHeight int, monsters ma
 			toPrint = append(toPrint, char)
 		}
 		toPrint = append(toPrint, '\n')
+		rowCounter++
+		charCounter = 0
 	}
 
 	return toPrint
