@@ -16,12 +16,14 @@ var (
 	d               dungeon
 	p               player
 	currentState    keyProcessor
+	previousState	keyProcessor
 	messages        messagePrompt
 	gameplay        gamePlay
 	activeMonsters  map[point]*monster
 	activeItems     map[point]*item
 	validKeyPressed bool
-	gridOverlay		[]string
+	gridOverlay     []string
+	selectedItem    int
 )
 
 const (
@@ -47,8 +49,8 @@ func init() {
 	initDungeon()
 	p = newPlayer('@')
 
-	generateMonsters(readMonsterTemplate(), 10)
-	generateItems(readItemsTemplate(), 10)
+	generateMonsters(readMonsterTemplate(), 0)
+	generateItems(readItemsTemplate(), 500)
 
 }
 
@@ -90,17 +92,17 @@ func pickUpItem() {
 
 }
 
-func itemAction(verb string, item *item) {
+func itemAction(verb string) {
 	switch verb {
 	case "drop":
-		dropItem(item)
+		dropItem()
 	}
 }
 
-func dropItem(item *item) {
+func dropItem() {
 
 	for i, currentItem := range p.inventory {
-		if currentItem.Name == item.Name {
+		if i == selectedItem {
 
 			newPosition := p.getPosition()
 
@@ -136,10 +138,26 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 	}
 }
 
-func generateInventoryOverlay() {
+func generateInventoryOverlay(menu bool) {
+	if len(p.inventory) == 0 {
+		gridOverlay = append(gridOverlay, "Inventory empty")
+		currentState = gameplay
+		previousState = gameplay
+		return
+	}
+	gridOverlay = nil
+	cursor := ""
 	gridOverlay = append(gridOverlay, "INVENTORY")
 	for index, item := range p.inventory {
-		gridOverlay = append(gridOverlay, strconv.Itoa(index) + ": " + item.Prefix + " " + item.Name)
+		if menu {
+			if index == selectedItem {
+				cursor = ">"
+			} else {
+				cursor = " "
+			}
+		}
+		gridOverlay = append(gridOverlay, cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name)
+
 	}
 }
 
@@ -205,11 +223,12 @@ func printMessages() {
 	switch {
 	case len(messages.messageQueue) == 1:
 		fmt.Print(messages.pop())
-		currentState = gameplay
+		currentState = previousState
 
 	case len(messages.messageQueue) > 1:
 		fmt.Print(messages.pop())
 		fmt.Print(" (press space for more...)")
+		previousState = currentState
 		currentState = messages
 
 	}
@@ -218,6 +237,7 @@ func printMessages() {
 func main() {
 
 	currentState = gameplay
+	previousState = gameplay
 
 	p.setPosition(getEmptyPoint(&d))
 	p.attemptMove(None)

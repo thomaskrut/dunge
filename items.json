@@ -4,7 +4,7 @@
             "name": "apple",
             "prefix": "an",
             "char": "o",
-            "prob": 550,
+            "prob": 950,
             "value": 10,
             "verb": "Eat"
         },
@@ -12,7 +12,7 @@
             "name": "fudge",
             "prefix": "a",
             "char": "#",
-            "prob": 610,
+            "prob": 910,
             "value": 10,
             "verb": "Eat"
         }

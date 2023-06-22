@@ -21,10 +21,11 @@ func (g gamePlay) processKey(char rune) bool {
 	case quitKey:
 		os.Exit(0)
 	case inventoryKey:
-		generateInventoryOverlay()
+		generateInventoryOverlay(false)
 		return true
 	case dropKey:
 		currentState = newItemSelect("drop")
+		previousState = currentState
 		return true
 	case northKey:
 		moveSuccessful = p.attemptMove(North)

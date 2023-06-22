@@ -5,6 +5,8 @@ type itemSelect struct {
 }
 
 func newItemSelect(v string) itemSelect {
+	selectedItem = 0
+	generateInventoryOverlay(true)
 	return itemSelect{verb: v}
 }
 
@@ -17,10 +19,15 @@ func (it itemSelect) processKey(char rune) bool {
 	switch char {
 	case 0:
 		currentState = gameplay
-		return true
+		previousState = currentState
 	case northKey:
-		
+		selectedItem--
+	case southKey:
+		selectedItem++
+	case restKey:
+		itemAction(it.verb)
 	}
+	generateInventoryOverlay(true)
 
-	return false;
+	return true;
 }
