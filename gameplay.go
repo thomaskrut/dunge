@@ -21,10 +21,18 @@ func (g gamePlay) processKey(char rune) bool {
 	case quitKey:
 		os.Exit(0)
 	case inventoryKey:
-		generateInventoryOverlay(false)
+		generateOverlay(false, "")
 		return true
 	case dropKey:
 		currentState = newItemSelect("drop")
+		previousState = currentState
+		return true
+	case eatKey:
+		currentState = newItemSelect("eat")
+		previousState = currentState
+		return true
+	case throwKey:
+		currentState = newItemSelect("throw")
 		previousState = currentState
 		return true
 	case northKey:

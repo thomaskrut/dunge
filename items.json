@@ -6,7 +6,11 @@
             "char": "o",
             "prob": 950,
             "value": 10,
-            "verb": "Eat"
+            "verbs": [
+                "eat",
+                "throw",
+                "drop"
+            ]
         },
         {
             "name": "fudge",
@@ -14,7 +18,22 @@
             "char": "#",
             "prob": 910,
             "value": 10,
-            "verb": "Eat"
+            "verbs": [
+                "eat",
+                "throw",
+                "drop"
+            ]
+        },
+        {
+            "name": "pebble",
+            "prefix": "a",
+            "char": ",",
+            "prob": 910,
+            "value": 10,
+            "verbs": [
+                "throw",
+                "drop"
+            ]
         }
     ]
 }

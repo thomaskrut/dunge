@@ -14,6 +14,8 @@ const (
 	quitKey      = 113
 	inventoryKey = 105
 	dropKey      = 100
+	eatKey       = 101
+	throwKey     = 116
 )
 
 type keyProcessor interface {

@@ -6,7 +6,7 @@ type itemSelect struct {
 
 func newItemSelect(v string) itemSelect {
 	selectedItem = 0
-	generateInventoryOverlay(true)
+	generateOverlay(true, v)
 	return itemSelect{verb: v}
 }
 
@@ -27,7 +27,7 @@ func (it itemSelect) processKey(char rune) bool {
 	case restKey:
 		itemAction(it.verb)
 	}
-	generateInventoryOverlay(true)
+	generateOverlay(true, it.verb)
 
-	return true;
+	return true
 }

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/eiannone/keyboard"
 	"strconv"
+
+	"github.com/eiannone/keyboard"
 )
 
 const (
@@ -16,7 +17,7 @@ var (
 	d               dungeon
 	p               player
 	currentState    keyProcessor
-	previousState	keyProcessor
+	previousState   keyProcessor
 	messages        messagePrompt
 	gameplay        gamePlay
 	activeMonsters  map[point]*monster
@@ -138,7 +139,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 	}
 }
 
-func generateInventoryOverlay(menu bool) {
+func generateOverlay(menu bool, verb string) {
 	if len(p.inventory) == 0 {
 		gridOverlay = append(gridOverlay, "Inventory empty")
 		currentState = gameplay
@@ -147,7 +148,12 @@ func generateInventoryOverlay(menu bool) {
 	}
 	gridOverlay = nil
 	cursor := ""
-	gridOverlay = append(gridOverlay, "INVENTORY")
+	if menu {
+		gridOverlay = append(gridOverlay, "Select item to " + verb + ":")
+	} else {
+		gridOverlay = append(gridOverlay, "Inventory:")
+	}
+	
 	for index, item := range p.inventory {
 		if menu {
 			if index == selectedItem {
@@ -156,8 +162,12 @@ func generateInventoryOverlay(menu bool) {
 				cursor = " "
 			}
 		}
-		gridOverlay = append(gridOverlay, cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name)
-
+		for _, v := range item.Verbs {
+			if v == verb {
+				gridOverlay = append(gridOverlay, cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name)
+				break
+			}
+		}
 	}
 }
 

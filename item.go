@@ -17,7 +17,7 @@ type item struct {
 	Char     string `json:"char"`
 	Prob     int    `json:"prob"`
 	Value    int    `json:"value"`
-	Verb     string `json:"verb"`
+	Verbs    []string `json:"verbs"`
 }
 
 func (i *item) setPosition(p point) {
