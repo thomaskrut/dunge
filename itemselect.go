@@ -5,7 +5,6 @@ type itemSelect struct {
 }
 
 func newItemSelect(v string) itemSelect {
-	selectedItem = 0
 	generateOverlay(true, v)
 	return itemSelect{verb: v}
 }

@@ -24,7 +24,7 @@ var (
 	activeItems     map[point]*item
 	validKeyPressed bool
 	gridOverlay     []string
-	itemsToDisplay  []item
+	itemsToDisplay  []*item
 	selectedItem    int
 )
 
@@ -98,12 +98,25 @@ func itemAction(verb string) {
 	switch verb {
 	case "drop":
 		dropItem()
+	case "eat":
+		eatItem()
+	}
+}
+
+func eatItem() {
+	
+	for i, currentItem := range itemsToDisplay {
+		if i == selectedItem {
+			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
+			messages.push("You ate " + currentItem.Prefix + " " + currentItem.Name)
+			return
+		}
 	}
 }
 
 func dropItem() {
 
-	for i, currentItem := range p.inventory {
+	for i, currentItem := range itemsToDisplay {
 		if i == selectedItem {
 
 			newPosition := p.getPosition()
@@ -116,7 +129,7 @@ func dropItem() {
 			}
 
 			currentItem.setPosition(newPosition)
-			activeItems[currentItem.position] = &currentItem
+			activeItems[currentItem.position] = currentItem
 			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
 			messages.push("You dropped " + currentItem.Prefix + " " + currentItem.Name)
 			return
@@ -150,19 +163,28 @@ func generateOverlay(menu bool, verb string) {
 	gridOverlay = nil
 	itemsToDisplay = nil
 	cursor := ""
-	if menu {
-		gridOverlay = append(gridOverlay, "Select item to " + verb + ":")
-	} else {
-		gridOverlay = append(gridOverlay, "Inventory:")
-	}
 	
 	for _, item := range p.inventory {
 		for _, v := range item.Verbs {
 			if v == verb {
-				itemsToDisplay = append(itemsToDisplay, item)
+				itemToAdd := item
+				itemsToDisplay = append(itemsToDisplay, &itemToAdd)
 				break
 			}
 		}
+	}
+
+	if len(itemsToDisplay) == 0 {
+		gridOverlay = append(gridOverlay, "No items to " + verb)
+		currentState = gameplay
+		previousState = gameplay
+		return
+	}
+
+	if menu {
+		gridOverlay = append(gridOverlay, "Select item to " + verb + ":")
+	} else {
+		gridOverlay = append(gridOverlay, "Inventory:")
 	}
 
 	for index, item := range itemsToDisplay {
