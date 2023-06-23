@@ -24,6 +24,7 @@ var (
 	activeItems     map[point]*item
 	validKeyPressed bool
 	gridOverlay     []string
+	itemsToDisplay  []item
 	selectedItem    int
 )
 
@@ -147,6 +148,7 @@ func generateOverlay(menu bool, verb string) {
 		return
 	}
 	gridOverlay = nil
+	itemsToDisplay = nil
 	cursor := ""
 	if menu {
 		gridOverlay = append(gridOverlay, "Select item to " + verb + ":")
@@ -154,20 +156,24 @@ func generateOverlay(menu bool, verb string) {
 		gridOverlay = append(gridOverlay, "Inventory:")
 	}
 	
-	for index, item := range p.inventory {
-		if menu {
-			if index == selectedItem {
-				cursor = ">"
-			} else {
-				cursor = " "
-			}
-		}
+	for _, item := range p.inventory {
 		for _, v := range item.Verbs {
 			if v == verb {
-				gridOverlay = append(gridOverlay, cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name)
+				itemsToDisplay = append(itemsToDisplay, item)
 				break
 			}
 		}
+	}
+
+	for index, item := range itemsToDisplay {
+		if menu {
+			if index == selectedItem {
+				cursor = "> "
+			} else {
+				cursor = "  "
+			}
+		}
+		gridOverlay = append(gridOverlay, cursor + strconv.Itoa(index) + ": " + item.Prefix + " " + item.Name)
 	}
 }
 
