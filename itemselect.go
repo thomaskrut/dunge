@@ -10,7 +10,9 @@ func newItemSelect(v string) itemSelect {
 }
 
 func (it itemSelect) processTurn() {
-
+	gridOverlay = nil
+	turn++
+	moveMonsters()
 }
 
 func (it itemSelect) processKey(char rune) bool {
@@ -18,13 +20,15 @@ func (it itemSelect) processKey(char rune) bool {
 	switch char {
 	case 0:
 		currentState = gameplay
-		previousState = currentState
 	case northKey:
 		selectedItem--
 	case southKey:
 		selectedItem++
 	case restKey:
 		itemAction(it.verb)
+		currentState.processTurn()
+		currentState = gameplay
+		return true
 	}
 	generateOverlay(true, it.verb)
 

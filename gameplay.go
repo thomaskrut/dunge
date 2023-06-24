@@ -10,6 +10,7 @@ type gamePlay struct {
 
 func (g gamePlay) processTurn() {
 	gridOverlay = nil
+	turn++
 	moveMonsters()
 	checkForItems()
 }
@@ -25,15 +26,12 @@ func (g gamePlay) processKey(char rune) bool {
 		return true
 	case dropKey:
 		currentState = newItemSelect("drop")
-		previousState = currentState
 		return true
 	case eatKey:
 		currentState = newItemSelect("eat")
-		previousState = currentState
 		return true
 	case throwKey:
 		currentState = newItemSelect("throw")
-		previousState = currentState
 		return true
 	case northKey:
 		moveSuccessful = p.attemptMove(North)
