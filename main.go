@@ -51,8 +51,8 @@ func init() {
 	initDungeon()
 	p = newPlayer('@')
 	turn = 0
-	generateMonsters(readMonsterTemplate(), 0)
-	generateItems(readItemsTemplate(), 500)
+	generateMonsters(readMonsterTemplate(), 50)
+	generateItems(readItemsTemplate(), 50)
 
 }
 
@@ -155,7 +155,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 
 func generateOverlay(menu bool, verb string) {
 	if len(p.inventory) == 0 {
-		gridOverlay = append(gridOverlay, "Inventory empty")
+		messages.push("Inventory empty")
 		currentState = gameplay
 		return
 	}
@@ -174,7 +174,7 @@ func generateOverlay(menu bool, verb string) {
 	}
 
 	if len(itemsToDisplay) == 0 {
-		gridOverlay = append(gridOverlay, "No items to "+verb)
+		messages.push("No items to " + verb)
 		currentState = gameplay
 		return
 	}

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	_"fmt"
 	"os"
 )
 
@@ -16,13 +16,13 @@ func (g gamePlay) processTurn() {
 }
 
 func (g gamePlay) processKey(char rune) bool {
-	fmt.Println(char)
+	//fmt.Println(char)
 	var moveSuccessful bool = false
 	switch char {
 	case quitKey:
 		os.Exit(0)
 	case inventoryKey:
-		generateOverlay(false, "")
+		generateOverlay(false, "drop")
 		return true
 	case dropKey:
 		currentState = newItemSelect("drop")
