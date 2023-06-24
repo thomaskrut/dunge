@@ -24,10 +24,6 @@ func (i *item) setPosition(p point) {
 	i.position = p
 }
 
-func (i item) getPosition() point {
-	return i.position
-}
-
 func (i item) getChar() rune {
 	return rune(i.Char[0])
 }

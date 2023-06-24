@@ -22,7 +22,3 @@ type keyProcessor interface {
 	processKey(char rune) bool
 	processTurn()
 }
-
-func convertToDigit(keycode rune) rune {
-	return keycode - 48
-}

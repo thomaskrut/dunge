@@ -94,48 +94,6 @@ func pickUpItem() {
 
 }
 
-func itemAction(verb string) {
-	switch verb {
-	case "drop":
-		dropItem()
-	case "eat":
-		eatItem()
-	}
-}
-
-func eatItem() {
-
-	for i, currentItem := range itemsToDisplay {
-		if i == selectedItem {
-			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
-			messages.push("You ate " + currentItem.Prefix + " " + currentItem.Name)
-			return
-		}
-	}
-}
-
-func dropItem() {
-
-	for i, currentItem := range itemsToDisplay {
-		if i == selectedItem {
-
-			newPosition := p.getPosition()
-
-			for activeItems[newPosition] != nil {
-				dir := randomDirection(None, true, true)
-				if newPosition.getPossibleDirections(&d)[dir] {
-					newPosition.move(dir)
-				}
-			}
-
-			currentItem.setPosition(newPosition)
-			activeItems[currentItem.position] = currentItem
-			p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
-			messages.push("You dropped " + currentItem.Prefix + " " + currentItem.Name)
-			return
-		}
-	}
-}
 
 func generateMonsters(list monsterList, numberOfIterations int) {
 
@@ -161,7 +119,7 @@ func generateOverlay(menu bool, verb string) {
 	}
 	gridOverlay = nil
 	itemsToDisplay = nil
-	cursor := ""
+	cursor := "| "
 
 	for _, item := range p.inventory {
 		for _, v := range item.Verbs {
@@ -179,18 +137,32 @@ func generateOverlay(menu bool, verb string) {
 		return
 	}
 
+	longestItemName := 0
+	for _, item := range itemsToDisplay {
+		if len(item.Name) > longestItemName {
+			longestItemName = len(item.Name)
+		}
+	}
+
+	frameTop := ""
+	for i:=0; i < longestItemName + 8; i++ {
+		frameTop += "-"
+	}
+
+	gridOverlay = append(gridOverlay, frameTop)
+
 	if menu {
-		gridOverlay = append(gridOverlay, "Select item to "+verb+":")
+		gridOverlay = append(gridOverlay, "| Select item to "+verb+":")
 	} else {
-		gridOverlay = append(gridOverlay, "Inventory:")
+		gridOverlay = append(gridOverlay, "| Inventory:")
 	}
 
 	for index, item := range itemsToDisplay {
 		if menu {
 			if index == selectedItem {
-				cursor = "> "
+				cursor = "| > "
 			} else {
-				cursor = "  "
+				cursor = "|   "
 			}
 		}
 		gridOverlay = append(gridOverlay, cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name)
@@ -248,6 +220,7 @@ func initDungeon() {
 
 func printDungeon() {
 	grindToPrint := render(&d, p, gridOverlay, 40, 40, activeMonsters, activeItems)
+	fmt.Println()
 	fmt.Println(string(grindToPrint))
 }
 
@@ -279,17 +252,6 @@ func main() {
 	for {
 
 		validKeyPressed = false
-
-		/*switch cs := currentState.(type) {
-
-		case gamePlay, messagePrompt:
-			printDungeon()
-			printStats()
-			printMessages()
-
-		case itemSelect:
-			printStats()
-		}*/
 
 		printDungeon()
 		printStats()
