@@ -5,6 +5,7 @@ type itemSelect struct {
 }
 
 func newItemSelect(v string) itemSelect {
+	selectedItem = 0
 	generateOverlay(true, v)
 	return itemSelect{verb: v}
 }
@@ -20,10 +21,18 @@ func (it itemSelect) processKey(char rune) bool {
 	switch char {
 	case 0:
 		currentState = gameplay
+		gridOverlay = nil
+		return true
 	case northKey:
 		selectedItem--
+		if selectedItem < 0 {
+			selectedItem = len(itemsToDisplay) - 1
+		}
 	case southKey:
 		selectedItem++
+		if selectedItem > len(itemsToDisplay)-1 {
+			selectedItem = 0
+		}
 	case restKey:
 		itemAction(it.verb)
 		currentState.processTurn()

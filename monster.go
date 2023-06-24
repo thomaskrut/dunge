@@ -35,7 +35,7 @@ func (m *monster) takeDamage(damage int) {
 		if len(m.inventory) > 0 {
 			m.dropAllItems()
 			messages.push("The " + m.Name + " scattered its belongings on the floor")
-		} 
+		}
 		delete(activeMonsters, m.position)
 	}
 }
@@ -47,15 +47,15 @@ func (m *monster) dropAllItems() {
 	for index := range m.inventory {
 		currentItem := m.inventory[index]
 		newPosition := m.getPosition()
-			for activeItems[newPosition] != nil {
-				
-				dir := randomDirection(None, true, true)
-				if newPosition.getPossibleDirections(&d)[dir] {
-					newPosition.move(dir)
-				}
+		for activeItems[newPosition] != nil {
+
+			dir := randomDirection(None, true, true)
+			if newPosition.getPossibleDirections(&d)[dir] {
+				newPosition.move(dir)
 			}
-			currentItem.setPosition(newPosition)
-			activeItems[currentItem.position] = &currentItem
+		}
+		currentItem.setPosition(newPosition)
+		activeItems[currentItem.position] = &currentItem
 	}
 	m.inventory = nil
 }
@@ -110,7 +110,7 @@ func (m *monster) move(dir direction) bool {
 			if d.grid[m.position.x][m.position.y]&lit == lit {
 				messages.push("The " + m.Name + " picked up " + item.Prefix + " " + item.Name)
 			}
-			
+
 			m.inventory = append(m.inventory, *item)
 			delete(activeItems, m.position)
 		}
