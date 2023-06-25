@@ -18,7 +18,7 @@ func (m messagePrompt) processTurn() {
 
 }
 
-func (m messagePrompt) processKey(char rune) bool {
+func (m messagePrompt) processKey(char rune) (validKey bool) {
 
 	switch char {
 	case 0:

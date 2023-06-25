@@ -16,7 +16,7 @@ func (it itemSelect) processTurn() {
 	moveMonsters()
 }
 
-func (it itemSelect) processKey(char rune) bool {
+func (it itemSelect) processKey(char rune) (validKey bool) {
 
 	switch char {
 	case 0:

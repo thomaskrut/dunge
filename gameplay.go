@@ -15,7 +15,7 @@ func (g gamePlay) processTurn() {
 	checkForItems()
 }
 
-func (g gamePlay) processKey(char rune) bool {
+func (g gamePlay) processKey(char rune) (validKey bool) {
 	//fmt.Println(char)
 	var moveSuccessful bool = false
 	switch char {
