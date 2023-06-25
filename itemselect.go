@@ -34,7 +34,7 @@ func (it itemSelect) processKey(char rune) bool {
 			selectedItem = 0
 		}
 	case restKey:
-		itemAction(it.verb)
+		itemActions[it.verb]()
 		currentState.processTurn()
 		currentState = gameplay
 		return true
