@@ -12,7 +12,7 @@ type monsterList struct {
 
 type monster struct {
 	moveCounterValue float32
-	inventory        []item
+	items            inventory
 	position         point
 
 	Char            string   `json:"char"`
@@ -32,7 +32,7 @@ func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
 	if m.Hp <= 0 {
 		messages.push("You killed the " + m.Name)
-		if len(m.inventory) > 0 {
+		if m.items.size() > 0 {
 			m.dropAllItems()
 			messages.push("The " + m.Name + " scattered its belongings on the floor")
 		}
@@ -42,10 +42,8 @@ func (m *monster) takeDamage(damage int) {
 
 func (m *monster) dropAllItems() {
 
-	fmt.Println(m.inventory)
-
-	for index := range m.inventory {
-		currentItem := m.inventory[index]
+	for _, item := range m.items.all() {
+		currentItem := item
 		newPosition := m.getPosition()
 		for activeItems[newPosition] != nil {
 
@@ -57,7 +55,7 @@ func (m *monster) dropAllItems() {
 		currentItem.setPosition(newPosition)
 		activeItems[currentItem.position] = &currentItem
 	}
-	m.inventory = nil
+	m.items.clear()
 }
 
 func (m *monster) attack(p *player) {
@@ -111,7 +109,7 @@ func (m *monster) move(dir direction) bool {
 				messages.push("The " + m.Name + " picked up " + item.Prefix + " " + item.Name)
 			}
 
-			m.inventory = append(m.inventory, *item)
+			m.items.add(item)
 			delete(activeItems, m.position)
 		}
 

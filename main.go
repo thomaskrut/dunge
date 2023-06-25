@@ -87,7 +87,7 @@ func checkForItems() {
 func pickUpItem() {
 
 	if i, ok := activeItems[p.position]; ok {
-		p.inventory = append(p.inventory, *i)
+		p.items.add(i)
 		delete(activeItems, p.position)
 		messages.push("You picked up " + i.Prefix + " " + i.Name)
 	}
@@ -112,7 +112,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 }
 
 func generateOverlay(menu bool, verb string) {
-	if len(p.inventory) == 0 {
+	if p.items.size() == 0 {
 		messages.push("Inventory empty")
 		currentState = gameplay
 		return
@@ -121,7 +121,7 @@ func generateOverlay(menu bool, verb string) {
 	itemsToDisplay = nil
 	cursor := "| "
 
-	for _, item := range p.inventory {
+	for _, item := range p.items.all() {
 		for _, v := range item.Verbs {
 			if v == verb {
 				itemToAdd := item
