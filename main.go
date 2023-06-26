@@ -131,7 +131,7 @@ func generateOverlay(menu bool, verb string) {
 		}
 	}
 
-	sort.Slice(itemsToDisplay, func(i, j int) bool {
+	sort.SliceStable(itemsToDisplay, func(i, j int) bool {
 		return itemsToDisplay[i].Name < itemsToDisplay[j].Name
 	})
 
