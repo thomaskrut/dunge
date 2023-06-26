@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
-
+	"sort"
 	"github.com/eiannone/keyboard"
 )
 
@@ -19,8 +19,8 @@ var (
 	currentState    keyProcessor
 	messages        messagePrompt
 	gameplay        gamePlay
-	activeMonsters  map[point]*monster
-	activeItems     map[point]*item
+	monstersOnMap   map[point]*monster
+	itemsOnMap      map[point]*item
 	validKeyPressed bool
 	gridOverlay     []string
 	itemsToDisplay  []*item
@@ -37,8 +37,8 @@ const (
 
 func init() {
 
-	activeMonsters = make(map[point]*monster)
-	activeItems = make(map[point]*item)
+	monstersOnMap = make(map[point]*monster)
+	itemsOnMap = make(map[point]*item)
 	charmap = newCharMap()
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -58,7 +58,7 @@ func init() {
 
 func moveMonsters() {
 
-	for i, m := range activeMonsters {
+	for i, m := range monstersOnMap {
 
 		if m.moveCounter() >= 1 {
 			var newDirection direction
@@ -69,8 +69,8 @@ func moveMonsters() {
 			for i := 0; !m.move(newDirection) && i < 10; i++ {
 				newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
 			}
-			delete(activeMonsters, i)
-			activeMonsters[m.position] = m
+			delete(monstersOnMap, i)
+			monstersOnMap[m.position] = m
 		}
 
 	}
@@ -78,7 +78,7 @@ func moveMonsters() {
 
 func checkForItems() {
 
-	if i, ok := activeItems[p.position]; ok {
+	if i, ok := itemsOnMap[p.position]; ok {
 		messages.push("There is " + i.Prefix + " " + i.Name + " here, press 5 to pick up")
 	}
 
@@ -86,14 +86,13 @@ func checkForItems() {
 
 func pickUpItem() {
 
-	if i, ok := activeItems[p.position]; ok {
+	if i, ok := itemsOnMap[p.position]; ok {
 		p.items.add(i)
-		delete(activeItems, p.position)
+		delete(itemsOnMap, p.position)
 		messages.push("You picked up " + i.Prefix + " " + i.Name)
 	}
 
 }
-
 
 func generateMonsters(list monsterList, numberOfIterations int) {
 
@@ -105,7 +104,8 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 			if rand < m.Prob {
 				newMonster := m
 				newMonster.setPosition(getEmptyPoint(&d))
-				activeMonsters[newMonster.position] = &newMonster
+				newMonster.items = newInventory()
+				monstersOnMap[newMonster.position] = &newMonster
 			}
 		}
 	}
@@ -121,15 +121,19 @@ func generateOverlay(menu bool, verb string) {
 	itemsToDisplay = nil
 	cursor := "| "
 
-	for _, item := range p.items.all() {
+	for item := range p.items.all() {
 		for _, v := range item.Verbs {
 			if v == verb {
 				itemToAdd := item
-				itemsToDisplay = append(itemsToDisplay, &itemToAdd)
+				itemsToDisplay = append(itemsToDisplay, itemToAdd)
 				break
 			}
 		}
 	}
+
+	sort.Slice(itemsToDisplay, func(i, j int) bool {
+		return itemsToDisplay[i].Name < itemsToDisplay[j].Name
+	})
 
 	if len(itemsToDisplay) == 0 {
 		messages.push("No items to " + verb)
@@ -145,7 +149,7 @@ func generateOverlay(menu bool, verb string) {
 	}
 
 	frameTop := ""
-	for i:=0; i < longestItemName + 8; i++ {
+	for i := 0; i < longestItemName+8; i++ {
 		frameTop += "-"
 	}
 
@@ -180,7 +184,7 @@ func generateItems(list itemList, numberOfIterations int) {
 			if rand < i.Prob {
 				newItem := i
 				newItem.setPosition(getEmptyPoint(&d))
-				activeItems[newItem.position] = &newItem
+				itemsOnMap[newItem.position] = &newItem
 			}
 		}
 	}
@@ -219,7 +223,7 @@ func initDungeon() {
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, gridOverlay, 40, 40, activeMonsters, activeItems)
+	grindToPrint := render(&d, p, gridOverlay, 40, 40, monstersOnMap, itemsOnMap)
 	fmt.Println()
 	fmt.Println(string(grindToPrint))
 }

@@ -1,23 +1,28 @@
 package main
 
 type inventory struct {
-	items []item
+	items map[*item]bool
+}
+
+func newInventory() inventory {
+	return inventory{
+		items: make(map[*item]bool),
+	}
 }
 
 func (i *inventory) add(item *item) {
-	i.items = append(i.items, *item)
+	i.items[item] = true
 }
 
-//TODO item not removed correctly
-func (i *inventory) remove(index int) {
-	i.items = append(i.items[:index], i.items[index+1:]...)
+func (i *inventory) remove(item *item) {
+	delete(i.items, item)
 }
 
 func (i *inventory) size() int {
 	return len(i.items)
 }
 
-func (i *inventory) all() []item {
+func (i *inventory) all() map[*item]bool {
 	return i.items
 }
 

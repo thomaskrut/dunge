@@ -15,7 +15,7 @@ func (p *player) attemptMove(dir direction) bool {
 		newPoint := p.position
 		newPoint.move(dir)
 
-		if m, ok := activeMonsters[newPoint]; ok {
+		if m, ok := monstersOnMap[newPoint]; ok {
 			p.attack(m)
 			return true
 		}
@@ -72,5 +72,6 @@ func newPlayer(char rune) player {
 		lightsource: 4,
 		strength:    8,
 		hp:          16,
+		items:       newInventory(),
 	}
 }

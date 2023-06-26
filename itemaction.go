@@ -12,9 +12,10 @@ func init() {
 
 func eatItem() {
 
-	for i, currentItem := range itemsToDisplay {
-		if i == selectedItem {
-			p.items.remove(i)
+	for index, _ := range itemsToDisplay {
+		if index == selectedItem {
+			currentItem := itemsToDisplay[index]
+			p.items.remove(currentItem)
 			messages.push("You ate " + currentItem.Prefix + " " + currentItem.Name)
 			return
 		}
@@ -28,7 +29,7 @@ func dropItem() {
 
 			newPosition := p.getPosition()
 
-			for activeItems[newPosition] != nil {
+			for itemsOnMap[newPosition] != nil {
 				dir := randomDirection(None, true, true)
 				if newPosition.getPossibleDirections(&d)[dir] {
 					newPosition.move(dir)
@@ -36,8 +37,8 @@ func dropItem() {
 			}
 
 			currentItem.setPosition(newPosition)
-			activeItems[currentItem.position] = currentItem
-			p.items.remove(i)
+			itemsOnMap[currentItem.position] = currentItem
+			p.items.remove(currentItem)
 			messages.push("You dropped " + currentItem.Prefix + " " + currentItem.Name)
 			return
 		}
