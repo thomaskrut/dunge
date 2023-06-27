@@ -22,6 +22,12 @@ func throwItem(i *item) keyProcessor {
 		for count := 0; count <= maxSteps; count++ {
 			if newPosition.getPossibleDirections(&d)[dir] {
 				newPosition.move(dir)
+				
+				if monstersOnMap[newPosition] != nil {
+					monstersOnMap[newPosition].takeDamage(i.Weight / 100)
+					messages.push("You hit the " + monstersOnMap[newPosition].Name + " with " + i.Prefix + " " + i.Name)
+					break
+				}
 			} else {
 				break
 			}

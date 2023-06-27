@@ -1,7 +1,7 @@
 {
     "monsters": [
         {
-            "name": "Small rat",
+            "name": "small rat",
             "char": "r",
             "prob": 250,
             "attack": ["bites", "scratches"],
@@ -14,7 +14,7 @@
             "speed": 1
         },
         {
-            "name": "Slow moving fungus",
+            "name": "slow moving fungus",
             "char": "F",
             "prob": 150,
             "attack": ["clutches at", "breathes at", "touches"],
