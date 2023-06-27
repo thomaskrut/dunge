@@ -26,17 +26,16 @@ func (it itemSelect) processKey(char rune) (validKey bool) {
 	case northKey:
 		selectedItem--
 		if selectedItem < 0 {
-			selectedItem = len(itemsToDisplay) - 1
+			selectedItem = len(menuItems) - 1
 		}
 	case southKey:
 		selectedItem++
-		if selectedItem > len(itemsToDisplay)-1 {
+		if selectedItem > len(menuItems)-1 {
 			selectedItem = 0
 		}
 	case restKey:
-		itemActions[it.verb](itemsToDisplay[selectedItem])
+		currentState = itemActions[it.verb](menuItems[selectedItem])
 		currentState.processTurn()
-		currentState = gameplay
 		return true
 	}
 	generateOverlay(true, it.verb)

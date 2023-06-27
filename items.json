@@ -6,6 +6,7 @@
             "char": "o",
             "prob": 950,
             "value": 10,
+            "weight": 300,
             "verbs": [
                 "eat",
                 "throw",
@@ -18,6 +19,7 @@
             "char": "#",
             "prob": 910,
             "value": 10,
+            "weight": 50,
             "verbs": [
                 "eat",
                 "throw",
@@ -30,6 +32,7 @@
             "char": ",",
             "prob": 910,
             "value": 10,
+            "weight": 100,
             "verbs": [
                 "throw",
                 "drop"

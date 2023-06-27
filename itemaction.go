@@ -1,21 +1,48 @@
 package main
 
 var (
-	itemActions map[string]func(i *item)
+	itemActions map[string]func(i *item) keyProcessor
 )
 
 func init() {
-	itemActions = make(map[string]func(i *item))
+	itemActions = make(map[string]func(i *item) keyProcessor)
 	itemActions["eat"] = eatItem
 	itemActions["drop"] = dropItem
+	itemActions["throw"] = throwItem
 }
 
-func eatItem(i *item) {
+func throwItem(i *item) keyProcessor {
+
+	action := func(dir direction) {
+
+		maxSteps := 1000 / i.Weight
+
+		newPosition := p.position
+
+		for count := 0; count <= maxSteps; count++ {
+			if newPosition.getPossibleDirections(&d)[dir] {
+				newPosition.move(dir)
+			} else {
+				break
+			}
+		}
+
+		i.setPosition(newPosition)
+		itemsOnMap[newPosition] = i
+		p.items.remove(i)
+	}
+	
+	return newDirSelect(action)
+	
+}
+
+func eatItem(i *item) keyProcessor {
 	p.items.remove(i)
 	messages.push("You ate " + i.Prefix + " " + i.Name)
+	return gameplay
 }
 
-func dropItem(i *item) {
+func dropItem(i *item) keyProcessor {
 
 	newPosition := p.getPosition()
 
@@ -30,5 +57,6 @@ func dropItem(i *item) {
 	itemsOnMap[i.position] = i
 	p.items.remove(i)
 	messages.push("You dropped " + i.Prefix + " " + i.Name)
+	return gameplay
 
 }

@@ -17,6 +17,7 @@ type item struct {
 	Char     string `json:"char"`
 	Prob     int    `json:"prob"`
 	Value    int    `json:"value"`
+	Weight   int    `json:"weight"`
 	Verbs    []string `json:"verbs"`
 }
 

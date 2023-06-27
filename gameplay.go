@@ -12,7 +12,6 @@ func (g gamePlay) processTurn() {
 	gridOverlay = nil
 	turn++
 	moveMonsters()
-	checkForItems()
 }
 
 func (g gamePlay) processKey(char rune) (validKey bool) {
@@ -54,6 +53,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		moveSuccessful = p.attemptMove(None)
 	}
 	if moveSuccessful {
+		checkForItems()
 		g.processTurn()
 		return true
 	}

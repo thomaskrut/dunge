@@ -88,6 +88,9 @@ func (m monster) getChar() rune {
 }
 
 func (m *monster) move(dir direction) bool {
+
+	
+
 	if m.position.getPossibleDirections(&d)[dir] {
 
 		newPoint := m.position
@@ -103,15 +106,6 @@ func (m *monster) move(dir direction) bool {
 		}
 
 		m.position.move(dir)
-
-		if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
-			if d.grid[m.position.x][m.position.y]&lit == lit {
-				messages.push("The " + m.Name + " picked up " + item.Prefix + " " + item.Name)
-			}
-
-			m.items.add(item)
-			delete(itemsOnMap, m.position)
-		}
 
 		return true
 	}

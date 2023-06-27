@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"sort"
+	"strconv"
+
 	"github.com/eiannone/keyboard"
 )
 
@@ -23,7 +24,7 @@ var (
 	itemsOnMap      map[point]*item
 	validKeyPressed bool
 	gridOverlay     []string
-	itemsToDisplay  []*item
+	menuItems       []*item
 	selectedItem    int
 	turn            int
 )
@@ -61,6 +62,16 @@ func moveMonsters() {
 	for i, m := range monstersOnMap {
 
 		if m.moveCounter() >= 1 {
+
+			if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
+				if d.grid[m.position.x][m.position.y]&lit == lit {
+					messages.push("The " + m.Name + " picked up " + item.Prefix + " " + item.Name)
+				}
+				m.items.add(item)
+				delete(itemsOnMap, m.position)
+				continue
+			}
+
 			var newDirection direction
 			newDirection.connect(m.getPosition(), p.getPosition())
 			if !m.MovesDiagonally {
@@ -118,31 +129,31 @@ func generateOverlay(menu bool, verb string) {
 		return
 	}
 	gridOverlay = nil
-	itemsToDisplay = nil
+	menuItems = nil
 	cursor := "| "
 
 	for item := range p.items.all() {
 		for _, v := range item.Verbs {
 			if v == verb {
 				itemToAdd := item
-				itemsToDisplay = append(itemsToDisplay, itemToAdd)
+				menuItems = append(menuItems, itemToAdd)
 				break
 			}
 		}
 	}
 
-	sort.SliceStable(itemsToDisplay, func(i, j int) bool {
-		return itemsToDisplay[i].Name < itemsToDisplay[j].Name
+	sort.SliceStable(menuItems, func(i, j int) bool {
+		return menuItems[i].Name < menuItems[j].Name
 	})
 
-	if len(itemsToDisplay) == 0 {
+	if len(menuItems) == 0 {
 		messages.push("No items to " + verb)
 		currentState = gameplay
 		return
 	}
 
 	longestItemName := 0
-	for _, item := range itemsToDisplay {
+	for _, item := range menuItems {
 		if len(item.Name) > longestItemName {
 			longestItemName = len(item.Name)
 		}
@@ -161,7 +172,7 @@ func generateOverlay(menu bool, verb string) {
 		gridOverlay = append(gridOverlay, "| Inventory:")
 	}
 
-	for index, item := range itemsToDisplay {
+	for index, item := range menuItems {
 		if menu {
 			if index == selectedItem {
 				cursor = "| > "
