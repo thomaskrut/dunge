@@ -18,6 +18,19 @@ const (
 	throwKey     = 116
 )
 
+var (
+	keyToDirMap = map[rune]direction{
+		northKey:     North,
+		southKey:     South,
+		eastKey:      East,
+		westKey:      West,
+		northWestKey: NorthWest,
+		northEastKey: NorthEast,
+		southWestKey: SouthWest,
+		southEastKey: SouthEast,
+	}
+)
+
 type keyProcessor interface {
 	processKey(char rune) (validKey bool)
 	processTurn()

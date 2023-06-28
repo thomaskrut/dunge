@@ -41,12 +41,7 @@ func init() {
 	monstersOnMap = make(map[point]*monster)
 	itemsOnMap = make(map[point]*item)
 	charmap = newCharMap()
-	charmap.add(wall, ' ')
-	charmap.add(empty, ' ')
-	charmap.add(empty|visited, ' ')
-	charmap.add(empty|lit, '.')
-	charmap.add(visited|wall, 9637)
-	charmap.add(lit|wall, 9639)
+	
 
 	d = newDungeon(width, height)
 	initDungeon()
@@ -65,7 +60,7 @@ func moveMonsters() {
 
 			if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
 				if d.grid[m.position.x][m.position.y]&lit == lit {
-					messages.push("The " + m.Name + " picked up " + item.Prefix + " " + item.Name)
+					messages.push("The "+m.Name+" picked up "+item.Prefix+" "+item.Name, gameplay)
 				}
 				m.items.add(item)
 				delete(itemsOnMap, m.position)
@@ -90,7 +85,7 @@ func moveMonsters() {
 func checkForItems() {
 
 	if i, ok := itemsOnMap[p.position]; ok {
-		messages.push("There is " + i.Prefix + " " + i.Name + " here, press 5 to pick up")
+		messages.push("There is "+i.Prefix+" "+i.Name+" here, press 5 to pick up", gameplay)
 	}
 
 }
@@ -100,7 +95,7 @@ func pickUpItem() {
 	if i, ok := itemsOnMap[p.position]; ok {
 		p.items.add(i)
 		delete(itemsOnMap, p.position)
-		messages.push("You picked up " + i.Prefix + " " + i.Name)
+		messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
 	}
 
 }
@@ -124,7 +119,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 
 func generateOverlay(menu bool, verb string) {
 	if p.items.size() == 0 {
-		messages.push("Inventory empty")
+		messages.push("Inventory empty", gameplay)
 		currentState = gameplay
 		return
 	}
@@ -147,7 +142,7 @@ func generateOverlay(menu bool, verb string) {
 	})
 
 	if len(menuItems) == 0 {
-		messages.push("No items to " + verb)
+		messages.push("No items to "+verb, gameplay)
 		currentState = gameplay
 		return
 	}
@@ -234,7 +229,7 @@ func initDungeon() {
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, gridOverlay, 40, 40, monstersOnMap, itemsOnMap)
+	grindToPrint := render(&d, p, gridOverlay, 60, 40, monstersOnMap, itemsOnMap)
 	fmt.Println()
 	fmt.Println(string(grindToPrint))
 }
@@ -247,7 +242,7 @@ func printMessages() {
 	switch {
 	case len(messages.messageQueue) == 1:
 		fmt.Print(messages.pop())
-		currentState = gameplay
+		currentState = messages.revertToState
 
 	case len(messages.messageQueue) > 1:
 		fmt.Print(messages.pop())

@@ -29,7 +29,7 @@ func (p *player) attemptMove(dir direction) bool {
 }
 
 func (p *player) attack(m *monster) {
-	messages.push("You hit the " + m.Name)
+	messages.push("You hit the " + m.Name, gameplay)
 	m.takeDamage(p.strength)
 }
 

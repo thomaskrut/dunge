@@ -31,10 +31,10 @@ type monster struct {
 func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
 	if m.Hp <= 0 {
-		messages.push("You killed the " + m.Name)
+		messages.push("You killed the " + m.Name, gameplay)
 		if m.items.size() > 0 {
 			m.dropAllItems()
-			messages.push("The " + m.Name + " scattered its belongings on the floor")
+			messages.push("The " + m.Name + " scattered its belongings on the floor", gameplay)
 		}
 		delete(monstersOnMap, m.position)
 	}
@@ -60,7 +60,7 @@ func (m *monster) dropAllItems() {
 
 func (m *monster) attack(p *player) {
 	if m.Hp > 0 {
-		messages.push(m.Name + " " + m.AttackVerbs[randomNumber(len(m.AttackVerbs))] + " you")
+		messages.push("The " + m.Name + " " + m.AttackVerbs[randomNumber(len(m.AttackVerbs))] + " you", gameplay)
 		p.takeDamage(m.Str)
 	}
 }

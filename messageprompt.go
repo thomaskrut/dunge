@@ -1,10 +1,12 @@
 package main
 
 type messagePrompt struct {
-	messageQueue []string
+	messageQueue  []string
+	revertToState keyProcessor
 }
 
-func (m *messagePrompt) push(message string) {
+func (m *messagePrompt) push(message string, revertToState keyProcessor) {
+	m.revertToState = revertToState
 	m.messageQueue = append(m.messageQueue, message)
 }
 

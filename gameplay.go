@@ -17,6 +17,11 @@ func (g gamePlay) processTurn() {
 func (g gamePlay) processKey(char rune) (validKey bool) {
 	//fmt.Println(char)
 	var moveSuccessful bool = false
+
+	if dir, ok := keyToDirMap[char]; ok {
+		moveSuccessful = p.attemptMove(dir)
+	}
+
 	switch char {
 	case quitKey:
 		os.Exit(0)
@@ -32,22 +37,6 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 	case throwKey:
 		currentState = newItemSelect("throw")
 		return true
-	case northKey:
-		moveSuccessful = p.attemptMove(North)
-	case southKey:
-		moveSuccessful = p.attemptMove(South)
-	case eastKey:
-		moveSuccessful = p.attemptMove(East)
-	case westKey:
-		moveSuccessful = p.attemptMove(West)
-	case northWestKey:
-		moveSuccessful = p.attemptMove(NorthWest)
-	case northEastKey:
-		moveSuccessful = p.attemptMove(NorthEast)
-	case southWestKey:
-		moveSuccessful = p.attemptMove(SouthWest)
-	case southEastKey:
-		moveSuccessful = p.attemptMove(SouthEast)
 	case restKey:
 		pickUpItem()
 		moveSuccessful = p.attemptMove(None)

@@ -25,7 +25,7 @@ func throwItem(i *item) keyProcessor {
 				
 				if monstersOnMap[newPosition] != nil {
 					monstersOnMap[newPosition].takeDamage(i.Weight / 100)
-					messages.push("You hit the " + monstersOnMap[newPosition].Name + " with " + i.Prefix + " " + i.Name)
+					messages.push("You hit the " + monstersOnMap[newPosition].Name + " with " + i.Prefix + " " + i.Name, gameplay)
 					break
 				}
 			} else {
@@ -38,13 +38,15 @@ func throwItem(i *item) keyProcessor {
 		p.items.remove(i)
 	}
 	
+	messages.push("Which direction?", newDirSelect(action))
+
 	return newDirSelect(action)
 	
 }
 
 func eatItem(i *item) keyProcessor {
 	p.items.remove(i)
-	messages.push("You ate " + i.Prefix + " " + i.Name)
+	messages.push("You ate " + i.Prefix + " " + i.Name, gameplay)
 	return gameplay
 }
 
@@ -62,7 +64,7 @@ func dropItem(i *item) keyProcessor {
 	i.setPosition(newPosition)
 	itemsOnMap[i.position] = i
 	p.items.remove(i)
-	messages.push("You dropped " + i.Prefix + " " + i.Name)
+	messages.push("You dropped " + i.Prefix + " " + i.Name, gameplay)
 	return gameplay
 
 }
