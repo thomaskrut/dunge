@@ -1,11 +1,10 @@
 package main
 
-
 type characterMapper struct {
 	chars map[int]rune
 }
 
-func newCharMap() characterMapper {
+func initChapMap() characterMapper {
 	charmap := characterMapper{make(map[int]rune)}
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
@@ -13,9 +12,10 @@ func newCharMap() characterMapper {
 	charmap.add(empty|lit, '.')
 	charmap.add(visited|wall, 9617)
 	charmap.add(lit|wall, 9618)
+	
 	/*
-	charmap.add(visited|wall, 9637)
-	charmap.add(lit|wall, 9639)
+		charmap.add(visited|wall, 9637)
+		charmap.add(lit|wall, 9639)
 	*/
 	return charmap
 }

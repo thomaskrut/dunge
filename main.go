@@ -22,6 +22,7 @@ var (
 	gameplay        gamePlay
 	monstersOnMap   map[point]*monster
 	itemsOnMap      map[point]*item
+	featuresOnMap   map[point]*feature
 	validKeyPressed bool
 	gridOverlay     []string
 	menuItems       []*item
@@ -40,14 +41,14 @@ func init() {
 
 	monstersOnMap = make(map[point]*monster)
 	itemsOnMap = make(map[point]*item)
-	charmap = newCharMap()
-	
+	featuresOnMap = make(map[point]*feature)
+	charmap = initChapMap()
 
 	d = newDungeon(width, height)
 	initDungeon()
 	p = newPlayer('@')
 	turn = 0
-	generateMonsters(readMonsterTemplate(), 50)
+	generateMonsters(readMonsterTemplate(), 30)
 	generateItems(readItemsTemplate(), 50)
 
 }
@@ -226,10 +227,12 @@ func initDungeon() {
 
 	}
 
+	d.generateDoors(100)
+
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, gridOverlay, 60, 40, monstersOnMap, itemsOnMap)
+	grindToPrint := render(&d, p, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
 	fmt.Println()
 	fmt.Println(string(grindToPrint))
 }

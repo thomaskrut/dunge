@@ -13,7 +13,7 @@ func init() {
 
 func throwItem(i *item) keyProcessor {
 
-	action := func(dir direction) {
+	action := func(dir direction) bool {
 
 		maxSteps := 1000 / i.Weight
 
@@ -36,6 +36,7 @@ func throwItem(i *item) keyProcessor {
 		i.setPosition(newPosition)
 		itemsOnMap[newPosition] = i
 		p.items.remove(i)
+		return true
 	}
 	
 	messages.push("Which direction?", newDirSelect(action))

@@ -49,6 +49,13 @@ func connectWithCorridor(d *dungeon, origin, destination point) {
 		if currentPosition.isOutOfBounds(d, 2) {
 			break
 		}
+
+		/*if d.grid[currentPosition.x][currentPosition.y] == wall {
+			if(randomNumber(100) == 1) {
+				featuresOnMap[currentPosition] = createDoor(currentPosition)
+			}
+		}*/
+
 		d.setPoint(currentPosition, empty)
 		if currentPosition == destination {
 			break
@@ -85,4 +92,40 @@ func (d *dungeon) createRoom(startingPoint point, width, height int) (center poi
 		}
 	}
 	return center, nil
+}
+
+func (d *dungeon) generateDoors(numberOfDoors int) {
+
+	count := 0
+
+	for count < numberOfDoors {
+
+		p := getEmptyPoint(d)
+
+		possibleDirections := p.getPossibleDirections(d)
+
+		delete(possibleDirections, NorthEast)
+		delete(possibleDirections, SouthEast)
+		delete(possibleDirections, NorthEast)
+		delete(possibleDirections, NorthWest)
+		delete(possibleDirections, None)
+
+		if len(possibleDirections) == 2 {
+
+			if _, ok := possibleDirections[North]; ok {
+				if _, ok := possibleDirections[South]; ok {
+					featuresOnMap[p] = createDoor(p)
+					count++
+				}
+			} else if _, ok := possibleDirections[East]; ok {
+				if _, ok := possibleDirections[West]; ok {
+					featuresOnMap[p] = createDoor(p)
+					count++
+				}
+			}
+
+		}
+
+	}
+
 }

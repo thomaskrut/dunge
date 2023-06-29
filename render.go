@@ -1,6 +1,6 @@
 package main
 
-func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item) (toPrint []rune) {
+func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
@@ -26,6 +26,10 @@ func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeigh
 			}
 
 			var char rune
+
+			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) {
+				char = f.getChar()
+			}
 
 			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit {
 				char = i.getChar()

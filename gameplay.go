@@ -1,7 +1,7 @@
 package main
 
 import (
-	_"fmt"
+	//"fmt"
 	"os"
 )
 
@@ -25,6 +25,9 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 	switch char {
 	case quitKey:
 		os.Exit(0)
+	case openKey:
+		open()
+		return true
 	case inventoryKey:
 		generateOverlay(false, "drop")
 		return true
