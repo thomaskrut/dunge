@@ -15,7 +15,9 @@ const (
 	inventoryKey = 105
 	dropKey      = 100
 	eatKey       = 101
+	lookKey      = 108
 	openKey      = 111
+	closeKey     = 99
 	throwKey     = 116
 )
 

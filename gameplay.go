@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"os"
 )
 
@@ -15,7 +15,7 @@ func (g gamePlay) processTurn() {
 }
 
 func (g gamePlay) processKey(char rune) (validKey bool) {
-	//fmt.Println(char)
+	fmt.Println(char)
 	var moveSuccessful bool = false
 
 	if dir, ok := keyToDirMap[char]; ok {
@@ -27,6 +27,9 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		os.Exit(0)
 	case openKey:
 		open()
+		return true
+	case lookKey:
+		look()
 		return true
 	case inventoryKey:
 		generateOverlay(false, "drop")

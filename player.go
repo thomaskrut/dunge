@@ -20,6 +20,8 @@ func (p *player) attemptMove(dir direction) bool {
 			return true
 		}
 
+		
+
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)
 		p.position.move(dir)
 		alterAreaVisibility(&d, p.position, lit, p.lightsource)
