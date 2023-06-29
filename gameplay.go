@@ -28,6 +28,9 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 	case openKey:
 		open()
 		return true
+	case closeKey:
+		close()
+		return true
 	case lookKey:
 		look()
 		return true

@@ -27,15 +27,15 @@ func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeigh
 
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) {
+			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) && d.grid[x][y]&arrow != arrow {
 				char = f.getChar()
 			}
 
-			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit {
+			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit && d.grid[x][y]&arrow != arrow {
 				char = i.getChar()
 			}
 
-			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit {
+			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit && d.grid[x][y]&arrow != arrow {
 				char = m.getChar()
 			}
 
@@ -43,7 +43,7 @@ func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeigh
 				char = charmap.chars[(d.getPoint(point{x, y}))]
 			}
 
-			if p.getPosition() == (point{x, y}) {
+			if p.getPosition() == (point{x, y}) && d.grid[x][y]&arrow != arrow {
 				char = p.getChar()
 			}
 			toPrint = append(toPrint, char)

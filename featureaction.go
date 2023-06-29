@@ -26,6 +26,34 @@ func open() {
 
 }
 
+func close() {
+
+	action := func(dir direction) bool {
+		newPosition := p.getPosition()
+		newPosition.move(dir)
+		if f, ok := featuresOnMap[newPosition]; ok {
+			if f.name == "door" && !f.obstacle {
+				f.obstacle = true
+				alterAreaVisibility(&d, p.position, visited, p.lightsource)
+				d.grid[newPosition.x][newPosition.y] = wall
+				p.attemptMove(None)
+				f.char = "+"
+				messages.push("You closed the door", gameplay)
+				return true
+			} else {
+				messages.push("You can't close that", gameplay)
+				return false
+			}
+		} else {
+			messages.push("There is nothing to close there", gameplay)
+			return false
+		}
+	}
+	messages.push("Which direction?", newDirSelect(action))
+
+}
+
+
 func look() {
 
 	action := func(dir direction) bool {
@@ -42,15 +70,20 @@ func look() {
 
 			if f, ok := featuresOnMap[currentPosition]; ok {
 				messages.push("You see a " + f.name, gameplay)
+				d.grid[currentPosition.x][currentPosition.y+1] = d.grid[currentPosition.x][currentPosition.y+1] | arrow
+				return false
 			}
 
 			if m, ok := monstersOnMap[currentPosition]; ok {
 				messages.push("You see a " + m.Name, gameplay)
+				d.grid[currentPosition.x][currentPosition.y+1] = d.grid[currentPosition.x][currentPosition.y+1] | arrow
+				return false
 			}
 
 			if i, ok := itemsOnMap[currentPosition]; ok {
 				messages.push("You see " + i.Prefix + " " + i.Name, gameplay)
 				d.grid[currentPosition.x][currentPosition.y+1] = d.grid[currentPosition.x][currentPosition.y+1] | arrow
+				return false
 			}
 
 		}

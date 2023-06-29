@@ -30,6 +30,6 @@ func (ds dirSelect) processKey(char rune) (validKey bool) {
 		gridOverlay = nil
 		return true
 	}
-	//default: return false?
+	
 	return false
 }
