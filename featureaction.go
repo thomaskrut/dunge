@@ -50,6 +50,7 @@ func look() {
 
 			if i, ok := itemsOnMap[currentPosition]; ok {
 				messages.push("You see " + i.Prefix + " " + i.Name, gameplay)
+				d.grid[currentPosition.x][currentPosition.y+1] = d.grid[currentPosition.x][currentPosition.y+1] | arrow
 			}
 
 		}
