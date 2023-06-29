@@ -10,11 +10,17 @@ type feature struct {
 func createDoor(position point) *feature {
 	door := feature {
 		position: position,
-		char: "+",
 		name: "door",
-		obstacle: true,
 	}
-	d.grid[position.x][position.y] = wall
+	if randomNumber(2) == 1 {
+		door.obstacle = true
+		door.char = "+"
+		d.grid[position.x][position.y] = wall
+	} else {
+		door.obstacle = false
+		door.char = "-"
+	}
+	
 	return &door
 }
 
