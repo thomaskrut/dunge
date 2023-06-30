@@ -41,7 +41,7 @@ func throwItem(i *item) keyProcessor {
 	
 	messages.push("Which direction?", newDirSelect(action))
 
-	return newDirSelect(action)
+	return messages
 	
 }
 
