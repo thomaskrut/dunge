@@ -1,12 +1,14 @@
 package main
 
-func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
+func render(d *dungeon, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
 
 	rowCounter := 0
 	charCounter := 0
+
+	arrow := arrows.pop()
 
 	for y := p.position.y - viewportHeight; y < p.position.y + viewportHeight; y++ {
 
@@ -27,15 +29,15 @@ func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeigh
 
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) && d.grid[x][y]&arrow != arrow {
+			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) {
 				char = f.getChar()
 			}
 
-			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit && d.grid[x][y]&arrow != arrow {
+			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit {
 				char = i.getChar()
 			}
 
-			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit && d.grid[x][y]&arrow != arrow {
+			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit {
 				char = m.getChar()
 			}
 
@@ -43,9 +45,14 @@ func render(d *dungeon, p player, overlay []string, viewportWidth, viewportHeigh
 				char = charmap.chars[(d.getPoint(point{x, y}))]
 			}
 
-			if p.getPosition() == (point{x, y}) && d.grid[x][y]&arrow != arrow {
+			if p.getPosition() == (point{x, y}) {
 				char = p.getChar()
 			}
+
+			if arrow.x == x && arrow.y == y {
+				char = '^'
+			}
+
 			toPrint = append(toPrint, char)
 		}
 		toPrint = append(toPrint, '\n')

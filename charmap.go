@@ -12,10 +12,6 @@ func initChapMap() characterMapper {
 	charmap.add(empty|lit, '.')
 	charmap.add(visited|wall, 9617)
 	charmap.add(lit|wall, 9618)
-	charmap.add(lit|empty|arrow, '^')
-	charmap.add(lit|wall|arrow, '^')
-	charmap.add(visited|wall|arrow, '^')
-	charmap.add(visited|empty|arrow, '^')
 	
 	/*
 		charmap.add(visited|wall, 9637)

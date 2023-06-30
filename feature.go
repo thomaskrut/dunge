@@ -24,6 +24,8 @@ func createDoor(position point) *feature {
 	return &door
 }
 
+
+
 func (f feature) getChar() rune {
 	return rune(f.char[0])
 }

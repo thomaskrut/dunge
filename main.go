@@ -23,6 +23,7 @@ var (
 	monstersOnMap   map[point]*monster
 	itemsOnMap      map[point]*item
 	featuresOnMap   map[point]*feature
+	arrows          arrowQueue
 	validKeyPressed bool
 	gridOverlay     []string
 	menuItems       []*item
@@ -233,7 +234,7 @@ func initDungeon() {
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
+	grindToPrint := render(&d, p, &arrows, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
 	fmt.Println()
 	fmt.Println(string(grindToPrint))
 }
