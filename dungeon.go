@@ -49,14 +49,12 @@ func connectWithCorridor(d *dungeon, origin, destination point) {
 		if currentPosition.isOutOfBounds(d, 2) {
 			break
 		}
-
-		/*if d.grid[currentPosition.x][currentPosition.y] == wall {
-			if(randomNumber(100) == 1) {
-				featuresOnMap[currentPosition] = createDoor(currentPosition)
-			}
-		}*/
-
-		d.setPoint(currentPosition, empty)
+		if d.grid[currentPosition.x][currentPosition.y]&room == room {
+			d.setPoint(currentPosition, empty | room)	
+		} else {
+			d.setPoint(currentPosition, empty)
+		}
+		
 		if currentPosition == destination {
 			break
 		}
@@ -88,7 +86,7 @@ func (d *dungeon) createRoom(startingPoint point, width, height int) (center poi
 			if (d.getPoint(point{x: i, y: j}) == empty) {
 				return center, errors.New("space already empty")
 			}
-			d.setPoint(point{x: i, y: j}, empty)
+			d.setPoint(point{x: i, y: j}, empty | room)
 		}
 	}
 	return center, nil

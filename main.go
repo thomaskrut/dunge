@@ -36,7 +36,7 @@ const (
 	empty = 1 << iota
 	visited
 	lit
-	arrow
+	room
 )
 
 func init() {

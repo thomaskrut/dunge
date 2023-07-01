@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type player struct {
 	position    point
 	char        rune
@@ -20,10 +22,15 @@ func (p *player) attemptMove(dir direction) bool {
 			return true
 		}
 
-		
-
 		alterAreaVisibility(&d, p.position, visited, p.lightsource)
+		
+		if d.grid[newPoint.x][newPoint.y]&room == room {
+			fmt.Println("room1")
+			lightRoom(newPoint)
+		}
+		
 		p.position.move(dir)
+		
 		alterAreaVisibility(&d, p.position, lit, p.lightsource)
 		return true
 	}
@@ -39,21 +46,38 @@ func (p *player) takeDamage(damage int) {
 	p.hp -= damage
 }
 
-func alterAreaVisibility(d *dungeon, p point, value int, currentDepth int) {
+func alterAreaVisibility(d *dungeon, p point, state int, currentDepth int) {
 	if currentDepth == 0 {
 		return
 	}
 	for _, dir := range getAllDirections() {
 		newPoint := p
 		newPoint.move(dir)
-		if d.grid[newPoint.x][newPoint.y]&empty == empty {
-			d.grid[newPoint.x][newPoint.y] = empty | value
-			alterAreaVisibility(d, newPoint, value, currentDepth-1)
+		if d.grid[newPoint.x][newPoint.y]&room == room {
+			d.grid[newPoint.x][newPoint.y] = empty | room | state
+			alterAreaVisibility(d, newPoint, state, currentDepth-1)
+		} else if d.grid[newPoint.x][newPoint.y]&empty == empty {
+			d.grid[newPoint.x][newPoint.y] = empty | state
+			alterAreaVisibility(d, newPoint, state, currentDepth-1)
 		} else {
-			d.grid[newPoint.x][newPoint.y] = value
+			d.grid[newPoint.x][newPoint.y] = state
 		}
 	}
+}
 
+func lightRoom(pos point) {
+	
+	d.grid[pos.x][pos.y] = empty | room | lit
+	for _, dir := range getAllDirections() {
+		fmt.Println("room")
+		newPoint := pos
+		newPoint.move(dir)
+		if d.grid[newPoint.x][newPoint.y]&room == room && d.grid[newPoint.x][newPoint.y]&lit != lit {
+			lightRoom(newPoint)
+		} else if d.grid[newPoint.x][newPoint.y] == 0 {
+			d.grid[newPoint.x][newPoint.y] = wall | visited
+		}
+	}
 }
 
 func (pl player) getPosition() point {

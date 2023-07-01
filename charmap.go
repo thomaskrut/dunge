@@ -8,8 +8,11 @@ func initChapMap() characterMapper {
 	charmap := characterMapper{make(map[int]rune)}
 	charmap.add(wall, ' ')
 	charmap.add(empty, ' ')
+	charmap.add(empty|room, ' ')
+	charmap.add(empty|room|visited, ' ')
 	charmap.add(empty|visited, ' ')
 	charmap.add(empty|lit, '.')
+	charmap.add(empty|room|lit, '.')
 	charmap.add(visited|wall, 9617)
 	charmap.add(lit|wall, 9618)
 	
