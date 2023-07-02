@@ -1,13 +1,13 @@
 package main
 
-type currentRoom struct {
+type scannedRoom struct {
 	points []point
 }
 
-func (r *currentRoom) add(p point) {
+func (r *scannedRoom) add(p point) {
 	r.points = append(r.points, p)
 }
 
-func (r *currentRoom) clear() {
+func (r *scannedRoom) clear() {
 	r.points = nil
 }

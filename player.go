@@ -10,7 +10,7 @@ type player struct {
 	hp          int
 	items       inventory
 	inRoom      bool
-	room        currentRoom
+	currentRoom scannedRoom
 }
 
 func (p *player) attemptMove(dir direction) bool {
@@ -31,13 +31,13 @@ func (p *player) attemptMove(dir direction) bool {
 			p.inRoom = true
 		}
 
-		if p.inRoom && d.grid[newPoint.x][newPoint.y]&room == room{
+		if p.inRoom && d.grid[newPoint.x][newPoint.y]&room == room {
 			setRoomState(lit)
 		}
 
 		if p.inRoom && d.grid[newPoint.x][newPoint.y]&room != room {
 			setRoomState(visited)
-			p.room.clear()
+			p.currentRoom.clear()
 			p.inRoom = false
 		}
 
@@ -78,13 +78,13 @@ func alterAreaVisibility(d *dungeon, p point, state int, currentDepth int) {
 }
 
 func setRoomState(state int) {
-	for _, p := range p.room.points {
-		if d.grid[p.x][p.y]& room == room {
-			d.grid[p.x][p.y] = empty | room | state	
+	for _, p := range p.currentRoom.points {
+		if d.grid[p.x][p.y]&room == room {
+			d.grid[p.x][p.y] = empty | room | state
 		} else {
 			d.grid[p.x][p.y] = empty | state
 		}
-		
+
 	}
 }
 
@@ -96,10 +96,10 @@ func scanRoom(pos point, state int) {
 		newPoint := pos
 		newPoint.move(dir)
 		if d.grid[newPoint.x][newPoint.y]&room == room && d.grid[newPoint.x][newPoint.y]&state != state {
-			p.room.add(newPoint)
+			p.currentRoom.add(newPoint)
 			scanRoom(newPoint, state)
 		} else if d.grid[newPoint.x][newPoint.y]&empty == empty {
-			p.room.add(newPoint)
+			p.currentRoom.add(newPoint)
 		} else if d.grid[newPoint.x][newPoint.y] == 0 {
 			d.grid[newPoint.x][newPoint.y] = wall | visited
 		}
