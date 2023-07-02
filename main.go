@@ -50,7 +50,7 @@ func init() {
 	initDungeon()
 	p = newPlayer('@')
 	turn = 0
-	generateMonsters(readMonsterTemplate(), 30)
+	generateMonsters(readMonsterTemplate(), 0)
 	generateItems(readItemsTemplate(), 50)
 
 }
@@ -234,9 +234,10 @@ func initDungeon() {
 }
 
 func printDungeon() {
-	grindToPrint := render(&d, p, &arrows, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
+	gridToPrint := render(&d, p, &arrows, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
+	//gridToPrint := renderAll(&d, p, &arrows, gridOverlay, monstersOnMap, itemsOnMap, featuresOnMap)
 	fmt.Println()
-	fmt.Println(string(grindToPrint))
+	fmt.Println(string(gridToPrint))
 }
 
 func printStats() {
