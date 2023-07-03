@@ -1,10 +1,12 @@
 package main
 
 type feature struct {
-	position point
-	char     string
-	name     string
-	closed   bool
+	position    point
+	prefix      string
+	name        string
+	char        string
+	description string
+	closed      bool
 }
 
 func createDoor(position point) (*feature, bool) {
@@ -21,14 +23,17 @@ func createDoor(position point) (*feature, bool) {
 
 		door := feature{
 			position: position,
-			name:     "door",
+			prefix: "a",
+			name: "door",
 		}
 		if randomNumber(2) == 1 {
 			door.closed = true
 			door.char = "+"
+			door.description = "a closed door"
 		} else {
 			door.closed = false
 			door.char = "-"
+			door.description = "an open door"
 		}
 
 		if _, ok := possibleDirections[North]; ok {

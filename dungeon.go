@@ -90,6 +90,7 @@ func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center 
 
 	for i := startingPoint.x; i < startingPoint.x+width; i++ {
 		for j := startingPoint.y; j < startingPoint.y+height; j++ {
+			currentPoint := point{x: i, y: j}
 			if i == startingPoint.x+width-(width/2) {
 				center.x = i
 			}
@@ -97,10 +98,10 @@ func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center 
 				center.y = j
 			}
 
-			if (d.read(point{x: i, y: j}) == empty) {
+			if d.read(currentPoint) == empty {
 				return center, errors.New("space already empty")
 			}
-			d.write(point{x: i, y: j}, empty|room)
+			d.write(currentPoint, empty|room)
 		}
 	}
 	return center, nil
