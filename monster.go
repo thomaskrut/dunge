@@ -31,10 +31,10 @@ type monster struct {
 func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
 	if m.Hp <= 0 {
-		messages.push("You killed the " + m.Name, gameplay)
+		messages.push("You killed the "+m.Name, gameplay)
 		if m.items.size() > 0 {
 			m.dropAllItems()
-			messages.push("The " + m.Name + " scattered its belongings on the floor", gameplay)
+			messages.push("The "+m.Name+" scattered its belongings on the floor", gameplay)
 		}
 		delete(monstersOnMap, m.position)
 	}
@@ -48,7 +48,7 @@ func (m *monster) dropAllItems() {
 		for itemsOnMap[newPosition] != nil {
 
 			dir := randomDirection(None, true, true)
-			if newPosition.getPossibleDirections(&d)[dir] {
+			if newPosition.getPossibleDirections(&dungeon)[dir] {
 				newPosition.move(dir)
 			}
 		}
@@ -60,7 +60,7 @@ func (m *monster) dropAllItems() {
 
 func (m *monster) attack(p *player) {
 	if m.Hp > 0 {
-		messages.push("The " + m.Name + " " + m.AttackVerbs[randomNumber(len(m.AttackVerbs))] + " you", gameplay)
+		messages.push("The "+m.Name+" "+m.AttackVerbs[randomNumber(len(m.AttackVerbs))]+" you", gameplay)
 		p.takeDamage(m.Str)
 	}
 }
@@ -89,9 +89,7 @@ func (m monster) getChar() rune {
 
 func (m *monster) move(dir direction) bool {
 
-	
-
-	if m.position.getPossibleDirections(&d)[dir] {
+	if m.position.getPossibleDirections(&dungeon)[dir] {
 
 		newPoint := m.position
 		newPoint.move(dir)

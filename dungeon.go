@@ -4,28 +4,28 @@ import (
 	"errors"
 )
 
-type dungeon struct {
+type dungeonMap struct {
 	grid          [][]int
 	width, height int
 }
 
-func newDungeon(width, height int) dungeon {
+func newDungeon(width, height int) dungeonMap {
 	zeroedGrid := make([][]int, width)
 	for i := range zeroedGrid {
 		zeroedGrid[i] = make([]int, height)
 	}
-	return dungeon{grid: zeroedGrid, width: width, height: height}
+	return dungeonMap{grid: zeroedGrid, width: width, height: height}
 }
 
-func (d *dungeon) setPoint(p point, value int) {
+func (d *dungeonMap) write(p point, value int) {
 	d.grid[p.x][p.y] = value
 }
 
-func (d *dungeon) getPoint(p point) int {
+func (d *dungeonMap) read(p point) int {
 	return d.grid[p.x][p.y]
 }
 
-func getEmptyPoint(d *dungeon) point {
+func getEmptyPoint(d *dungeonMap) point {
 	for {
 		x := randomNumber(len(d.grid))
 		y := randomNumber(len(d.grid[0]))
@@ -35,7 +35,7 @@ func getEmptyPoint(d *dungeon) point {
 	}
 }
 
-func connectWithCorridor(d *dungeon, origin, destination point) {
+func connectWithCorridor(d *dungeonMap, origin, destination point) {
 	currentPosition := origin
 	var newDirection direction
 
@@ -50,18 +50,18 @@ func connectWithCorridor(d *dungeon, origin, destination point) {
 			break
 		}
 		if d.grid[currentPosition.x][currentPosition.y]&room == room {
-			d.setPoint(currentPosition, empty | room)	
+			d.write(currentPosition, empty|room)
 		} else {
-			d.setPoint(currentPosition, empty)
+			d.write(currentPosition, empty)
 		}
-		
+
 		if currentPosition == destination {
 			break
 		}
 	}
 }
 
-func (d *dungeon) createRandomRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
+func (d *dungeonMap) createRandomRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
 	startingPoint.move(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 3
 	roomHeight := randomNumber(maxHeight) + 3
@@ -72,7 +72,7 @@ func (d *dungeon) createRandomRoom(startingPoint point, maxWidth, maxHeight int)
 
 }
 
-func (d *dungeon) createRoom(startingPoint point, width, height int) (center point, err error) {
+func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center point, err error) {
 
 	for i := startingPoint.x; i < startingPoint.x+width; i++ {
 		for j := startingPoint.y; j < startingPoint.y+height; j++ {
@@ -83,16 +83,16 @@ func (d *dungeon) createRoom(startingPoint point, width, height int) (center poi
 				center.y = j
 			}
 
-			if (d.getPoint(point{x: i, y: j}) == empty) {
+			if (d.read(point{x: i, y: j}) == empty) {
 				return center, errors.New("space already empty")
 			}
-			d.setPoint(point{x: i, y: j}, empty | room)
+			d.write(point{x: i, y: j}, empty|room)
 		}
 	}
 	return center, nil
 }
 
-func (d *dungeon) generateDoors(numberOfDoors int) {
+func (d *dungeonMap) generateDoors(numberOfDoors int) {
 
 	count := 0
 

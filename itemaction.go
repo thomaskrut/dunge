@@ -20,12 +20,12 @@ func throwItem(i *item) keyProcessor {
 		newPosition := p.position
 
 		for count := 0; count <= maxSteps; count++ {
-			if newPosition.getPossibleDirections(&d)[dir] {
+			if newPosition.getPossibleDirections(&dungeon)[dir] {
 				newPosition.move(dir)
-				
+
 				if monstersOnMap[newPosition] != nil {
 					monstersOnMap[newPosition].takeDamage(i.Weight / 100)
-					messages.push("You hit the " + monstersOnMap[newPosition].Name + " with " + i.Prefix + " " + i.Name, gameplay)
+					messages.push("You hit the "+monstersOnMap[newPosition].Name+" with "+i.Prefix+" "+i.Name, gameplay)
 					break
 				}
 			} else {
@@ -38,16 +38,16 @@ func throwItem(i *item) keyProcessor {
 		p.items.remove(i)
 		return true
 	}
-	
+
 	messages.push("Which direction?", newDirSelect(action))
 
 	return messages
-	
+
 }
 
 func eatItem(i *item) keyProcessor {
 	p.items.remove(i)
-	messages.push("You ate " + i.Prefix + " " + i.Name, gameplay)
+	messages.push("You ate "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay
 }
 
@@ -57,7 +57,7 @@ func dropItem(i *item) keyProcessor {
 
 	for itemsOnMap[newPosition] != nil {
 		dir := randomDirection(None, true, true)
-		if newPosition.getPossibleDirections(&d)[dir] {
+		if newPosition.getPossibleDirections(&dungeon)[dir] {
 			newPosition.move(dir)
 		}
 	}
@@ -65,7 +65,7 @@ func dropItem(i *item) keyProcessor {
 	i.setPosition(newPosition)
 	itemsOnMap[i.position] = i
 	p.items.remove(i)
-	messages.push("You dropped " + i.Prefix + " " + i.Name, gameplay)
+	messages.push("You dropped "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay
 
 }

@@ -14,26 +14,31 @@ const (
 )
 
 var (
-	charmap         characterMapper
-	d               dungeon
-	p               player
-	currentState    keyProcessor
-	messages        messagePrompt
-	gameplay        gamePlay
-	monstersOnMap   map[point]*monster
-	itemsOnMap      map[point]*item
-	featuresOnMap   map[point]*feature
-	arrows          arrowQueue
+	charmap characterMapper
+	dungeon dungeonMap
+	p       player
+
+	currentState keyProcessor
+	messages     messagePrompt
+	gameplay     gamePlay
+
+	monstersOnMap map[point]*monster
+	itemsOnMap    map[point]*item
+	featuresOnMap map[point]*feature
+
+	arrows arrowQueue
+
 	validKeyPressed bool
-	gridOverlay     []string
-	menuItems       []*item
-	selectedItem    int
-	turn            int
+
+	gridOverlay  []string
+	menuItems    []*item
+	selectedItem int
+	turn         int
 )
 
 const (
-	wall  = 0
-	empty = 1 << iota
+	obstacle = 0
+	empty    = 1 << iota
 	visited
 	lit
 	room
@@ -46,7 +51,7 @@ func init() {
 	featuresOnMap = make(map[point]*feature)
 	charmap = initChapMap()
 
-	d = newDungeon(width, height)
+	dungeon = newDungeon(width, height)
 	initDungeon()
 	p = newPlayer('@')
 	turn = 0
@@ -62,7 +67,7 @@ func moveMonsters() {
 		if m.moveCounter() >= 1 {
 
 			if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
-				if d.grid[m.position.x][m.position.y]&lit == lit {
+				if dungeon.read(m.position)&lit == lit {
 					messages.push("The "+m.Name+" picked up "+item.Prefix+" "+item.Name, gameplay)
 				}
 				m.items.add(item)
@@ -112,7 +117,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 		for _, m := range list.Monsters {
 			if rand < m.Prob {
 				newMonster := m
-				newMonster.setPosition(getEmptyPoint(&d))
+				newMonster.setPosition(getEmptyPoint(&dungeon))
 				newMonster.items = newInventory()
 				monstersOnMap[newMonster.position] = &newMonster
 			}
@@ -192,7 +197,7 @@ func generateItems(list itemList, numberOfIterations int) {
 
 			if rand < i.Prob {
 				newItem := i
-				newItem.setPosition(getEmptyPoint(&d))
+				newItem.setPosition(getEmptyPoint(&dungeon))
 				itemsOnMap[newItem.position] = &newItem
 			}
 		}
@@ -207,7 +212,7 @@ func initDungeon() {
 	var err error
 
 	for {
-		previousRoom, err = d.createRandomRoom(getRandomPoint(&d), 20, 20)
+		previousRoom, err = dungeon.createRandomRoom(getRandomPoint(&dungeon), 20, 20)
 		if err != nil {
 			continue
 		}
@@ -217,24 +222,24 @@ func initDungeon() {
 	for i := 0; i < 10; i++ {
 
 		for {
-			nextRoom, err = d.createRandomRoom(getRandomPoint(&d), 20, 20)
+			nextRoom, err = dungeon.createRandomRoom(getRandomPoint(&dungeon), 20, 20)
 			if err != nil {
 				continue
 			}
 			break
 		}
 
-		connectWithCorridor(&d, previousRoom, nextRoom)
+		connectWithCorridor(&dungeon, previousRoom, nextRoom)
 		previousRoom = nextRoom
 
 	}
 
-	d.generateDoors(100)
+	dungeon.generateDoors((width + height) / 10)
 
 }
 
 func printDungeon() {
-	gridToPrint := render(&d, p, &arrows, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
+	gridToPrint := render(&dungeon, p, &arrows, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
 	//gridToPrint := renderAll(&d, p, &arrows, gridOverlay, monstersOnMap, itemsOnMap, featuresOnMap)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))
@@ -262,7 +267,7 @@ func main() {
 
 	currentState = gameplay
 
-	p.setPosition(getEmptyPoint(&d))
+	p.setPosition(getEmptyPoint(&dungeon))
 	p.attemptMove(None)
 
 	for {

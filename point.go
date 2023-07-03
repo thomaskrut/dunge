@@ -4,13 +4,13 @@ type point struct {
 	x, y int
 }
 
-func (p point) getPossibleDirections(d *dungeon) map[direction]bool {
+func (p point) getPossibleDirections(d *dungeonMap) map[direction]bool {
 	directions := make(map[direction]bool)
 	for _, dir := range getAllDirections() {
 		newPoint := p
 		newPoint.move(dir)
 		if d.grid[newPoint.x][newPoint.y]&empty == empty {
-			
+
 			directions[dir] = true
 		}
 	}
@@ -18,7 +18,7 @@ func (p point) getPossibleDirections(d *dungeon) map[direction]bool {
 	return directions
 }
 
-func getRandomPoint(d *dungeon) point {
+func getRandomPoint(d *dungeonMap) point {
 	return point{x: randomNumber(len(d.grid)), y: randomNumber(len(d.grid[0]))}
 }
 
@@ -29,6 +29,6 @@ func (p *point) move(dir direction) {
 
 }
 
-func (p point) isOutOfBounds(d *dungeon, margin int) bool {
+func (p point) isOutOfBounds(d *dungeonMap, margin int) bool {
 	return p.x <= margin || p.x >= len(d.grid)-margin || p.y <= margin || p.y >= len(d.grid[0])-margin
 }

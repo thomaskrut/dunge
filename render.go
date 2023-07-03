@@ -1,6 +1,6 @@
 package main
 
-func render(d *dungeon, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
+func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
@@ -10,9 +10,9 @@ func render(d *dungeon, p player, arrows *arrowQueue, overlay []string, viewport
 
 	arrow := arrows.pop()
 
-	for y := p.position.y - viewportHeight; y < p.position.y + viewportHeight; y++ {
+	for y := p.position.y - viewportHeight; y < p.position.y+viewportHeight; y++ {
 
-		for x := p.position.x - viewportWidth; x < p.position.x + viewportWidth; x++ {
+		for x := p.position.x - viewportWidth; x < p.position.x+viewportWidth; x++ {
 
 			if len(overlay) > rowCounter {
 				if len(overlay[rowCounter]) > charCounter {
@@ -42,7 +42,7 @@ func render(d *dungeon, p player, arrows *arrowQueue, overlay []string, viewport
 			}
 
 			if char == 0 {
-				char = charmap.chars[(d.getPoint(point{x, y}))]
+				char = charmap.chars[(d.read(point{x, y}))]
 			}
 
 			if p.getPosition() == (point{x, y}) {
@@ -64,8 +64,7 @@ func render(d *dungeon, p player, arrows *arrowQueue, overlay []string, viewport
 
 }
 
-func renderAll(d *dungeon, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
-
+func renderAll(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
 
 	rowCounter := 0
 	charCounter := 0
@@ -106,7 +105,7 @@ func renderAll(d *dungeon, p player, arrows *arrowQueue, overlay []string, monst
 			}
 
 			if char == 0 {
-				char = charmap.chars[(d.getPoint(point{x, y}))]
+				char = charmap.chars[(d.read(point{x, y}))]
 			}
 
 			if p.getPosition() == (point{x, y}) {
