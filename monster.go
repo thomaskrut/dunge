@@ -44,7 +44,7 @@ func (m *monster) dropAllItems() {
 
 	for item := range m.items.all() {
 		currentItem := item
-		newPosition := m.getPosition()
+		newPosition := m.position
 		for itemsOnMap[newPosition] != nil {
 
 			dir := randomDirection(None, true, true)

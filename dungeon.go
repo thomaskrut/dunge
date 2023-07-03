@@ -37,6 +37,7 @@ func getEmptyPoint(d *dungeonMap) point {
 
 func connectWithCorridor(d *dungeonMap, origin, destination point) {
 	currentPosition := origin
+	//var previousPosition point
 	var newDirection direction
 
 	for {
@@ -44,16 +45,29 @@ func connectWithCorridor(d *dungeonMap, origin, destination point) {
 		if randomNumber(2) == 0 {
 			newDirection.connect(currentPosition, destination).toNonDiagonal()
 		}
-
+		//previousPosition = currentPosition
 		currentPosition.move(newDirection)
 		if currentPosition.isOutOfBounds(d, 2) {
 			break
 		}
-		if d.grid[currentPosition.x][currentPosition.y]&room == room {
+
+		if d.read(currentPosition)&room == room {
 			d.write(currentPosition, empty|room)
 		} else {
 			d.write(currentPosition, empty)
 		}
+
+		/*if d.read(previousPosition)&room != room && d.read(currentPosition)&room == room {
+			if door, ok := createDoor(previousPosition); ok {
+				featuresOnMap[previousPosition] = door
+			}
+		}
+
+		if d.read(previousPosition)&room == room && d.read(currentPosition)&room != room {
+			if door, ok := createDoor(currentPosition); ok {
+				featuresOnMap[currentPosition] = door
+			}
+		}*/
 
 		if currentPosition == destination {
 			break
@@ -100,28 +114,9 @@ func (d *dungeonMap) generateDoors(numberOfDoors int) {
 
 		p := getEmptyPoint(d)
 
-		possibleDirections := p.getPossibleDirections(d)
-
-		delete(possibleDirections, NorthEast)
-		delete(possibleDirections, SouthEast)
-		delete(possibleDirections, NorthEast)
-		delete(possibleDirections, NorthWest)
-		delete(possibleDirections, None)
-
-		if len(possibleDirections) == 2 {
-
-			if _, ok := possibleDirections[North]; ok {
-				if _, ok := possibleDirections[South]; ok {
-					featuresOnMap[p] = createDoor(p)
-					count++
-				}
-			} else if _, ok := possibleDirections[East]; ok {
-				if _, ok := possibleDirections[West]; ok {
-					featuresOnMap[p] = createDoor(p)
-					count++
-				}
-			}
-
+		if door, ok := createDoor(p); ok {
+			featuresOnMap[p] = door
+			count++
 		}
 
 	}
