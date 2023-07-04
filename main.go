@@ -55,36 +55,40 @@ func init() {
 	initDungeon()
 	p = newPlayer('@')
 	turn = 0
-	generateMonsters(readMonsterTemplate(), 0)
-	generateItems(readItemsTemplate(), 50)
+	generateMonsters(readMonsterTemplate(), 50)
+	generateItems(readItemsTemplate(), 10)
 
 }
 
 func moveMonsters() {
 
-	for i, m := range monstersOnMap {
+	for i := 0; i < p.speed; i++ {
 
-		if m.moveCounter() >= 1 {
+		for i, m := range monstersOnMap {
 
-			if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
-				if dungeon.read(m.position)&lit == lit {
-					messages.push("The "+m.Name+" picked up "+item.Prefix+" "+item.Name, gameplay)
+			if m.readyToMove() {
+
+				if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
+					if dungeon.read(m.position)&lit == lit {
+						messages.push("The "+m.Name+" picked up "+item.Prefix+" "+item.Name, gameplay)
+					}
+					m.items.add(item)
+					delete(itemsOnMap, m.position)
+					continue
 				}
-				m.items.add(item)
-				delete(itemsOnMap, m.position)
-				continue
+
+				var newDirection direction
+				newDirection.connect(m.getPosition(), p.getPosition())
+				if !m.MovesDiagonally {
+					newDirection.toNonDiagonal()
+				}
+				for i := 0; !m.attemptMove(newDirection) && i < 10; i++ {
+					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
+				}
+				delete(monstersOnMap, i)
+				monstersOnMap[m.position] = m
 			}
 
-			var newDirection direction
-			newDirection.connect(m.getPosition(), p.getPosition())
-			if !m.MovesDiagonally {
-				newDirection.toNonDiagonal()
-			}
-			for i := 0; !m.move(newDirection) && i < 10; i++ {
-				newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
-			}
-			delete(monstersOnMap, i)
-			monstersOnMap[m.position] = m
 		}
 
 	}
@@ -119,6 +123,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 				newMonster := m
 				newMonster.setPosition(dungeon.getEmptyPoint())
 				newMonster.items = newInventory()
+				newMonster.speedCounter = newMonster.Speed
 				monstersOnMap[newMonster.position] = &newMonster
 			}
 		}

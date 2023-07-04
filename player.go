@@ -6,13 +6,24 @@ type player struct {
 	lightsource int
 	strength    int
 	hp          int
+	speed       int
 	items       inventory
 	inRoom      bool
 	currentRoom scannedRoom
 }
 
+func newPlayer(char rune) player {
+	return player{
+		char:        char,
+		lightsource: 4,
+		strength:    8,
+		hp:          16,
+		speed:       10,
+		items:       newInventory(),
+	}
+}
 func (p *player) attemptMove(dir direction) bool {
-
+	
 	if p.position.getPossibleDirections(&dungeon)[dir] {
 		destination := p.position
 		destination.move(dir)
@@ -116,12 +127,3 @@ func (pl player) getChar() rune {
 	return pl.char
 }
 
-func newPlayer(char rune) player {
-	return player{
-		char:        char,
-		lightsource: 4,
-		strength:    8,
-		hp:          16,
-		items:       newInventory(),
-	}
-}

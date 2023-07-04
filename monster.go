@@ -11,19 +11,18 @@ type monsterList struct {
 }
 
 type monster struct {
-	moveCounterValue float32
-	items            inventory
-	position         point
-
+	speedCounter    int
+	items           inventory
+	position        point
 	Char            string   `json:"char"`
 	Name            string   `json:"name"`
 	Prob            int      `json:"prob"`
 	AttackVerbs     []string `json:"attack"`
 	Str             int      `json:"str"`
 	Hp              int      `json:"hp"`
+	Speed           int      `json:"speed"`
 	Moves           bool     `json:"moves"`
 	Aggressive      bool     `json:"aggressive"`
-	Speed           float32  `json:"speed"`
 	MovesDiagonally bool     `json:"movesdiagonally"`
 	CarriesItems    bool     `json:"carriesitems"`
 }
@@ -65,14 +64,13 @@ func (m *monster) attack(p *player) {
 	}
 }
 
-func (m *monster) moveCounter() float32 {
-	if m.moveCounterValue >= 1 {
-		m.moveCounterValue -= 1
+func (m *monster) readyToMove() bool {
+	if m.speedCounter == 0 {
+		m.speedCounter = m.Speed
+		return true
 	}
-
-	m.moveCounterValue += m.Speed
-
-	return m.moveCounterValue
+	m.speedCounter--
+	return false
 }
 
 func (m monster) getPosition() point {
@@ -87,7 +85,7 @@ func (m monster) getChar() rune {
 	return rune(m.Char[0])
 }
 
-func (m *monster) move(dir direction) bool {
+func (m *monster) attemptMove(dir direction) bool {
 
 	if m.position.getPossibleDirections(&dungeon)[dir] {
 
