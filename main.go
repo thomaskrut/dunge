@@ -52,7 +52,7 @@ func init() {
 	charmap = initChapMap()
 
 	dungeon = newDungeon(width, height)
-	initDungeon()
+	generateDungeon()
 	p = newPlayer('@')
 	turn = 0
 	generateMonsters(readMonsterTemplate(), 50)
@@ -102,16 +102,6 @@ func checkForItems() {
 
 }
 
-func pickUpItem() {
-
-	if i, ok := itemsOnMap[p.position]; ok {
-		p.items.add(i)
-		delete(itemsOnMap, p.position)
-		messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
-	}
-
-}
-
 func generateMonsters(list monsterList, numberOfIterations int) {
 
 	for i := 0; i < numberOfIterations; i++ {
@@ -131,7 +121,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 }
 
 func generateOverlay(menu bool, verb string) {
-	if p.items.size() == 0 {
+	if p.items.count() == 0 {
 		messages.push("Inventory empty", gameplay)
 		currentState = gameplay
 		return
@@ -210,7 +200,7 @@ func generateItems(list itemList, numberOfIterations int) {
 
 }
 
-func initDungeon() {
+func generateDungeon() {
 
 	var previousRoom point
 	var nextRoom point

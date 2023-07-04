@@ -82,8 +82,8 @@ func (d *dungeonMap) connectWithCorridor(origin, destination point) {
 
 func (d *dungeonMap) createRandomRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
 	startingPoint.move(SouthEast)
-	roomWidth := randomNumber(maxWidth) + 3
-	roomHeight := randomNumber(maxHeight) + 3
+	roomWidth := randomNumber(maxWidth) + 5
+	roomHeight := randomNumber(maxHeight) + 5
 	if p := (point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(2) {
 		return point{}, errors.New("room out of bounds")
 	}

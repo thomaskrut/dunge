@@ -58,6 +58,16 @@ func (p *player) attemptMove(dir direction) bool {
 	return false
 }
 
+func (p *player) pickUpItem() {
+
+	if i, ok := itemsOnMap[p.position]; ok {
+		p.items.add(i)
+		delete(itemsOnMap, p.position)
+		messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
+	}
+
+}
+
 func (p *player) attack(m *monster) {
 	messages.push("You hit the "+m.Name, gameplay)
 	m.takeDamage(p.strength)

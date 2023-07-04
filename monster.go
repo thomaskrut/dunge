@@ -31,7 +31,7 @@ func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
 	if m.Hp <= 0 {
 		messages.push("You killed the "+m.Name, gameplay)
-		if m.items.size() > 0 {
+		if m.items.count() > 0 {
 			m.dropAllItems()
 			messages.push("The "+m.Name+" scattered its belongings on the floor", gameplay)
 		}

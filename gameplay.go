@@ -47,7 +47,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		currentState = newItemSelect("throw")
 		return true
 	case restKey:
-		pickUpItem()
+		p.pickUpItem()
 		moveSuccessful = p.attemptMove(None)
 	}
 	if moveSuccessful {

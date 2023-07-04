@@ -18,7 +18,7 @@ func (i *inventory) remove(item *item) {
 	delete(i.items, item)
 }
 
-func (i *inventory) size() int {
+func (i *inventory) count() int {
 	return len(i.items)
 }
 
