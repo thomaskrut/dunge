@@ -11,20 +11,11 @@ type feature struct {
 
 func createDoor(position point) (*feature, bool) {
 
-	possibleDirections := position.getPossibleDirections(&dungeon)
-
-	delete(possibleDirections, NorthEast)
-	delete(possibleDirections, SouthEast)
-	delete(possibleDirections, NorthEast)
-	delete(possibleDirections, NorthWest)
-	delete(possibleDirections, None)
-
-	if len(possibleDirections) == 2 {
-
+	if position.isInCorridor() {
 		door := feature{
 			position: position,
-			prefix: "a",
-			name: "door",
+			prefix:   "a",
+			name:     "door",
 		}
 		if randomNumber(2) == 1 {
 			door.closed = true
@@ -35,19 +26,11 @@ func createDoor(position point) (*feature, bool) {
 			door.char = "-"
 			door.description = "an open door"
 		}
-
-		if _, ok := possibleDirections[North]; ok {
-			if _, ok := possibleDirections[South]; ok {
-				return &door, true
-			}
-		} else if _, ok := possibleDirections[East]; ok {
-			if _, ok := possibleDirections[West]; ok {
-				return &door, true
-			}
-		}
-
+		return &door, true
+	} else {
+		return &feature{}, false
 	}
-	return &feature{}, false
+
 }
 
 func (f feature) getChar() rune {

@@ -18,10 +18,6 @@ func (p point) getPossibleDirections(d *dungeonMap) map[direction]bool {
 	return directions
 }
 
-func getRandomPoint(d *dungeonMap) point {
-	return point{x: randomNumber(len(d.grid)), y: randomNumber(len(d.grid[0]))}
-}
-
 func (p *point) move(dir direction) {
 
 	p.x += dir.varX
@@ -29,6 +25,32 @@ func (p *point) move(dir direction) {
 
 }
 
-func (p point) isOutOfBounds(d *dungeonMap, margin int) bool {
-	return p.x <= margin || p.x >= len(d.grid)-margin || p.y <= margin || p.y >= len(d.grid[0])-margin
+func (p point) isOutOfBounds(margin int) bool {
+	return p.x <= margin || p.x >= len(dungeon.grid)-margin || p.y <= margin || p.y >= len(dungeon.grid[0])-margin
+}
+
+func (p point) isInCorridor() bool {
+	possibleDirections := p.getPossibleDirections(&dungeon)
+
+	delete(possibleDirections, NorthEast)
+	delete(possibleDirections, SouthEast)
+	delete(possibleDirections, NorthEast)
+	delete(possibleDirections, NorthWest)
+	delete(possibleDirections, None)
+
+	if len(possibleDirections) == 2 {
+
+		if _, ok := possibleDirections[North]; ok {
+			if _, ok := possibleDirections[South]; ok {
+				return true
+			}
+		} else if _, ok := possibleDirections[East]; ok {
+			if _, ok := possibleDirections[West]; ok {
+				return true
+			}
+		}
+
+	}
+	return false
+
 }

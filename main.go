@@ -117,7 +117,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 		for _, m := range list.Monsters {
 			if rand < m.Prob {
 				newMonster := m
-				newMonster.setPosition(getEmptyPoint(&dungeon))
+				newMonster.setPosition(dungeon.getEmptyPoint())
 				newMonster.items = newInventory()
 				monstersOnMap[newMonster.position] = &newMonster
 			}
@@ -197,7 +197,7 @@ func generateItems(list itemList, numberOfIterations int) {
 
 			if rand < i.Prob {
 				newItem := i
-				newItem.setPosition(getEmptyPoint(&dungeon))
+				newItem.setPosition(dungeon.getEmptyPoint())
 				itemsOnMap[newItem.position] = &newItem
 			}
 		}
@@ -212,7 +212,7 @@ func initDungeon() {
 	var err error
 
 	for {
-		previousRoom, err = dungeon.createRandomRoom(getRandomPoint(&dungeon), 20, 20)
+		previousRoom, err = dungeon.createRandomRoom(dungeon.getRandomPoint(), 20, 20)
 		if err != nil {
 			continue
 		}
@@ -222,14 +222,14 @@ func initDungeon() {
 	for i := 0; i < 10; i++ {
 
 		for {
-			nextRoom, err = dungeon.createRandomRoom(getRandomPoint(&dungeon), 20, 20)
+			nextRoom, err = dungeon.createRandomRoom(dungeon.getRandomPoint(), 20, 20)
 			if err != nil {
 				continue
 			}
 			break
 		}
 
-		connectWithCorridor(&dungeon, previousRoom, nextRoom)
+		dungeon.connectWithCorridor(previousRoom, nextRoom)
 		previousRoom = nextRoom
 
 	}
@@ -267,7 +267,7 @@ func main() {
 
 	currentState = gameplay
 
-	p.setPosition(getEmptyPoint(&dungeon))
+	p.setPosition(dungeon.getEmptyPoint())
 	p.attemptMove(None)
 
 	for {

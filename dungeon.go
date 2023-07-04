@@ -25,17 +25,22 @@ func (d *dungeonMap) read(p point) int {
 	return d.grid[p.x][p.y]
 }
 
-func getEmptyPoint(d *dungeonMap) point {
+func (d *dungeonMap) getEmptyPoint() point {
 	for {
-		x := randomNumber(len(d.grid))
-		y := randomNumber(len(d.grid[0]))
-		if d.grid[x][y] == empty {
+		x := randomNumber(dungeon.width)
+		y := randomNumber(dungeon.height)
+		if dungeon.grid[x][y] == empty {
 			return point{x, y}
 		}
 	}
 }
 
-func connectWithCorridor(d *dungeonMap, origin, destination point) {
+func (d *dungeonMap) getRandomPoint() point {
+	return point{x: randomNumber(d.width), y: randomNumber(d.height)}
+}
+
+
+func (d *dungeonMap) connectWithCorridor(origin, destination point) {
 	currentPosition := origin
 	//var previousPosition point
 	var newDirection direction
@@ -47,7 +52,7 @@ func connectWithCorridor(d *dungeonMap, origin, destination point) {
 		}
 		//previousPosition = currentPosition
 		currentPosition.move(newDirection)
-		if currentPosition.isOutOfBounds(d, 2) {
+		if currentPosition.isOutOfBounds(2) {
 			break
 		}
 
@@ -79,7 +84,7 @@ func (d *dungeonMap) createRandomRoom(startingPoint point, maxWidth, maxHeight i
 	startingPoint.move(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 3
 	roomHeight := randomNumber(maxHeight) + 3
-	if p := (point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(d, 2) {
+	if p := (point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(2) {
 		return point{}, errors.New("room out of bounds")
 	}
 	return d.createRoom(startingPoint, roomWidth, roomHeight)
@@ -113,7 +118,7 @@ func (d *dungeonMap) generateDoors(numberOfDoors int) {
 
 	for count < numberOfDoors {
 
-		p := getEmptyPoint(d)
+		p := dungeon.getEmptyPoint()
 
 		if door, ok := createDoor(p); ok {
 			if door.closed {
