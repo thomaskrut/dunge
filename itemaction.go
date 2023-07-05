@@ -14,11 +14,10 @@ func init() {
 
 func pickUpItem(i *item) keyProcessor {
 	p.items.add(i)
-		itemsOnMap[p.position] = append(itemsOnMap[p.position][:selectedItem], itemsOnMap[p.position][selectedItem+1:]...)
-		messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
-		return gameplay
+	itemsOnMap[p.position] = append(itemsOnMap[p.position][:selectedItem], itemsOnMap[p.position][selectedItem+1:]...)
+	messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
+	return gameplay
 }
-
 
 func throwItem(i *item) keyProcessor {
 
