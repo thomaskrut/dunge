@@ -34,7 +34,7 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 			}
 
 			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit {
-				char = i[0].getChar()
+				char = i[len(items[point{x, y}])-1].getChar()
 			}
 
 			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit {

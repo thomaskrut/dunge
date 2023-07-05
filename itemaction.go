@@ -1,5 +1,7 @@
 package main
 
+import "strconv"
+
 var (
 	itemActions map[string]func(i *item) keyProcessor
 )
@@ -15,7 +17,14 @@ func init() {
 func pickUpItem(i *item) keyProcessor {
 	p.items.add(i)
 	itemsOnMap[p.position] = append(itemsOnMap[p.position][:selectedItem], itemsOnMap[p.position][selectedItem+1:]...)
-	messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
+	message := "You picked up "+i.Prefix+" "+i.Name
+	if len(itemsOnMap[p.position]) == 1 {
+		message = message + ". There is " + itemsOnMap[p.position][0].Prefix + " " + itemsOnMap[p.position][0].Name + " here, press 5 to pick up"
+	}
+	if len(itemsOnMap[p.position]) > 1 {
+		message = message + ". There are " + strconv.Itoa(len(itemsOnMap[p.position])) + " more things here, press 5 to examine"
+	}
+	messages.push(message, gameplay)
 	return gameplay
 }
 
@@ -23,11 +32,11 @@ func throwItem(i *item) keyProcessor {
 
 	action := func(dir direction) bool {
 
-		maxSteps := 1000 / i.Weight
+		distance := 1000 / i.Weight
 
 		newPosition := p.position
 
-		for count := 0; count <= maxSteps; count++ {
+		for count := 0; count <= distance; count++ {
 			if newPosition.getPossibleDirections(&dungeon)[dir] {
 				newPosition.move(dir)
 
@@ -48,9 +57,7 @@ func throwItem(i *item) keyProcessor {
 	}
 
 	messages.push("Which direction?", newDirSelect(action))
-
 	return messages
-
 }
 
 func eatItem(i *item) keyProcessor {

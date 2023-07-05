@@ -79,10 +79,15 @@ func look() {
 				arrows.push(point{currentPosition.x, currentPosition.y + 1})
 			}
 
-			/*if i, ok := itemsOnMap[currentPosition]; ok {
-				messages.push("You see "+i.Prefix+" "+i.Name, gameplay)
+			if i, ok := itemsOnMap[currentPosition]; ok {
+				if len(i) == 1 {
+					messages.push("You see "+i[0].Prefix+" "+i[0].Name, gameplay)
+				} else if len(i) > 1 {
+					messages.push("You see "+i[len(i)-1].Prefix+" "+i[len(i)-1].Name + " with some other things underneath", gameplay)
+				}
+				
 				arrows.push(point{currentPosition.x, currentPosition.y + 1})
-			}*/
+			}
 
 		}
 

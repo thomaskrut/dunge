@@ -100,7 +100,7 @@ func checkForItems() {
 		if len(i) == 1 {
 			messages.push("There is "+i[0].Prefix+" "+i[0].Name+" here, press 5 to pick up", gameplay)
 		} else if len(i) > 1 {
-			currentState = newItemSelect("pick up")
+			messages.push("There are some things there, press 5 to examine", gameplay)
 		}
 		
 	}

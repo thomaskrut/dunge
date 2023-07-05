@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	_"fmt"
 	"os"
 )
 
@@ -9,12 +9,13 @@ type gamePlay struct {
 }
 
 func (g gamePlay) processTurn() {
+	gridOverlay = nil
 	turn++
 	moveMonsters()
 }
 
 func (g gamePlay) processKey(char rune) (validKey bool) {
-	fmt.Println(char)
+	//fmt.Println(char)
 	var moveSuccessful bool = false
 
 	if dir, ok := keyToDirMap[char]; ok {
@@ -47,7 +48,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		return true
 	case restKey:
 		p.pickUpItem()
-		moveSuccessful = p.attemptMove(None)
+		return true
 	}
 	if moveSuccessful {
 		gridOverlay = nil

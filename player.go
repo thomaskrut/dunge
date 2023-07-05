@@ -64,8 +64,10 @@ func (p *player) pickUpItem() {
 		p.items.add(i[0])
 		delete(itemsOnMap, p.position)
 		messages.push("You picked up "+i[0].Prefix+" "+i[0].Name, gameplay)
+		currentState.processTurn()
+	} else if len(i) > 1 {
+		currentState = newItemSelect("pick up")
 	}
-
 }
 
 func (p *player) attack(m *monster) {
