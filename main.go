@@ -23,7 +23,7 @@ var (
 	gameplay     gamePlay
 
 	monstersOnMap map[point]*monster
-	itemsOnMap    map[point]*item
+	itemsOnMap    map[point][]*item
 	featuresOnMap map[point]*feature
 
 	arrows arrowQueue
@@ -47,7 +47,7 @@ const (
 func init() {
 
 	monstersOnMap = make(map[point]*monster)
-	itemsOnMap = make(map[point]*item)
+	itemsOnMap = make(map[point][]*item)
 	featuresOnMap = make(map[point]*feature)
 	charmap = initChapMap()
 
@@ -55,8 +55,8 @@ func init() {
 	generateDungeon()
 	p = newPlayer('@')
 	turn = 0
-	generateMonsters(readMonsterTemplate(), 50)
-	generateItems(readItemsTemplate(), 10)
+	generateMonsters(readMonsterTemplate(), 0)
+	generateItems(readItemsTemplate(), 100)
 
 }
 
@@ -68,14 +68,14 @@ func moveMonsters() {
 
 			if m.readyToMove() {
 
-				if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
+				/*if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
 					if dungeon.read(m.position)&lit == lit {
 						messages.push("The "+m.Name+" picked up "+item.Prefix+" "+item.Name, gameplay)
 					}
 					m.items.add(item)
 					delete(itemsOnMap, m.position)
 					continue
-				}
+				}*/
 
 				var newDirection direction
 				newDirection.connect(m.getPosition(), p.getPosition())
@@ -97,7 +97,12 @@ func moveMonsters() {
 func checkForItems() {
 
 	if i, ok := itemsOnMap[p.position]; ok {
-		messages.push("There is "+i.Prefix+" "+i.Name+" here, press 5 to pick up", gameplay)
+		if len(i) == 1 {
+			messages.push("There is "+i[0].Prefix+" "+i[0].Name+" here, press 5 to pick up", gameplay)
+		} else if len(i) > 1 {
+			currentState = newItemSelect("pick up")
+		}
+		
 	}
 
 }
@@ -121,25 +126,38 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 }
 
 func generateOverlay(menu bool, verb string) {
-	if p.items.count() == 0 {
-		messages.push("Inventory empty", gameplay)
-		currentState = gameplay
-		return
-	}
+	
 	gridOverlay = nil
 	menuItems = nil
 	cursor := "| "
 
-	for item := range p.items.all() {
-		for _, v := range item.Verbs {
-			if v == verb {
-				itemToAdd := item
-				menuItems = append(menuItems, itemToAdd)
-				break
+	if verb == "pick up" {
+
+		for _, item := range itemsOnMap[p.position] {
+					itemToAdd := item
+					menuItems = append(menuItems, itemToAdd)
+			}
+
+	} else {
+
+		if p.items.count() == 0 {
+			messages.push("Inventory empty", gameplay)
+			currentState = gameplay
+			return
+		}
+		
+		for item := range p.items.all() {
+			for _, v := range item.Verbs {
+				if v == verb {
+					itemToAdd := item
+					menuItems = append(menuItems, itemToAdd)
+					break
+				}
 			}
 		}
 	}
 
+	
 	sort.SliceStable(menuItems, func(i, j int) bool {
 		return menuItems[i].Name < menuItems[j].Name
 	})
@@ -193,7 +211,7 @@ func generateItems(list itemList, numberOfIterations int) {
 			if rand < i.Prob {
 				newItem := i
 				newItem.setPosition(dungeon.getEmptyPoint())
-				itemsOnMap[newItem.position] = &newItem
+				itemsOnMap[newItem.position] = append(itemsOnMap[newItem.position], &newItem)
 			}
 		}
 	}

@@ -60,10 +60,10 @@ func (p *player) attemptMove(dir direction) bool {
 
 func (p *player) pickUpItem() {
 
-	if i, ok := itemsOnMap[p.position]; ok {
-		p.items.add(i)
+	if i, ok := itemsOnMap[p.position]; ok && len(i) == 1 {
+		p.items.add(i[0])
 		delete(itemsOnMap, p.position)
-		messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
+		messages.push("You picked up "+i[0].Prefix+" "+i[0].Name, gameplay)
 	}
 
 }

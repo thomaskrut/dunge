@@ -9,7 +9,16 @@ func init() {
 	itemActions["eat"] = eatItem
 	itemActions["drop"] = dropItem
 	itemActions["throw"] = throwItem
+	itemActions["pick up"] = pickUpItem
 }
+
+func pickUpItem(i *item) keyProcessor {
+	p.items.add(i)
+		itemsOnMap[p.position] = append(itemsOnMap[p.position][:selectedItem], itemsOnMap[p.position][selectedItem+1:]...)
+		messages.push("You picked up "+i.Prefix+" "+i.Name, gameplay)
+		return gameplay
+}
+
 
 func throwItem(i *item) keyProcessor {
 
@@ -34,7 +43,7 @@ func throwItem(i *item) keyProcessor {
 		}
 
 		i.setPosition(newPosition)
-		itemsOnMap[newPosition] = i
+		itemsOnMap[newPosition] = append(itemsOnMap[newPosition], i)
 		p.items.remove(i)
 		return true
 	}
@@ -55,15 +64,8 @@ func dropItem(i *item) keyProcessor {
 
 	newPosition := p.getPosition()
 
-	for itemsOnMap[newPosition] != nil {
-		dir := randomDirection(None, true, true)
-		if newPosition.getPossibleDirections(&dungeon)[dir] {
-			newPosition.move(dir)
-		}
-	}
-
 	i.setPosition(newPosition)
-	itemsOnMap[i.position] = i
+	itemsOnMap[i.position] = append(itemsOnMap[i.position], i)
 	p.items.remove(i)
 	messages.push("You dropped "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay

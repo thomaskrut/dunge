@@ -52,7 +52,7 @@ func (m *monster) dropAllItems() {
 			}
 		}
 		currentItem.setPosition(newPosition)
-		itemsOnMap[currentItem.position] = currentItem
+		itemsOnMap[currentItem.position] = append(itemsOnMap[currentItem.position], currentItem)
 	}
 	m.items.clear()
 }
