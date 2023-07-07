@@ -68,7 +68,7 @@ func moveMonsters() {
 
 			if m.readyToMove() {
 
-				if items, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
+				if items, ok := itemsOnMap[m.position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
 					if dungeon.read(m.position)&lit == lit {
 						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
 					}

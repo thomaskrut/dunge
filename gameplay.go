@@ -51,7 +51,6 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		return true
 	}
 	if moveSuccessful {
-		gridOverlay = nil
 		checkForItems()
 		g.processTurn()
 		return true
