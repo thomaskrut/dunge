@@ -55,8 +55,8 @@ func init() {
 	generateDungeon()
 	p = newPlayer('@')
 	turn = 0
-	generateMonsters(readMonsterTemplate(), 0)
-	generateItems(readItemsTemplate(), 100)
+	generateMonsters(readMonsterTemplate(), 50)
+	generateItems(readItemsTemplate(), 50)
 
 }
 
@@ -68,14 +68,17 @@ func moveMonsters() {
 
 			if m.readyToMove() {
 
-				/*if item, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
+				if items, ok := itemsOnMap[m.position]; ok && m.CarriesItems {
 					if dungeon.read(m.position)&lit == lit {
-						messages.push("The "+m.Name+" picked up "+item.Prefix+" "+item.Name, gameplay)
+						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
 					}
-					m.items.add(item)
-					delete(itemsOnMap, m.position)
+					m.items.add(items[len(items)-1])
+					itemsOnMap[m.position] = itemsOnMap[m.position][:len(itemsOnMap[m.position])-1]
+					if len(itemsOnMap[m.position]) == 0 {
+						delete(itemsOnMap, m.position)
+					}
 					continue
-				}*/
+				}
 
 				var newDirection direction
 				newDirection.connect(m.getPosition(), p.getPosition())

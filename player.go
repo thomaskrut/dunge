@@ -67,6 +67,8 @@ func (p *player) pickUpItem() {
 		currentState.processTurn()
 	} else if len(i) > 1 {
 		currentState = newItemSelect("pick up")
+	} else {
+		currentState.processTurn()
 	}
 }
 
