@@ -81,7 +81,7 @@ func (p *player) takeDamage(damage int) {
 	p.hp -= damage
 }
 
-func alterAreaVisibility(p point, newState int, currentDepth int) {
+func alterAreaVisibility(p point, newState byte, currentDepth int) {
 	if currentDepth == 0 {
 		return
 	}
@@ -101,7 +101,7 @@ func alterAreaVisibility(p point, newState int, currentDepth int) {
 	}
 }
 
-func setRoomState(newState int) {
+func setRoomState(newState byte) {
 	for _, p := range p.currentRoom.points {
 		if dungeon.grid[p.x][p.y]&room == room {
 			dungeon.grid[p.x][p.y] = empty | room | newState
@@ -112,7 +112,7 @@ func setRoomState(newState int) {
 	}
 }
 
-func scanRoom(pos point, state int) {
+func scanRoom(pos point, state byte) {
 
 	dungeon.grid[pos.x][pos.y] = empty | room | state
 	for _, dir := range getAllDirections() {

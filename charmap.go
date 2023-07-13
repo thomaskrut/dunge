@@ -1,11 +1,11 @@
 package main
 
 type characterMapper struct {
-	chars map[int]rune
+	chars map[byte]rune
 }
 
 func initChapMap() characterMapper {
-	charmap := characterMapper{make(map[int]rune)}
+	charmap := characterMapper{make(map[byte]rune)}
 	charmap.add(obstacle, ' ')
 	charmap.add(empty, ' ')
 	charmap.add(empty|room, ' ')
@@ -19,6 +19,6 @@ func initChapMap() characterMapper {
 	return charmap
 }
 
-func (c characterMapper) add(value int, char rune) {
+func (c characterMapper) add(value byte, char rune) {
 	c.chars[value] = char
 }

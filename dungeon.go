@@ -5,23 +5,23 @@ import (
 )
 
 type dungeonMap struct {
-	grid          [][]int
+	grid          [][]byte
 	width, height int
 }
 
 func newDungeon(width, height int) dungeonMap {
-	zeroedGrid := make([][]int, width)
+	zeroedGrid := make([][]byte, width)
 	for i := range zeroedGrid {
-		zeroedGrid[i] = make([]int, height)
+		zeroedGrid[i] = make([]byte, height)
 	}
 	return dungeonMap{grid: zeroedGrid, width: width, height: height}
 }
 
-func (d *dungeonMap) write(p point, value int) {
+func (d *dungeonMap) write(p point, value byte) {
 	d.grid[p.x][p.y] = value
 }
 
-func (d *dungeonMap) read(p point) int {
+func (d *dungeonMap) read(p point) byte {
 	return d.grid[p.x][p.y]
 }
 

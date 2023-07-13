@@ -37,8 +37,8 @@ var (
 )
 
 const (
-	obstacle = 0
-	empty    = 1 << iota
+	obstacle byte = 0
+	empty    byte = 1 << iota
 	visited
 	lit
 	room
@@ -52,6 +52,11 @@ func init() {
 	charmap = initChapMap()
 
 	dungeon = newDungeon(width, height)
+
+	
+	fmt.Println(fileExists("save.txt"))
+
+
 	generateDungeon()
 	p = newPlayer('@')
 	turn = 0
@@ -105,7 +110,7 @@ func checkForItems() {
 		} else if len(i) > 1 {
 			messages.push("There are some things there, press 5 to examine", gameplay)
 		}
-		
+
 	}
 
 }
@@ -129,7 +134,7 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 }
 
 func generateOverlay(menu bool, verb string) {
-	
+
 	gridOverlay = nil
 	menuItems = nil
 	cursor := "| "
@@ -137,9 +142,9 @@ func generateOverlay(menu bool, verb string) {
 	if verb == "pick up" {
 
 		for _, item := range itemsOnMap[p.position] {
-					itemToAdd := item
-					menuItems = append(menuItems, itemToAdd)
-			}
+			itemToAdd := item
+			menuItems = append(menuItems, itemToAdd)
+		}
 
 	} else {
 
@@ -148,7 +153,7 @@ func generateOverlay(menu bool, verb string) {
 			currentState = gameplay
 			return
 		}
-		
+
 		for item := range p.items.all() {
 			for _, v := range item.Verbs {
 				if v == verb {
@@ -160,7 +165,6 @@ func generateOverlay(menu bool, verb string) {
 		}
 	}
 
-	
 	sort.SliceStable(menuItems, func(i, j int) bool {
 		return menuItems[i].Name < menuItems[j].Name
 	})
