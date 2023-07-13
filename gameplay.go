@@ -24,6 +24,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 
 	switch char {
 	case quitKey:
+		saveMap("save.txt")
 		os.Exit(0)
 	case openKey:
 		open()

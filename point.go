@@ -9,7 +9,7 @@ func (p point) getPossibleDirections(d *dungeonMap) map[direction]bool {
 	for _, dir := range getAllDirections() {
 		newPoint := p
 		newPoint.move(dir)
-		if d.grid[newPoint.x][newPoint.y]&empty == empty {
+		if d.read(newPoint)&empty == empty {
 
 			directions[dir] = true
 		}

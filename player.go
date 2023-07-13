@@ -101,12 +101,12 @@ func alterAreaVisibility(p point, newState int, currentDepth int) {
 	}
 }
 
-func setRoomState(state int) {
+func setRoomState(newState int) {
 	for _, p := range p.currentRoom.points {
 		if dungeon.grid[p.x][p.y]&room == room {
-			dungeon.grid[p.x][p.y] = empty | room | state
+			dungeon.grid[p.x][p.y] = empty | room | newState
 		} else {
-			dungeon.grid[p.x][p.y] = empty | state
+			dungeon.grid[p.x][p.y] = empty | newState
 		}
 
 	}
