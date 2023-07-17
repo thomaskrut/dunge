@@ -51,15 +51,18 @@ func init() {
 	featuresOnMap = make(map[point]*feature)
 	charmap = initChapMap()
 
-	dungeon = newDungeon(width, height)
-
-	
-	fmt.Println(fileExists("save.txt"))
-
-
-	generateDungeon()
 	p = newPlayer('@')
-	turn = 0
+
+	savedStateLoaded := loadState("save.txt")
+	//savedStateLoaded := false
+
+	if !savedStateLoaded {
+		dungeon = newDungeon(width, height)
+		generateDungeon()
+		p.setPosition(dungeon.getEmptyPoint())
+		turn = 0
+	}
+
 	generateMonsters(readMonsterTemplate(), 50)
 	generateItems(readItemsTemplate(), 50)
 
@@ -287,7 +290,7 @@ func main() {
 
 	currentState = gameplay
 
-	p.setPosition(dungeon.getEmptyPoint())
+	
 	p.attemptMove(None)
 
 	for {
