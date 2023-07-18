@@ -21,7 +21,7 @@ func saveState(filename string) {
 	defer f.Close()
 
 	saveMap(f)
-	savePlayer()
+	savePlayer("~player.sav")
 }
 
 func saveMap(f *os.File) {
@@ -34,13 +34,13 @@ func saveMap(f *os.File) {
 	}
 }
 
-func savePlayer() {
+func savePlayer(path string) {
 
-	if fileExists("player.save") {
-		os.Remove("player.save")
+	if fileExists(path) {
+		os.Remove(path)
 	}
 
-	f, err := os.Create("player.save")
+	f, err := os.Create(path)
 
 	if err != nil {
 		panic(err)

@@ -42,7 +42,7 @@ func loadState(filename string) bool {
 
 	dungeon.grid = grid
 
-	f2, err := os.Open("player.save")
+	f2, err := os.Open("~player.sav")
 
 	if err != nil {
 		panic(err)
