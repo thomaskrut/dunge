@@ -4,7 +4,7 @@ type characterMapper struct {
 	chars map[byte]rune
 }
 
-func initChapMap() characterMapper {
+func initCharMap() characterMapper {
 	charmap := characterMapper{make(map[byte]rune)}
 	charmap.add(obstacle, ' ')
 	charmap.add(empty, ' ')

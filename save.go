@@ -21,20 +21,22 @@ func saveState(filename string) {
 	defer f.Close()
 
 	saveMap(f)
-	savePlayer("~player.sav")
+	save("~player.sav", p)
+	save("~map.sav", dungeon)
+	save("~items.sav", itemsOnMap)
 }
 
 func saveMap(f *os.File) {
 
-	f.Write([]byte{byte(dungeon.width)})
-	f.Write([]byte{byte(dungeon.height)})
+	f.Write([]byte{byte(dungeon.Width)})
+	f.Write([]byte{byte(dungeon.Height)})
 
-	for _, slice := range dungeon.grid {
+	for _, slice := range dungeon.Grid {
 		f.Write(slice)
 	}
 }
 
-func savePlayer(path string) {
+func save(path string, source interface{}) {
 
 	if fileExists(path) {
 		os.Remove(path)
@@ -52,15 +54,12 @@ func savePlayer(path string) {
 
 	enc := gob.NewEncoder(writer)
 
-	err = enc.Encode(p)
+	err = enc.Encode(source)
 
 	writer.Flush()
 
 	if err != nil {
 		panic(err)
 	}
-
-	//slice := []byte{byte(p.position.x), byte(p.position.y)}
-	//f.Write(slice)
 
 }

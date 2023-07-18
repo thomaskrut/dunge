@@ -103,10 +103,10 @@ func alterAreaVisibility(p point, newState byte, currentDepth int) {
 
 func setRoomState(newState byte) {
 	for _, p := range p.CurrentRoom.Points {
-		if dungeon.grid[p.X][p.Y]&room == room {
-			dungeon.grid[p.X][p.Y] = empty | room | newState
+		if dungeon.Grid[p.X][p.Y]&room == room {
+			dungeon.Grid[p.X][p.Y] = empty | room | newState
 		} else {
-			dungeon.grid[p.X][p.Y] = empty | newState
+			dungeon.Grid[p.X][p.Y] = empty | newState
 		}
 
 	}
@@ -114,17 +114,17 @@ func setRoomState(newState byte) {
 
 func scanRoom(pos point, state byte) {
 
-	dungeon.grid[pos.X][pos.Y] = empty | room | state
+	dungeon.Grid[pos.X][pos.Y] = empty | room | state
 	for _, dir := range getAllDirections() {
 		newPoint := pos
 		newPoint.move(dir)
-		if dungeon.grid[newPoint.X][newPoint.Y]&room == room && dungeon.grid[newPoint.X][newPoint.Y]&state != state {
+		if dungeon.Grid[newPoint.X][newPoint.Y]&room == room && dungeon.Grid[newPoint.X][newPoint.Y]&state != state {
 			p.CurrentRoom.add(newPoint)
 			scanRoom(newPoint, state)
-		} else if dungeon.grid[newPoint.X][newPoint.Y]&empty == empty {
+		} else if dungeon.Grid[newPoint.X][newPoint.Y]&empty == empty {
 			p.CurrentRoom.add(newPoint)
-		} else if dungeon.grid[newPoint.X][newPoint.Y] == obstacle {
-			dungeon.grid[newPoint.X][newPoint.Y] = obstacle | visited
+		} else if dungeon.Grid[newPoint.X][newPoint.Y] == obstacle {
+			dungeon.Grid[newPoint.X][newPoint.Y] = obstacle | visited
 		}
 	}
 }

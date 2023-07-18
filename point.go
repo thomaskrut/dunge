@@ -26,7 +26,7 @@ func (p *point) move(dir direction) {
 }
 
 func (p point) isOutOfBounds(margin int) bool {
-	return p.X <= margin || p.X >= len(dungeon.grid)-margin || p.Y <= margin || p.Y >= len(dungeon.grid[0])-margin
+	return p.X <= margin || p.X >= len(dungeon.Grid)-margin || p.Y <= margin || p.Y >= len(dungeon.Grid[0])-margin
 }
 
 func (p point) isInCorridor() bool {

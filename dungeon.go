@@ -5,8 +5,8 @@ import (
 )
 
 type dungeonMap struct {
-	grid          [][]byte
-	width, height int
+	Grid          [][]byte
+	Width, Height int
 }
 
 func newDungeon(width, height int) dungeonMap {
@@ -14,29 +14,29 @@ func newDungeon(width, height int) dungeonMap {
 	for i := range zeroedGrid {
 		zeroedGrid[i] = make([]byte, height)
 	}
-	return dungeonMap{grid: zeroedGrid, width: width, height: height}
+	return dungeonMap{Grid: zeroedGrid, Width: width, Height: height}
 }
 
 func (d *dungeonMap) write(p point, value byte) {
-	d.grid[p.X][p.Y] = value
+	d.Grid[p.X][p.Y] = value
 }
 
 func (d *dungeonMap) read(p point) byte {
-	return d.grid[p.X][p.Y]
+	return d.Grid[p.X][p.Y]
 }
 
 func (d *dungeonMap) getEmptyPoint() point {
 	for {
-		x := randomNumber(dungeon.width)
-		y := randomNumber(dungeon.height)
-		if dungeon.grid[x][y] == empty {
+		x := randomNumber(dungeon.Width)
+		y := randomNumber(dungeon.Height)
+		if dungeon.Grid[x][y] == empty {
 			return point{x, y}
 		}
 	}
 }
 
 func (d *dungeonMap) getRandomPoint() point {
-	return point{X: randomNumber(d.width), Y: randomNumber(d.height)}
+	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
 }
 
 func (d *dungeonMap) connectWithCorridor(origin, destination point) {

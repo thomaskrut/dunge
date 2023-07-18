@@ -49,22 +49,20 @@ func init() {
 	monstersOnMap = make(map[point]*monster)
 	itemsOnMap = make(map[point][]*item)
 	featuresOnMap = make(map[point]*feature)
-	charmap = initChapMap()
+	charmap = initCharMap()
 
-	p = newPlayer('@')
-
-	savedStateLoaded := loadState("save.txt")
-	//savedStateLoaded := false
+	savedStateLoaded := loadState()
 
 	if !savedStateLoaded {
 		dungeon = newDungeon(width, height)
 		generateDungeon()
+		p = newPlayer('@')
 		p.setPosition(dungeon.getEmptyPoint())
 		turn = 0
+		generateItems(readItemsTemplate(), 50)
 	}
 
 	generateMonsters(readMonsterTemplate(), 50)
-	generateItems(readItemsTemplate(), 50)
 
 }
 

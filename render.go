@@ -22,22 +22,22 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 				}
 			}
 
-			if x < 0 || x >= d.width || y < 0 || y >= d.height {
+			if x < 0 || x >= d.Width || y < 0 || y >= d.Height {
 				toPrint = append(toPrint, ' ')
 				continue
 			}
 
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) {
+			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit) {
 				char = f.getChar()
 			}
 
-			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit {
+			if i, ok := items[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
 				char = i[len(items[point{x, y}])-1].getChar()
 			}
 
-			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit {
+			if m, ok := monsters[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
 				char = m.getChar()
 			}
 
@@ -71,11 +71,11 @@ func renderAll(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, mo
 
 	arrow := arrows.pop()
 
-	for y := 0; y < d.height; y++ {
+	for y := 0; y < d.Height; y++ {
 
-		for x := 0; x < d.width; x++ {
+		for x := 0; x < d.Width; x++ {
 
-			d.grid[x][y] = d.grid[x][y] | visited
+			d.Grid[x][y] = d.Grid[x][y] | visited
 
 			if len(overlay) > rowCounter {
 				if len(overlay[rowCounter]) > charCounter {
@@ -85,22 +85,22 @@ func renderAll(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, mo
 				}
 			}
 
-			if x < 0 || x >= d.width || y < 0 || y >= d.height {
+			if x < 0 || x >= d.Width || y < 0 || y >= d.Height {
 				toPrint = append(toPrint, ' ')
 				continue
 			}
 
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.grid[x][y]&visited == visited || d.grid[x][y]&lit == lit) {
+			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit) {
 				char = f.getChar()
 			}
 
-			if i, ok := items[point{x, y}]; ok && d.grid[x][y]&lit == lit {
+			if i, ok := items[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
 				char = i.getChar()
 			}
 
-			if m, ok := monsters[point{x, y}]; ok && d.grid[x][y]&lit == lit {
+			if m, ok := monsters[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
 				char = m.getChar()
 			}
 
