@@ -62,21 +62,21 @@ func (d *direction) toNonDiagonal() {
 
 func (dir *direction) connect(from, to point) *direction {
 	switch {
-	case to.x == from.x && to.y < from.y:
+	case to.X == from.X && to.Y < from.Y:
 		*dir = North
-	case to.x == from.x && to.y > from.y:
+	case to.X == from.X && to.Y > from.Y:
 		*dir = South
-	case to.x < from.x && to.y == from.y:
+	case to.X < from.X && to.Y == from.Y:
 		*dir = West
-	case to.x > from.x && to.y == from.y:
+	case to.X > from.X && to.Y == from.Y:
 		*dir = East
-	case to.x > from.x && to.y < from.y:
+	case to.X > from.X && to.Y < from.Y:
 		*dir = NorthEast
-	case to.x > from.x && to.y > from.y:
+	case to.X > from.X && to.Y > from.Y:
 		*dir = SouthEast
-	case to.x < from.x && to.y < from.y:
+	case to.X < from.X && to.Y < from.Y:
 		*dir = NorthWest
-	case to.x < from.x && to.y > from.y:
+	case to.X < from.X && to.Y > from.Y:
 		*dir = SouthWest
 	}
 	return dir

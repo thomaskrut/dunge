@@ -91,7 +91,7 @@ func (m *monster) attemptMove(dir direction) bool {
 
 		newPoint := m.position
 		newPoint.move(dir)
-		if newPoint == p.position {
+		if newPoint == p.Position {
 			m.attack(&p)
 			return true
 		}

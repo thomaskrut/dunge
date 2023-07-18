@@ -1,6 +1,10 @@
 package main
 
-import "os"
+import (
+	"bufio"
+	"encoding/gob"
+	"os"
+)
 
 func saveState(filename string) {
 
@@ -17,7 +21,7 @@ func saveState(filename string) {
 	defer f.Close()
 
 	saveMap(f)
-	savePlayer(f)
+	savePlayer()
 }
 
 func saveMap(f *os.File) {
@@ -30,9 +34,33 @@ func saveMap(f *os.File) {
 	}
 }
 
-func savePlayer(f *os.File) {
+func savePlayer() {
 
-	slice := []byte{byte(p.position.x), byte(p.position.y)}
-	f.Write(slice)
+	if fileExists("player.save") {
+		os.Remove("player.save")
+	}
+
+	f, err := os.Create("player.save")
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
+	writer := bufio.NewWriter(f)
+
+	enc := gob.NewEncoder(writer)
+
+	err = enc.Encode(p)
+
+	writer.Flush()
+
+	if err != nil {
+		panic(err)
+	}
+
+	//slice := []byte{byte(p.position.x), byte(p.position.y)}
+	//f.Write(slice)
 
 }

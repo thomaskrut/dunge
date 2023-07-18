@@ -10,9 +10,9 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 
 	arrow := arrows.pop()
 
-	for y := p.position.y - viewportHeight; y < p.position.y+viewportHeight; y++ {
+	for y := p.Position.Y - viewportHeight; y < p.Position.Y+viewportHeight; y++ {
 
-		for x := p.position.x - viewportWidth; x < p.position.x+viewportWidth; x++ {
+		for x := p.Position.X - viewportWidth; x < p.Position.X+viewportWidth; x++ {
 
 			if len(overlay) > rowCounter {
 				if len(overlay[rowCounter]) > charCounter {
@@ -49,7 +49,7 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 				char = p.getChar()
 			}
 
-			if arrow.x == x && arrow.y == y {
+			if arrow.X == x && arrow.Y == y {
 				char = '^'
 			}
 
@@ -112,7 +112,7 @@ func renderAll(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, mo
 				char = p.getChar()
 			}
 
-			if arrow.x == x && arrow.y == y {
+			if arrow.X == x && arrow.Y == y {
 				char = '^'
 			}
 

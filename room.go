@@ -1,13 +1,13 @@
 package main
 
 type scannedRoom struct {
-	points []point
+	Points []point
 }
 
 func (r *scannedRoom) add(p point) {
-	r.points = append(r.points, p)
+	r.Points = append(r.Points, p)
 }
 
 func (r *scannedRoom) clear() {
-	r.points = nil
+	r.Points = nil
 }

@@ -1,31 +1,31 @@
 package main
 
 type player struct {
-	position    point
-	char        rune
-	lightsource int
-	strength    int
-	hp          int
-	speed       int
-	items       inventory
-	inRoom      bool
-	currentRoom scannedRoom
+	Position    point
+	Char        rune
+	Lightsource int
+	Strength    int
+	Hp          int
+	Speed       int
+	Items       inventory
+	InRoom      bool
+	CurrentRoom scannedRoom
 }
 
 func newPlayer(char rune) player {
 	return player{
-		char:        char,
-		lightsource: 4,
-		strength:    8,
-		hp:          16,
-		speed:       10,
-		items:       newInventory(),
+		Char:        char,
+		Lightsource: 4,
+		Strength:    8,
+		Hp:          16,
+		Speed:       10,
+		Items:       newInventory(),
 	}
 }
 func (p *player) attemptMove(dir direction) bool {
-	
-	if p.position.getPossibleDirections(&dungeon)[dir] {
-		destination := p.position
+
+	if p.Position.getPossibleDirections(&dungeon)[dir] {
+		destination := p.Position
 		destination.move(dir)
 
 		if m, ok := monstersOnMap[destination]; ok {
@@ -33,26 +33,26 @@ func (p *player) attemptMove(dir direction) bool {
 			return true
 		}
 
-		alterAreaVisibility(p.position, visited, p.lightsource)
+		alterAreaVisibility(p.Position, visited, p.Lightsource)
 
-		if !p.inRoom && dungeon.read(destination)&room == room {
+		if !p.InRoom && dungeon.read(destination)&room == room {
 			scanRoom(destination, lit)
-			p.inRoom = true
+			p.InRoom = true
 		}
 
-		if p.inRoom && dungeon.read(destination)&room == room {
+		if p.InRoom && dungeon.read(destination)&room == room {
 			setRoomState(lit)
 		}
 
-		if p.inRoom && dungeon.read(destination)&room != room {
+		if p.InRoom && dungeon.read(destination)&room != room {
 			setRoomState(visited)
-			p.currentRoom.clear()
-			p.inRoom = false
+			p.CurrentRoom.clear()
+			p.InRoom = false
 		}
 
-		p.position.move(dir)
+		p.Position.move(dir)
 
-		alterAreaVisibility(p.position, lit, p.lightsource)
+		alterAreaVisibility(p.Position, lit, p.Lightsource)
 		return true
 	}
 	return false
@@ -60,9 +60,9 @@ func (p *player) attemptMove(dir direction) bool {
 
 func (p *player) pickUpItem() {
 
-	if i, ok := itemsOnMap[p.position]; ok && len(i) == 1 {
-		p.items.add(i[0])
-		delete(itemsOnMap, p.position)
+	if i, ok := itemsOnMap[p.Position]; ok && len(i) == 1 {
+		p.Items.add(i[0])
+		delete(itemsOnMap, p.Position)
 		messages.push("You picked up "+i[0].Prefix+" "+i[0].Name, gameplay)
 		currentState.processTurn()
 	} else if len(i) > 1 {
@@ -74,11 +74,11 @@ func (p *player) pickUpItem() {
 
 func (p *player) attack(m *monster) {
 	messages.push("You hit the "+m.Name, gameplay)
-	m.takeDamage(p.strength)
+	m.takeDamage(p.Strength)
 }
 
 func (p *player) takeDamage(damage int) {
-	p.hp -= damage
+	p.Hp -= damage
 }
 
 func alterAreaVisibility(p point, newState byte, currentDepth int) {
@@ -102,11 +102,11 @@ func alterAreaVisibility(p point, newState byte, currentDepth int) {
 }
 
 func setRoomState(newState byte) {
-	for _, p := range p.currentRoom.points {
-		if dungeon.grid[p.x][p.y]&room == room {
-			dungeon.grid[p.x][p.y] = empty | room | newState
+	for _, p := range p.CurrentRoom.Points {
+		if dungeon.grid[p.X][p.Y]&room == room {
+			dungeon.grid[p.X][p.Y] = empty | room | newState
 		} else {
-			dungeon.grid[p.x][p.y] = empty | newState
+			dungeon.grid[p.X][p.Y] = empty | newState
 		}
 
 	}
@@ -114,30 +114,29 @@ func setRoomState(newState byte) {
 
 func scanRoom(pos point, state byte) {
 
-	dungeon.grid[pos.x][pos.y] = empty | room | state
+	dungeon.grid[pos.X][pos.Y] = empty | room | state
 	for _, dir := range getAllDirections() {
 		newPoint := pos
 		newPoint.move(dir)
-		if dungeon.grid[newPoint.x][newPoint.y]&room == room && dungeon.grid[newPoint.x][newPoint.y]&state != state {
-			p.currentRoom.add(newPoint)
+		if dungeon.grid[newPoint.X][newPoint.Y]&room == room && dungeon.grid[newPoint.X][newPoint.Y]&state != state {
+			p.CurrentRoom.add(newPoint)
 			scanRoom(newPoint, state)
-		} else if dungeon.grid[newPoint.x][newPoint.y]&empty == empty {
-			p.currentRoom.add(newPoint)
-		} else if dungeon.grid[newPoint.x][newPoint.y] == obstacle {
-			dungeon.grid[newPoint.x][newPoint.y] = obstacle | visited
+		} else if dungeon.grid[newPoint.X][newPoint.Y]&empty == empty {
+			p.CurrentRoom.add(newPoint)
+		} else if dungeon.grid[newPoint.X][newPoint.Y] == obstacle {
+			dungeon.grid[newPoint.X][newPoint.Y] = obstacle | visited
 		}
 	}
 }
 
 func (pl player) getPosition() point {
-	return pl.position
+	return pl.Position
 }
 
 func (pl *player) setPosition(p point) {
-	pl.position = p
+	pl.Position = p
 }
 
 func (pl player) getChar() rune {
-	return pl.char
+	return pl.Char
 }
-

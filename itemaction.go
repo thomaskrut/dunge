@@ -15,14 +15,14 @@ func init() {
 }
 
 func pickUpItem(i *item) keyProcessor {
-	p.items.add(i)
-	itemsOnMap[p.position] = append(itemsOnMap[p.position][:selectedItem], itemsOnMap[p.position][selectedItem+1:]...)
-	message := "You picked up "+i.Prefix+" "+i.Name
-	if len(itemsOnMap[p.position]) == 1 {
-		message = message + ". There is " + itemsOnMap[p.position][0].Prefix + " " + itemsOnMap[p.position][0].Name + " here, press 5 to pick up"
+	p.Items.add(i)
+	itemsOnMap[p.Position] = append(itemsOnMap[p.Position][:selectedItem], itemsOnMap[p.Position][selectedItem+1:]...)
+	message := "You picked up " + i.Prefix + " " + i.Name
+	if len(itemsOnMap[p.Position]) == 1 {
+		message = message + ". There is " + itemsOnMap[p.Position][0].Prefix + " " + itemsOnMap[p.Position][0].Name + " here, press 5 to pick up"
 	}
-	if len(itemsOnMap[p.position]) > 1 {
-		message = message + ". There are " + strconv.Itoa(len(itemsOnMap[p.position])) + " more things here, press 5 to examine"
+	if len(itemsOnMap[p.Position]) > 1 {
+		message = message + ". There are " + strconv.Itoa(len(itemsOnMap[p.Position])) + " more things here, press 5 to examine"
 	}
 	messages.push(message, gameplay)
 	return gameplay
@@ -34,7 +34,7 @@ func throwItem(i *item) keyProcessor {
 
 		distance := 1000 / i.Weight
 
-		newPosition := p.position
+		newPosition := p.Position
 
 		for count := 0; count <= distance; count++ {
 			if newPosition.getPossibleDirections(&dungeon)[dir] {
@@ -52,7 +52,7 @@ func throwItem(i *item) keyProcessor {
 
 		i.setPosition(newPosition)
 		itemsOnMap[newPosition] = append(itemsOnMap[newPosition], i)
-		p.items.remove(i)
+		p.Items.remove(i)
 		return true
 	}
 
@@ -61,7 +61,7 @@ func throwItem(i *item) keyProcessor {
 }
 
 func eatItem(i *item) keyProcessor {
-	p.items.remove(i)
+	p.Items.remove(i)
 	messages.push("You ate "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay
 }
@@ -72,7 +72,7 @@ func dropItem(i *item) keyProcessor {
 
 	i.setPosition(newPosition)
 	itemsOnMap[i.position] = append(itemsOnMap[i.position], i)
-	p.items.remove(i)
+	p.Items.remove(i)
 	messages.push("You dropped "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay
 

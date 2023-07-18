@@ -18,11 +18,11 @@ func newDungeon(width, height int) dungeonMap {
 }
 
 func (d *dungeonMap) write(p point, value byte) {
-	d.grid[p.x][p.y] = value
+	d.grid[p.X][p.Y] = value
 }
 
 func (d *dungeonMap) read(p point) byte {
-	return d.grid[p.x][p.y]
+	return d.grid[p.X][p.Y]
 }
 
 func (d *dungeonMap) getEmptyPoint() point {
@@ -36,9 +36,8 @@ func (d *dungeonMap) getEmptyPoint() point {
 }
 
 func (d *dungeonMap) getRandomPoint() point {
-	return point{x: randomNumber(d.width), y: randomNumber(d.height)}
+	return point{X: randomNumber(d.width), Y: randomNumber(d.height)}
 }
-
 
 func (d *dungeonMap) connectWithCorridor(origin, destination point) {
 	currentPosition := origin
@@ -84,7 +83,7 @@ func (d *dungeonMap) createRandomRoom(startingPoint point, maxWidth, maxHeight i
 	startingPoint.move(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 5
 	roomHeight := randomNumber(maxHeight) + 5
-	if p := (point{x: startingPoint.x + roomWidth, y: startingPoint.y + roomHeight}); p.isOutOfBounds(2) {
+	if p := (point{X: startingPoint.X + roomWidth, Y: startingPoint.Y + roomHeight}); p.isOutOfBounds(2) {
 		return point{}, errors.New("room out of bounds")
 	}
 	return d.createRoom(startingPoint, roomWidth, roomHeight)
@@ -93,14 +92,14 @@ func (d *dungeonMap) createRandomRoom(startingPoint point, maxWidth, maxHeight i
 
 func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center point, err error) {
 
-	for i := startingPoint.x; i < startingPoint.x+width; i++ {
-		for j := startingPoint.y; j < startingPoint.y+height; j++ {
-			currentPoint := point{x: i, y: j}
-			if i == startingPoint.x+width-(width/2) {
-				center.x = i
+	for i := startingPoint.X; i < startingPoint.X+width; i++ {
+		for j := startingPoint.Y; j < startingPoint.Y+height; j++ {
+			currentPoint := point{X: i, Y: j}
+			if i == startingPoint.X+width-(width/2) {
+				center.X = i
 			}
-			if j == startingPoint.y+height-(height/2) {
-				center.y = j
+			if j == startingPoint.Y+height-(height/2) {
+				center.Y = j
 			}
 
 			if d.read(currentPoint) == empty {

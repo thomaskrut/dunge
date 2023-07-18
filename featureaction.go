@@ -3,7 +3,7 @@ package main
 func open() {
 
 	action := func(dir direction) bool {
-		newPosition := p.position
+		newPosition := p.Position
 		newPosition.move(dir)
 		if f, ok := featuresOnMap[newPosition]; ok {
 			if f.name == "door" && f.closed {
@@ -11,7 +11,7 @@ func open() {
 				f.char = "-"
 				f.description = "an open door"
 				dungeon.write(newPosition, empty)
-				alterAreaVisibility(p.position, lit, p.lightsource)
+				alterAreaVisibility(p.Position, lit, p.Lightsource)
 				messages.push("You opened the door", gameplay)
 				return true
 			} else {
@@ -30,16 +30,16 @@ func open() {
 func close() {
 
 	action := func(dir direction) bool {
-		newPosition := p.position
+		newPosition := p.Position
 		newPosition.move(dir)
 		if f, ok := featuresOnMap[newPosition]; ok {
 			if f.name == "door" && !f.closed {
 				f.closed = true
 				f.char = "+"
 				f.description = "a closed door"
-				alterAreaVisibility(p.position, visited, p.lightsource)
+				alterAreaVisibility(p.Position, visited, p.Lightsource)
 				dungeon.write(newPosition, obstacle)
-				alterAreaVisibility(p.position, lit, p.lightsource)
+				alterAreaVisibility(p.Position, lit, p.Lightsource)
 				messages.push("You closed the door", gameplay)
 				return true
 			} else {
@@ -71,22 +71,22 @@ func look() {
 
 			if f, ok := featuresOnMap[currentPosition]; ok {
 				messages.push("You see "+f.description, gameplay)
-				arrows.push(point{currentPosition.x, currentPosition.y + 1})
+				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
 			if m, ok := monstersOnMap[currentPosition]; ok {
 				messages.push("You see a "+m.Name, gameplay)
-				arrows.push(point{currentPosition.x, currentPosition.y + 1})
+				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
 			if i, ok := itemsOnMap[currentPosition]; ok {
 				if len(i) == 1 {
 					messages.push("You see "+i[0].Prefix+" "+i[0].Name, gameplay)
 				} else if len(i) > 1 {
-					messages.push("You see "+i[len(i)-1].Prefix+" "+i[len(i)-1].Name + " with some other things underneath", gameplay)
+					messages.push("You see "+i[len(i)-1].Prefix+" "+i[len(i)-1].Name+" with some other things underneath", gameplay)
 				}
-				
-				arrows.push(point{currentPosition.x, currentPosition.y + 1})
+
+				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
 		}

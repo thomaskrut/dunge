@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bufio"
+	"encoding/gob"
+	"fmt"
 	"os"
 )
 
@@ -19,30 +22,46 @@ func loadState(filename string) bool {
 		return false
 	}
 
-	f, err := os.Open(filename)
+	f1, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
+	defer f1.Close()
 
 	dimensions := make([]byte, 2)
-	f.Read(dimensions)
+	f1.Read(dimensions)
 	dungeon.width = int(dimensions[0])
 	dungeon.height = int(dimensions[1])
 
 	grid := make([][]byte, dungeon.width)
 	for i := range grid {
 		row := make([]byte, dungeon.height)
-		f.Read(row)
+		f1.Read(row)
 		grid[i] = row
 	}
 
 	dungeon.grid = grid
 
-	playerPosition := make([]byte, 2)
+	f2, err := os.Open("player.save")
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer f2.Close()
+
+	reader := bufio.NewReader(f2)
+
+	dec := gob.NewDecoder(reader)
+	
+	dec.Decode(&p)
+
+	fmt.Println(p)
+
+	/*playerPosition := make([]byte, 2)
 	f.Read(playerPosition)
 	p.position.x = int(playerPosition[0])
-	p.position.y = int(playerPosition[1])
+	p.position.y = int(playerPosition[1])*/
 
 	return true
 }

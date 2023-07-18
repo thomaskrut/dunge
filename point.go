@@ -1,7 +1,7 @@
 package main
 
 type point struct {
-	x, y int
+	X, Y int
 }
 
 func (p point) getPossibleDirections(d *dungeonMap) map[direction]bool {
@@ -20,13 +20,13 @@ func (p point) getPossibleDirections(d *dungeonMap) map[direction]bool {
 
 func (p *point) move(dir direction) {
 
-	p.x += dir.varX
-	p.y += dir.varY
+	p.X += dir.varX
+	p.Y += dir.varY
 
 }
 
 func (p point) isOutOfBounds(margin int) bool {
-	return p.x <= margin || p.x >= len(dungeon.grid)-margin || p.y <= margin || p.y >= len(dungeon.grid[0])-margin
+	return p.X <= margin || p.X >= len(dungeon.grid)-margin || p.Y <= margin || p.Y >= len(dungeon.grid[0])-margin
 }
 
 func (p point) isInCorridor() bool {

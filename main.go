@@ -70,7 +70,7 @@ func init() {
 
 func moveMonsters() {
 
-	for i := 0; i < p.speed; i++ {
+	for i := 0; i < p.Speed; i++ {
 
 		for i, m := range monstersOnMap {
 
@@ -107,7 +107,7 @@ func moveMonsters() {
 
 func checkForItems() {
 
-	if i, ok := itemsOnMap[p.position]; ok {
+	if i, ok := itemsOnMap[p.Position]; ok {
 		if len(i) == 1 {
 			messages.push("There is "+i[0].Prefix+" "+i[0].Name+" here, press 5 to pick up", gameplay)
 		} else if len(i) > 1 {
@@ -144,20 +144,20 @@ func generateOverlay(menu bool, verb string) {
 
 	if verb == "pick up" {
 
-		for _, item := range itemsOnMap[p.position] {
+		for _, item := range itemsOnMap[p.Position] {
 			itemToAdd := item
 			menuItems = append(menuItems, itemToAdd)
 		}
 
 	} else {
 
-		if p.items.count() == 0 {
+		if p.Items.count() == 0 {
 			messages.push("Inventory empty", gameplay)
 			currentState = gameplay
 			return
 		}
 
-		for item := range p.items.all() {
+		for item := range p.Items.all() {
 			for _, v := range item.Verbs {
 				if v == verb {
 					itemToAdd := item
@@ -269,7 +269,7 @@ func printDungeon() {
 }
 
 func printStats() {
-	fmt.Println("HP:", p.hp, "Turn:", turn)
+	fmt.Println("HP:", p.Hp, "Turn:", turn)
 }
 
 func printMessages() {
@@ -290,7 +290,6 @@ func main() {
 
 	currentState = gameplay
 
-	
 	p.attemptMove(None)
 
 	for {
