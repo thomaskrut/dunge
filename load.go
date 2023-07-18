@@ -14,7 +14,9 @@ func loadState() bool {
 
 	load("~player.sav", &p)
 	load("~map.sav", &dungeon)
-	load("~ĩtems.sav", &itemsOnMap)
+	load("~items.sav", &itemsOnMap)
+	load("~monsters.sav", &monstersOnMap)
+	load("~features.sav", &featuresOnMap)
 	return true
 
 }

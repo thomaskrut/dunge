@@ -120,8 +120,8 @@ func (d *dungeonMap) generateDoors(numberOfDoors int) {
 		p := dungeon.getEmptyPoint()
 
 		if door, ok := createDoor(p); ok {
-			if door.closed {
-				dungeon.write(door.position, obstacle)
+			if door.Closed {
+				dungeon.write(door.Position, obstacle)
 			}
 			featuresOnMap[p] = door
 			count++

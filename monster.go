@@ -11,9 +11,9 @@ type monsterList struct {
 }
 
 type monster struct {
-	speedCounter    int
-	items           inventory
-	position        point
+	SpeedCounter    int
+	Items           inventory
+	Position        point
 	Char            string   `json:"char"`
 	Name            string   `json:"name"`
 	Prob            int      `json:"prob"`
@@ -31,19 +31,19 @@ func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
 	if m.Hp <= 0 {
 		messages.push("You killed the "+m.Name, gameplay)
-		if m.items.count() > 0 {
+		if m.Items.count() > 0 {
 			m.dropAllItems()
 			messages.push("The "+m.Name+" scattered its belongings on the floor", gameplay)
 		}
-		delete(monstersOnMap, m.position)
+		delete(monstersOnMap, m.Position)
 	}
 }
 
 func (m *monster) dropAllItems() {
 
-	for item := range m.items.all() {
+	for item := range m.Items.all() {
 		currentItem := item
-		newPosition := m.position
+		newPosition := m.Position
 		for itemsOnMap[newPosition] != nil {
 
 			dir := randomDirection(None, true, true)
@@ -52,9 +52,9 @@ func (m *monster) dropAllItems() {
 			}
 		}
 		currentItem.setPosition(newPosition)
-		itemsOnMap[currentItem.position] = append(itemsOnMap[currentItem.position], currentItem)
+		itemsOnMap[currentItem.Position] = append(itemsOnMap[currentItem.Position], currentItem)
 	}
-	m.items.clear()
+	m.Items.clear()
 }
 
 func (m *monster) attack(p *player) {
@@ -65,20 +65,20 @@ func (m *monster) attack(p *player) {
 }
 
 func (m *monster) readyToMove() bool {
-	if m.speedCounter == 0 {
-		m.speedCounter = m.Speed
+	if m.SpeedCounter == 0 {
+		m.SpeedCounter = m.Speed
 		return true
 	}
-	m.speedCounter--
+	m.SpeedCounter--
 	return false
 }
 
 func (m monster) getPosition() point {
-	return m.position
+	return m.Position
 }
 
 func (m *monster) setPosition(p point) {
-	m.position = p
+	m.Position = p
 }
 
 func (m monster) getChar() rune {
@@ -87,21 +87,21 @@ func (m monster) getChar() rune {
 
 func (m *monster) attemptMove(dir direction) bool {
 
-	if m.position.getPossibleDirections(&dungeon)[dir] {
+	if m.Position.getPossibleDirections(&dungeon)[dir] {
 
-		newPoint := m.position
+		newPoint := m.Position
 		newPoint.move(dir)
 		if newPoint == p.Position {
 			m.attack(&p)
 			return true
 		}
 		for _, m := range monstersOnMap {
-			if m.position == newPoint {
+			if m.Position == newPoint {
 				return false
 			}
 		}
 
-		m.position.move(dir)
+		m.Position.move(dir)
 
 		return true
 	}

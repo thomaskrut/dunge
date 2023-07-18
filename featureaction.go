@@ -6,10 +6,10 @@ func open() {
 		newPosition := p.Position
 		newPosition.move(dir)
 		if f, ok := featuresOnMap[newPosition]; ok {
-			if f.name == "door" && f.closed {
-				f.closed = false
-				f.char = "-"
-				f.description = "an open door"
+			if f.Name == "door" && f.Closed {
+				f.Closed = false
+				f.Char = "-"
+				f.Description = "an open door"
 				dungeon.write(newPosition, empty)
 				alterAreaVisibility(p.Position, lit, p.Lightsource)
 				messages.push("You opened the door", gameplay)
@@ -33,10 +33,10 @@ func close() {
 		newPosition := p.Position
 		newPosition.move(dir)
 		if f, ok := featuresOnMap[newPosition]; ok {
-			if f.name == "door" && !f.closed {
-				f.closed = true
-				f.char = "+"
-				f.description = "a closed door"
+			if f.Name == "door" && !f.Closed {
+				f.Closed = true
+				f.Char = "+"
+				f.Description = "a closed door"
 				alterAreaVisibility(p.Position, visited, p.Lightsource)
 				dungeon.write(newPosition, obstacle)
 				alterAreaVisibility(p.Position, lit, p.Lightsource)
@@ -70,7 +70,7 @@ func look() {
 			}
 
 			if f, ok := featuresOnMap[currentPosition]; ok {
-				messages.push("You see "+f.description, gameplay)
+				messages.push("You see "+f.Description, gameplay)
 				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 

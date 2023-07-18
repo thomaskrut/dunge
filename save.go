@@ -6,35 +6,15 @@ import (
 	"os"
 )
 
-func saveState(filename string) {
+func saveState() {
 
-	if fileExists(filename) {
-		os.Remove(filename)
-	}
-
-	f, err := os.Create(filename)
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer f.Close()
-
-	saveMap(f)
 	save("~player.sav", p)
 	save("~map.sav", dungeon)
 	save("~items.sav", itemsOnMap)
+	save("~monsters.sav", monstersOnMap)
+	save("~features.sav", featuresOnMap)
 }
 
-func saveMap(f *os.File) {
-
-	f.Write([]byte{byte(dungeon.Width)})
-	f.Write([]byte{byte(dungeon.Height)})
-
-	for _, slice := range dungeon.Grid {
-		f.Write(slice)
-	}
-}
 
 func save(path string, source interface{}) {
 

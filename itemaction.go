@@ -71,7 +71,7 @@ func dropItem(i *item) keyProcessor {
 	newPosition := p.getPosition()
 
 	i.setPosition(newPosition)
-	itemsOnMap[i.position] = append(itemsOnMap[i.position], i)
+	itemsOnMap[i.Position] = append(itemsOnMap[i.Position], i)
 	p.Items.remove(i)
 	messages.push("You dropped "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay

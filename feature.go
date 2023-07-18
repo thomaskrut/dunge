@@ -1,30 +1,30 @@
 package main
 
 type feature struct {
-	position    point
-	prefix      string
-	name        string
-	char        string
-	description string
-	closed      bool
+	Position    point
+	Prefix      string
+	Name        string
+	Char        string
+	Description string
+	Closed      bool
 }
 
 func createDoor(position point) (*feature, bool) {
 
 	if position.isInCorridor() {
 		door := feature{
-			position: position,
-			prefix:   "a",
-			name:     "door",
+			Position: position,
+			Prefix:   "a",
+			Name:     "door",
 		}
 		if randomNumber(2) == 1 {
-			door.closed = true
-			door.char = "+"
-			door.description = "a closed door"
+			door.Closed = true
+			door.Char = "+"
+			door.Description = "a closed door"
 		} else {
-			door.closed = false
-			door.char = "-"
-			door.description = "an open door"
+			door.Closed = false
+			door.Char = "-"
+			door.Description = "an open door"
 		}
 		return &door, true
 	} else {
@@ -34,5 +34,5 @@ func createDoor(position point) (*feature, bool) {
 }
 
 func (f feature) getChar() rune {
-	return rune(f.char[0])
+	return rune(f.Char[0])
 }

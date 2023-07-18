@@ -60,9 +60,8 @@ func init() {
 		p.setPosition(dungeon.getEmptyPoint())
 		turn = 0
 		generateItems(readItemsTemplate(), 50)
+		generateMonsters(readMonsterTemplate(), 50)
 	}
-
-	generateMonsters(readMonsterTemplate(), 50)
 
 }
 
@@ -74,14 +73,14 @@ func moveMonsters() {
 
 			if m.readyToMove() {
 
-				if items, ok := itemsOnMap[m.position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
-					if dungeon.read(m.position)&lit == lit {
+				if items, ok := itemsOnMap[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
+					if dungeon.read(m.Position)&lit == lit {
 						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
 					}
-					m.items.add(items[len(items)-1])
-					itemsOnMap[m.position] = itemsOnMap[m.position][:len(itemsOnMap[m.position])-1]
-					if len(itemsOnMap[m.position]) == 0 {
-						delete(itemsOnMap, m.position)
+					m.Items.add(items[len(items)-1])
+					itemsOnMap[m.Position] = itemsOnMap[m.Position][:len(itemsOnMap[m.Position])-1]
+					if len(itemsOnMap[m.Position]) == 0 {
+						delete(itemsOnMap, m.Position)
 					}
 					continue
 				}
@@ -95,7 +94,7 @@ func moveMonsters() {
 					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
 				}
 				delete(monstersOnMap, i)
-				monstersOnMap[m.position] = m
+				monstersOnMap[m.Position] = m
 			}
 
 		}
@@ -126,9 +125,9 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 			if rand < m.Prob {
 				newMonster := m
 				newMonster.setPosition(dungeon.getEmptyPoint())
-				newMonster.items = newInventory()
-				newMonster.speedCounter = newMonster.Speed
-				monstersOnMap[newMonster.position] = &newMonster
+				newMonster.Items = newInventory()
+				newMonster.SpeedCounter = newMonster.Speed
+				monstersOnMap[newMonster.Position] = &newMonster
 			}
 		}
 	}
@@ -219,7 +218,7 @@ func generateItems(list itemList, numberOfIterations int) {
 			if rand < i.Prob {
 				newItem := i
 				newItem.setPosition(dungeon.getEmptyPoint())
-				itemsOnMap[newItem.position] = append(itemsOnMap[newItem.position], &newItem)
+				itemsOnMap[newItem.Position] = append(itemsOnMap[newItem.Position], &newItem)
 			}
 		}
 	}

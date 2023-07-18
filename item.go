@@ -11,18 +11,18 @@ type itemList struct {
 }
 
 type item struct {
-	position point
-	Name     string `json:"name"`
-	Prefix   string `json:"prefix"`
-	Char     string `json:"char"`
-	Prob     int    `json:"prob"`
-	Value    int    `json:"value"`
-	Weight   int    `json:"weight"`
+	Position point
+	Name     string   `json:"name"`
+	Prefix   string   `json:"prefix"`
+	Char     string   `json:"char"`
+	Prob     int      `json:"prob"`
+	Value    int      `json:"value"`
+	Weight   int      `json:"weight"`
 	Verbs    []string `json:"verbs"`
 }
 
 func (i *item) setPosition(p point) {
-	i.position = p
+	i.Position = p
 }
 
 func (i item) getChar() rune {
