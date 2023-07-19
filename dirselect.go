@@ -18,7 +18,7 @@ func (ds dirSelect) processKey(char rune) (validKey bool) {
 	if dir, ok := keyToDirMap[char]; ok {
 		
 		currentState = gameplay
-		if actionSuccessful := ds.action(dir); actionSuccessful {
+		if ds.action(dir) {
 			currentState.processTurn()
 		}
 		return true
