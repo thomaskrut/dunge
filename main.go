@@ -55,7 +55,7 @@ func init() {
 
 	flag.Parse()
 
-	setSource(*seed)
+	setRandomSource(*seed)
 
 	monstersOnMap = make(map[point]*monster)
 	itemsOnMap = make(map[point][]*item)
