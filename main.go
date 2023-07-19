@@ -36,7 +36,9 @@ var (
 	gridOverlay  []string
 	menuItems    []*item
 	selectedItem int
+
 	turn         int
+	currentLevel int
 
 	seed *int
 )
@@ -49,12 +51,19 @@ const (
 	room
 )
 
+func counter() func() int {
+	i := 0
+	return func() int {
+		current := i
+		i++
+		return current
+	}
+}
+
 func init() {
 
 	seed = flag.Int("seed", 0, "seed for random number generation")
-
 	flag.Parse()
-
 	setRandomSource(*seed)
 
 	monstersOnMap = make(map[point]*monster)
@@ -63,25 +72,32 @@ func init() {
 	charmap = initCharMap()
 
 	persist = make(map[int]interface{})
-	persist[0] = &p
-	persist[1] = &dungeon
-	persist[2] = &itemsOnMap
-	persist[3] = &monstersOnMap
-	persist[4] = &featuresOnMap
-	persist[5] = &turn
+	next := counter()
+	persist[next()] = &p
+	persist[next()] = &dungeon
+	persist[next()] = &itemsOnMap
+	persist[next()] = &monstersOnMap
+	persist[next()] = &featuresOnMap
+	persist[next()] = &turn
+	persist[next()] = &currentLevel
 
-	savedStateLoaded := loadState("save.sav")
+	savedStateExists := loadState("save.sav")
 
-	if !savedStateLoaded {
-		dungeon = newDungeon(width, height)
-		generateDungeon()
-		p = newPlayer('@')
-		p.setPosition(dungeon.getEmptyPoint())
-		turn = 0
-		generateItems(readItemsTemplate(), 50)
-		generateMonsters(readMonsterTemplate(), 50)
+	if !savedStateExists {
+		generateLevel(1)
 	}
 
+}
+
+func generateLevel(level int) {
+	currentLevel = level
+	dungeon = newDungeon(width, height)
+	generateDungeon()
+	p = newPlayer('@')
+	p.setPosition(dungeon.getEmptyPoint())
+	turn = 0
+	generateItems(readItemsTemplate(), 50)
+	generateMonsters(readMonsterTemplate(), 50)
 }
 
 func moveMonsters() {
@@ -285,7 +301,7 @@ func printDungeon() {
 }
 
 func printStats() {
-	fmt.Println("HP:", p.Hp, "Turn:", turn)
+	fmt.Println("HP:", p.Hp, "Turn:", turn, "Depth:", currentLevel * 10)
 }
 
 func printMessages() {
