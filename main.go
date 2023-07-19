@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"sort"
 	"strconv"
@@ -26,6 +27,8 @@ var (
 	itemsOnMap    map[point][]*item
 	featuresOnMap map[point]*feature
 
+	persist map[int]interface{}
+
 	arrows arrowQueue
 
 	validKeyPressed bool
@@ -34,6 +37,8 @@ var (
 	menuItems    []*item
 	selectedItem int
 	turn         int
+
+	seed *int
 )
 
 const (
@@ -46,12 +51,26 @@ const (
 
 func init() {
 
+	seed = flag.Int("seed", 0, "seed for random number generation")
+
+	flag.Parse()
+
+	setSource(*seed)
+
 	monstersOnMap = make(map[point]*monster)
 	itemsOnMap = make(map[point][]*item)
 	featuresOnMap = make(map[point]*feature)
 	charmap = initCharMap()
 
-	savedStateLoaded := loadState()
+	persist = make(map[int]interface{})
+	persist[0] = &p
+	persist[1] = &dungeon
+	persist[2] = &itemsOnMap
+	persist[3] = &monstersOnMap
+	persist[4] = &featuresOnMap
+	persist[5] = &turn
+
+	savedStateLoaded := loadState("save.sav")
 
 	if !savedStateLoaded {
 		dungeon = newDungeon(width, height)
