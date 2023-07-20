@@ -34,7 +34,7 @@ func createDoor(position point) (*feature, bool) {
 }
 
 func createStairs(position point, direction string) (*feature, bool) {
-	if position.isInCorridor() {
+	if _, ok := featuresOnMap[position]; ok || position.isInCorridor() {
 		return nil, false
 	}
 
