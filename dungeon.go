@@ -49,7 +49,7 @@ func (d *dungeonMap) getRandomPoint() point {
 	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
 }
 
-func (d *dungeonMap) connectWithCorridor(origin, destination point) {
+func (d *dungeonMap) newCorridor(origin, destination point) {
 	currentPosition := origin
 	//var previousPosition point
 	var newDirection direction
@@ -89,7 +89,7 @@ func (d *dungeonMap) connectWithCorridor(origin, destination point) {
 	}
 }
 
-func (d *dungeonMap) createRandomRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
+func (d *dungeonMap) newRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
 	startingPoint.move(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 5
 	roomHeight := randomNumber(maxHeight) + 5
@@ -123,8 +123,6 @@ func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center 
 
 func (d *dungeonMap) generateDoors(numberOfDoors int) {
 
-	
-
 	for i := 0; i < numberOfDoors; {
 
 		p := dungeon.getEmptyPoint()
@@ -142,7 +140,7 @@ func (d *dungeonMap) generateDoors(numberOfDoors int) {
 }
 
 func (d *dungeonMap) generateStairs(up, down int) {
-	
+
 	for i := 0; i < up; {
 		p := dungeon.getEmptyPoint()
 		if stairs, ok := createStairs(p, "up"); ok {

@@ -69,7 +69,7 @@ func init() {
 		turn = 0
 		p = newPlayer('@')
 		generateLevel(1)
-		
+
 	}
 
 }
@@ -131,24 +131,6 @@ func checkForItems() {
 
 	}
 
-}
-
-func generateMonsters(list monsterList, numberOfIterations int) {
-
-	for i := 0; i < numberOfIterations; i++ {
-
-		rand := randomNumber(1000)
-
-		for _, m := range list.Monsters {
-			if rand < m.Prob {
-				newMonster := m
-				newMonster.setPosition(dungeon.getEmptyPoint())
-				newMonster.Items = newInventory()
-				newMonster.SpeedCounter = newMonster.Speed
-				monstersOnMap[newMonster.Position] = &newMonster
-			}
-		}
-	}
 }
 
 func generateOverlay(menu bool, verb string) {
@@ -225,6 +207,24 @@ func generateOverlay(menu bool, verb string) {
 	}
 }
 
+func generateMonsters(list monsterList, numberOfIterations int) {
+
+	for i := 0; i < numberOfIterations; i++ {
+
+		rand := randomNumber(1000)
+
+		for _, m := range list.Monsters {
+			if rand < m.Prob {
+				newMonster := m
+				newMonster.setPosition(dungeon.getEmptyPoint())
+				newMonster.Items = newInventory()
+				newMonster.SpeedCounter = newMonster.Speed
+				monstersOnMap[newMonster.Position] = &newMonster
+			}
+		}
+	}
+}
+
 func generateItems(list itemList, numberOfIterations int) {
 
 	for i := 1; i < numberOfIterations; i++ {
@@ -250,7 +250,7 @@ func generateDungeon() {
 	var err error
 
 	for {
-		previousRoom, err = dungeon.createRandomRoom(dungeon.getRandomPoint(), 20, 20)
+		previousRoom, err = dungeon.newRoom(dungeon.getRandomPoint(), 20, 20)
 		if err != nil {
 			continue
 		}
@@ -260,20 +260,20 @@ func generateDungeon() {
 	for i := 0; i < 10; i++ {
 
 		for {
-			nextRoom, err = dungeon.createRandomRoom(dungeon.getRandomPoint(), 20, 20)
+			nextRoom, err = dungeon.newRoom(dungeon.getRandomPoint(), 20, 20)
 			if err != nil {
 				continue
 			}
 			break
 		}
 
-		dungeon.connectWithCorridor(previousRoom, nextRoom)
+		dungeon.newCorridor(previousRoom, nextRoom)
 		previousRoom = nextRoom
 
 	}
 
 	dungeon.generateDoors((width + height) / 10)
-	dungeon.generateStairs(12,12)
+	dungeon.generateStairs(12, 12)
 
 }
 
