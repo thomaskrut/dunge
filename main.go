@@ -22,12 +22,11 @@ var (
 	currentState keyProcessor
 	messages     messagePrompt
 	gameplay     gamePlay
+	persistance  persist
 
 	monstersOnMap map[point]*monster
 	itemsOnMap    map[point][]*item
 	featuresOnMap map[point]*feature
-
-	persist map[int]interface{}
 
 	arrows arrowQueue
 
@@ -51,37 +50,20 @@ const (
 	room
 )
 
-func counter() func() int {
-	i := 0
-	return func() int {
-		current := i
-		i++
-		return current
-	}
-}
-
 func init() {
 
 	seed = flag.Int("seed", 0, "seed for random number generation")
 	flag.Parse()
 	setRandomSource(*seed)
 
+	persistance.register(&p, &dungeon, &itemsOnMap, &monstersOnMap, &featuresOnMap, &turn, &currentLevel)
+
 	monstersOnMap = make(map[point]*monster)
 	itemsOnMap = make(map[point][]*item)
 	featuresOnMap = make(map[point]*feature)
 	charmap = initCharMap()
 
-	persist = make(map[int]interface{})
-	next := counter()
-	persist[next()] = &p
-	persist[next()] = &dungeon
-	persist[next()] = &itemsOnMap
-	persist[next()] = &monstersOnMap
-	persist[next()] = &featuresOnMap
-	persist[next()] = &turn
-	persist[next()] = &currentLevel
-
-	savedStateExists := loadState("save.sav")
+	savedStateExists := persistance.loadState("save.sav")
 
 	if !savedStateExists {
 		generateLevel(1)
@@ -301,7 +283,7 @@ func printDungeon() {
 }
 
 func printStats() {
-	fmt.Println("HP:", p.Hp, "Turn:", turn, "Depth:", currentLevel * 10)
+	fmt.Println("HP:", p.Hp, "Turn:", turn, "Depth:", currentLevel*10)
 }
 
 func printMessages() {

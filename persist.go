@@ -7,8 +7,21 @@ import (
 )
 
 
+type persist struct {
+	entities map[int]interface{}
+}
 
-func saveState(filename string) {
+func (p *persist) register (entities ...interface{}) {
+	p.entities = make(map[int]interface{})
+	
+	for i, e := range entities {
+		p.entities[i] = e
+	}
+
+}
+
+
+func (p *persist) saveState(filename string) {
 
 	f, err := os.Create(filename)
 
@@ -22,8 +35,8 @@ func saveState(filename string) {
 
 	enc := gob.NewEncoder(writer)
 
-	for i:=0; i<len(persist); i++ {
-		err = enc.Encode(persist[i])
+	for i:=0; i<len(p.entities); i++ {
+		err = enc.Encode(p.entities[i])
 		handle(err)
 	}
 
@@ -31,7 +44,7 @@ func saveState(filename string) {
 
 }
 
-func loadState(filename string) bool {
+func (p *persist) loadState(filename string) bool {
 
 	if !fileExists(filename) {
 		return false
@@ -47,8 +60,8 @@ func loadState(filename string) bool {
 
 	dec := gob.NewDecoder(bufio.NewReader(f))
 
-	for i:=0; i<len(persist); i++ {
-		err = dec.Decode(persist[i])
+	for i:=0; i<len(p.entities); i++ {
+		err = dec.Decode(p.entities[i])
 		handle(err)
 	}
 
