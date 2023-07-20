@@ -35,6 +35,16 @@ func (d *dungeonMap) getEmptyPoint() point {
 	}
 }
 
+func (d *dungeonMap) getPointInRoom() point {
+	for {
+		x := randomNumber(dungeon.Width)
+		y := randomNumber(dungeon.Height)
+		if dungeon.Grid[x][y]&room == room {
+			return point{x, y}
+		}
+	}
+}
+
 func (d *dungeonMap) getRandomPoint() point {
 	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
 }

@@ -1,5 +1,24 @@
 package main
 
+func useStairs() {
+
+	if f, ok := featuresOnMap[p.Position]; ok {
+		switch f.Name {
+		case "upstair":
+			generateLevel(currentLevel - 1)
+			p.attemptMove(None)
+			currentState.processTurn()
+		case "downstair":
+			generateLevel(currentLevel + 1)
+			p.attemptMove(None)
+			currentState.processTurn()
+		}
+	} else {
+		messages.push("There are no stairs here", gameplay)
+	}
+
+}
+
 func open() {
 
 	action := func(dir direction) bool {

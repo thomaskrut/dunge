@@ -66,7 +66,10 @@ func init() {
 	savedStateExists := persistance.loadState("save.sav")
 
 	if !savedStateExists {
+		turn = 0
+		p = newPlayer('@')
 		generateLevel(1)
+		
 	}
 
 }
@@ -75,9 +78,7 @@ func generateLevel(level int) {
 	currentLevel = level
 	dungeon = newDungeon(width, height)
 	generateDungeon()
-	p = newPlayer('@')
-	p.setPosition(dungeon.getEmptyPoint())
-	turn = 0
+	p.setPosition(dungeon.getPointInRoom())
 	generateItems(readItemsTemplate(), 50)
 	generateMonsters(readMonsterTemplate(), 50)
 }
@@ -272,7 +273,7 @@ func generateDungeon() {
 	}
 
 	dungeon.generateDoors((width + height) / 10)
-	dungeon.generateStairs(2,2)
+	dungeon.generateStairs(12,12)
 
 }
 

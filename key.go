@@ -10,6 +10,8 @@ const (
 	southWestKey = 49
 	southEastKey = 51
 	restKey      = 53
+	downStairs   = 62
+	upStairs     = 60
 	spacebar     = 0
 	quitKey      = 113
 	inventoryKey = 105

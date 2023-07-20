@@ -1,7 +1,7 @@
 package main
 
 import (
-	_"fmt"
+	"fmt"
 	"os"
 )
 
@@ -15,7 +15,7 @@ func (g gamePlay) processTurn() {
 }
 
 func (g gamePlay) processKey(char rune) (validKey bool) {
-	//fmt.Println(char)
+	fmt.Println(char)
 	var moveSuccessful bool = false
 
 	if dir, ok := keyToDirMap[char]; ok {
@@ -49,6 +49,9 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		return true
 	case restKey:
 		p.pickUpItem()
+		return true
+	case downStairs, upStairs:
+		useStairs()
 		return true
 	}
 	if moveSuccessful {
