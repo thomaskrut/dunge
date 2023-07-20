@@ -15,14 +15,14 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 
 		for x := p.Position.X - viewportWidth; x < p.Position.X+viewportWidth; x++ {
 
-			if rowCounter >= overlayMargin && len(overlay) > rowCounter - overlayMargin {
+			if rowCounter >= overlayMargin && len(overlay) > rowCounter-overlayMargin {
 				if charCounter >= overlayMargin && len(overlay[rowCounter-overlayMargin]) > charCounter-overlayMargin {
 					toPrint = append(toPrint, rune(overlay[rowCounter-overlayMargin][charCounter-overlayMargin]))
 					charCounter++
 					continue
 				}
 				charCounter++
-				
+
 			}
 
 			if x < 0 || x >= d.Width || y < 0 || y >= d.Height {
