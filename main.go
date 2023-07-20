@@ -178,25 +178,16 @@ func generateOverlay(menu bool, verb string) {
 		return
 	}
 
-	longestItemName := 0
-	for _, item := range menuItems {
-		if len(item.Name) > longestItemName {
-			longestItemName = len(item.Name)
-		}
-	}
-
-	frameTop := ""
-	for i := 0; i < longestItemName+8; i++ {
-		frameTop += "-"
-	}
-
-	gridOverlay = append(gridOverlay, frameTop)
+	gridOverlay = append(gridOverlay, "_______________________________")
+	
 
 	if menu {
-		gridOverlay = append(gridOverlay, "| Select item to "+verb+":")
+		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|Select an item to "+verb+":", " |"))
 	} else {
-		gridOverlay = append(gridOverlay, "| Inventory:")
+		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|Inventory", " |"))
 	}
+
+	gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|", " |"))
 
 	for index, item := range menuItems {
 		if menu {
@@ -206,8 +197,11 @@ func generateOverlay(menu bool, verb string) {
 				cursor = "|   "
 			}
 		}
-		gridOverlay = append(gridOverlay, cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name)
+		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name, " |"))
 	}
+
+	gridOverlay = append(gridOverlay, "|______________________________|")
+
 }
 
 func generateMonsters(list monsterList, numberOfIterations int) {
