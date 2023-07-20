@@ -6,7 +6,7 @@ type feature struct {
 	Name        string
 	Char        string
 	Description string
-	Closed      bool
+	State       string
 }
 
 func createDoor(position point) (*feature, bool) {
@@ -18,11 +18,11 @@ func createDoor(position point) (*feature, bool) {
 			Name:     "door",
 		}
 		if randomNumber(2) == 1 {
-			door.Closed = true
+			door.State = "closed"
 			door.Char = "+"
 			door.Description = "a closed door"
 		} else {
-			door.Closed = false
+			door.State = "open"
 			door.Char = "-"
 			door.Description = "an open door"
 		}
@@ -38,23 +38,24 @@ func createStairs(position point, direction string) (*feature, bool) {
 		return nil, false
 	}
 
-	stairs := feature {
+	stairs := feature{
 		Position: position,
+		Name: "staircase",
+		Prefix: "a",
+		State: direction,
 	}
 
 	switch direction {
 	case "up":
 		stairs.Char = "<"
-		stairs.Name = "upstair"
-		stairs.Prefix = "a"
 		stairs.Description = "a staircase going up"
 	case "down":
 		stairs.Char = ">"
-		stairs.Name = "downstair"
-		stairs.Prefix = "a"
 		stairs.Description = "a staircase going down"
+	default:
+		return nil, false
 	}
-	
+
 	return &stairs, true
 
 }

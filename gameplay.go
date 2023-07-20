@@ -50,8 +50,11 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 	case restKey:
 		p.pickUpItem()
 		return true
-	case downStairs, upStairs:
-		useStairs()
+	case downStairs:
+		useStairs("down")
+		return true
+	case upStairs:
+		useStairs("up")
 		return true
 	}
 	if moveSuccessful {

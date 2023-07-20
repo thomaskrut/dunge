@@ -25,9 +25,7 @@ func (p *persist) saveState(filename string) {
 
 	f, err := os.Create(filename)
 
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	defer f.Close()
 
@@ -37,7 +35,7 @@ func (p *persist) saveState(filename string) {
 
 	for i:=0; i<len(p.entities); i++ {
 		err = enc.Encode(p.entities[i])
-		handle(err)
+		check(err)
 	}
 
 	writer.Flush()
@@ -52,9 +50,7 @@ func (p *persist) loadState(filename string) bool {
 
 	f, err := os.Open(filename)
 
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	defer f.Close()
 
@@ -62,12 +58,10 @@ func (p *persist) loadState(filename string) bool {
 
 	for i:=0; i<len(p.entities); i++ {
 		err = dec.Decode(p.entities[i])
-		handle(err)
+		check(err)
 	}
 
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	return true
 
@@ -82,7 +76,7 @@ func fileExists(filename string) bool {
 	}
 }
 
-func handle(e error) {
+func check(e error) {
 	if e != nil {
 		panic(e)
 	}

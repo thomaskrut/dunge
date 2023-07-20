@@ -1,14 +1,18 @@
 package main
 
-func useStairs() {
+func useStairs(direction string) {
 
 	if f, ok := featuresOnMap[p.Position]; ok {
-		switch f.Name {
-		case "upstair":
+		if f.State != direction {
+			messages.push("There are no stairs to walk " + direction + " here", gameplay)
+			return
+		}
+		switch direction {
+		case "up":
 			generateLevel(currentLevel - 1)
 			p.attemptMove(None)
 			currentState.processTurn()
-		case "downstair":
+		case "down":
 			generateLevel(currentLevel + 1)
 			p.attemptMove(None)
 			currentState.processTurn()
@@ -25,8 +29,8 @@ func open() {
 		newPosition := p.Position
 		newPosition.move(dir)
 		if f, ok := featuresOnMap[newPosition]; ok {
-			if f.Name == "door" && f.Closed {
-				f.Closed = false
+			if f.Name == "door" && f.State == "closed" {
+				f.State = "open"
 				f.Char = "-"
 				f.Description = "an open door"
 				dungeon.write(newPosition, empty)
@@ -52,8 +56,8 @@ func close() {
 		newPosition := p.Position
 		newPosition.move(dir)
 		if f, ok := featuresOnMap[newPosition]; ok {
-			if f.Name == "door" && !f.Closed {
-				f.Closed = true
+			if f.Name == "door" && f.State == "open" {
+				f.State = "closed"
 				f.Char = "+"
 				f.Description = "a closed door"
 				alterAreaVisibility(p.Position, visited, p.Lightsource)
