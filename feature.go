@@ -47,12 +47,12 @@ func createStairs(position point, direction string) (*feature, bool) {
 		stairs.Char = "<"
 		stairs.Name = "upstair"
 		stairs.Prefix = "a"
-		stairs.Description = "staircase going up"
+		stairs.Description = "a staircase going up"
 	case "down":
 		stairs.Char = ">"
 		stairs.Name = "downstair"
 		stairs.Prefix = "a"
-		stairs.Description = "staircase going down"
+		stairs.Description = "a staircase going down"
 	}
 	
 	return &stairs, true

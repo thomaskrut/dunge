@@ -120,7 +120,11 @@ func moveMonsters() {
 	}
 }
 
-func checkForItems() {
+func checkPosition() {
+
+	if f, ok := featuresOnMap[p.Position]; ok {
+		messages.push("There is "+f.Description+" here", gameplay)
+	}
 
 	if i, ok := itemsOnMap[p.Position]; ok {
 		if len(i) == 1 {
@@ -130,7 +134,6 @@ func checkForItems() {
 		}
 
 	}
-
 }
 
 func generateOverlay(menu bool, verb string) {

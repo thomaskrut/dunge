@@ -55,7 +55,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		return true
 	}
 	if moveSuccessful {
-		checkForItems()
+		checkPosition()
 		g.processTurn()
 		return true
 	}
