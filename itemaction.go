@@ -57,6 +57,7 @@ func throwItem(i *item) keyProcessor {
 	}
 
 	messages.push("Which direction?", newDirSelect(action))
+	gridOverlay = nil
 	return messages
 }
 

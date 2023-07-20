@@ -7,7 +7,7 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 
 	rowCounter := 0
 	charCounter := 0
-	overlayMargin := 2
+	overlayMargin := 6
 
 	arrow := arrows.pop()
 
@@ -16,11 +16,13 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 		for x := p.Position.X - viewportWidth; x < p.Position.X+viewportWidth; x++ {
 
 			if rowCounter >= overlayMargin && len(overlay) > rowCounter - overlayMargin {
-				if len(overlay[rowCounter-overlayMargin]) > charCounter {
-					toPrint = append(toPrint, rune(overlay[rowCounter-overlayMargin][charCounter]))
+				if charCounter >= overlayMargin && len(overlay[rowCounter-overlayMargin]) > charCounter-overlayMargin {
+					toPrint = append(toPrint, rune(overlay[rowCounter-overlayMargin][charCounter-overlayMargin]))
 					charCounter++
 					continue
 				}
+				charCounter++
+				
 			}
 
 			if x < 0 || x >= d.Width || y < 0 || y >= d.Height {
