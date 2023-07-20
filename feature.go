@@ -28,8 +28,34 @@ func createDoor(position point) (*feature, bool) {
 		}
 		return &door, true
 	} else {
-		return &feature{}, false
+		return nil, false
 	}
+
+}
+
+func createStairs(position point, direction string) (*feature, bool) {
+	if position.isInCorridor() {
+		return nil, false
+	}
+
+	stairs := feature {
+		Position: position,
+	}
+
+	switch direction {
+	case "up":
+		stairs.Char = "<"
+		stairs.Name = "upstair"
+		stairs.Prefix = "a"
+		stairs.Description = "staircase going up"
+	case "down":
+		stairs.Char = ">"
+		stairs.Name = "downstair"
+		stairs.Prefix = "a"
+		stairs.Description = "staircase going down"
+	}
+	
+	return &stairs, true
 
 }
 

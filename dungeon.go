@@ -113,9 +113,9 @@ func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center 
 
 func (d *dungeonMap) generateDoors(numberOfDoors int) {
 
-	count := 0
+	
 
-	for count < numberOfDoors {
+	for i := 0; i < numberOfDoors; {
 
 		p := dungeon.getEmptyPoint()
 
@@ -124,9 +124,29 @@ func (d *dungeonMap) generateDoors(numberOfDoors int) {
 				dungeon.write(door.Position, obstacle)
 			}
 			featuresOnMap[p] = door
-			count++
+			i++
 		}
 
+	}
+
+}
+
+func (d *dungeonMap) generateStairs(up, down int) {
+	
+	for i := 0; i < up; {
+		p := dungeon.getEmptyPoint()
+		if stairs, ok := createStairs(p, "up"); ok {
+			featuresOnMap[p] = stairs
+			i++
+		}
+	}
+
+	for i := 0; i < down; {
+		p := dungeon.getEmptyPoint()
+		if stairs, ok := createStairs(p, "down"); ok {
+			featuresOnMap[p] = stairs
+			i++
+		}
 	}
 
 }

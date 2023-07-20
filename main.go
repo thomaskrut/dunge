@@ -272,6 +272,7 @@ func generateDungeon() {
 	}
 
 	dungeon.generateDoors((width + height) / 10)
+	dungeon.generateStairs(2,2)
 
 }
 
