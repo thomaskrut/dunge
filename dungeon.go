@@ -6,7 +6,6 @@ import (
 
 type dungeon struct {
 	Levels map[int]*levelMap
-
 	Turn         int
 	CurrentDepth int
 }

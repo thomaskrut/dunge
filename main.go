@@ -60,7 +60,8 @@ func init() {
 	if !savedStateExists {
 		p = newPlayer('@')
 		world = newDungeon()
-		generateLevel(1)
+		world.CurrentDepth = 1
+		generateLevel(world.CurrentDepth)
 	} else {
 		level = world.Levels[world.CurrentDepth]
 	}
@@ -68,9 +69,7 @@ func init() {
 }
 
 func generateLevel(depth int) {
-	
 	level = world.newLevel(depth, width, height)
-	world.CurrentDepth = depth
 	generateDungeon()
 	p.setPosition(level.getPointInRoom())
 	level.generateDoors((width + height) / 10)
