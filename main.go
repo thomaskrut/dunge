@@ -105,6 +105,11 @@ func moveMonsters() {
 
 				var newDirection direction
 				newDirection.connect(m.getPosition(), p.getPosition())
+
+				if !m.Aggressive {
+					newDirection = newDirection.opposite()
+				}
+
 				if !m.MovesDiagonally {
 					newDirection.toNonDiagonal()
 				}

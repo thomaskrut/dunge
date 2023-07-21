@@ -12,6 +12,11 @@ func init() {
 	itemActions["drop"] = dropItem
 	itemActions["throw"] = throwItem
 	itemActions["pick up"] = pickUpItem
+	itemActions["wield or wear"] = wearItem
+}
+
+func wearItem(i *item) keyProcessor {
+	return gameplay
 }
 
 func pickUpItem(i *item) keyProcessor {

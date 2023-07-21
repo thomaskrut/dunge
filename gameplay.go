@@ -47,6 +47,9 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 	case throwKey:
 		currentState = newItemSelect("throw")
 		return true
+	case wieldKey:
+		currentState = newItemSelect("wield or wear")
+		return true
 	case restKey:
 		p.pickUpItem()
 		return true

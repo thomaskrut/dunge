@@ -21,6 +21,7 @@ const (
 	openKey      = 111
 	closeKey     = 99
 	throwKey     = 116
+	wieldKey     = 119
 )
 
 var (

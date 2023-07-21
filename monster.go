@@ -29,6 +29,7 @@ type monster struct {
 
 func (m *monster) takeDamage(damage int) {
 	m.Hp -= damage
+	m.Aggressive = true
 	if m.Hp <= 0 {
 		messages.push("You killed the "+m.Name, gameplay)
 		if m.Items.count() > 0 {
@@ -92,7 +93,9 @@ func (m *monster) attemptMove(dir direction) bool {
 		newPoint := m.Position
 		newPoint.move(dir)
 		if newPoint == p.Position {
-			m.attack(&p)
+			if m.Aggressive {
+				m.attack(&p)
+			}
 			return true
 		}
 		for _, m := range monstersOnMap {
