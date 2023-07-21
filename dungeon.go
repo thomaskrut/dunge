@@ -115,7 +115,6 @@ func (d *levelMap) generateMonsters(list monsterList, numberOfIterations int) {
 
 func (d *levelMap) newCorridor(origin, destination point) {
 	currentPosition := origin
-	//var previousPosition point
 	var newDirection direction
 
 	for {
@@ -123,7 +122,7 @@ func (d *levelMap) newCorridor(origin, destination point) {
 		if randomNumber(2) == 0 {
 			newDirection.connect(currentPosition, destination).toNonDiagonal()
 		}
-		//previousPosition = currentPosition
+		
 		currentPosition.move(newDirection)
 		if currentPosition.isOutOfBounds(2) {
 			break
@@ -134,18 +133,6 @@ func (d *levelMap) newCorridor(origin, destination point) {
 		} else {
 			d.write(currentPosition, empty)
 		}
-
-		/*if d.read(previousPosition)&room != room && d.read(currentPosition)&room == room {
-			if door, ok := createDoor(previousPosition); ok {
-				featuresOnMap[previousPosition] = door
-			}
-		}
-
-		if d.read(previousPosition)&room == room && d.read(currentPosition)&room != room {
-			if door, ok := createDoor(currentPosition); ok {
-				featuresOnMap[currentPosition] = door
-			}
-		}*/
 
 		if currentPosition == destination {
 			break
@@ -174,6 +161,38 @@ func (d *levelMap) createRoom(startingPoint point, width, height int) (center po
 			}
 			if j == startingPoint.Y+height-(height/2) {
 				center.Y = j
+			}
+
+			if i == startingPoint.X {
+				newPoint := currentPoint
+				newPoint.move(West)
+				if d.read(newPoint)&empty == empty {
+					return center, errors.New("adjacent empty space")
+				}
+			}
+
+			if i == startingPoint.X+width - 1 {
+				newPoint := currentPoint
+				newPoint.move(East)
+				if d.read(newPoint)&empty == empty {
+					return center, errors.New("adjacent empty space")
+				}
+			}
+
+			if j == startingPoint.Y {
+				newPoint := currentPoint
+				newPoint.move(North)
+				if d.read(newPoint)&empty == empty {
+					return center, errors.New("adjacent empty space")
+				}
+			}
+
+			if j == startingPoint.Y+height-1 {
+				newPoint := currentPoint
+				newPoint.move(South)
+				if d.read(newPoint)&empty == empty {
+					return center, errors.New("adjacent empty space")
+				}
 			}
 
 			if d.read(currentPoint) == empty {
