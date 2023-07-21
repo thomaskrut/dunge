@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type player struct {
 	Position    point
 	Char        rune
@@ -24,27 +26,27 @@ func newPlayer(char rune) player {
 }
 func (p *player) attemptMove(dir direction) bool {
 
-	if p.Position.getPossibleDirections(&dungeon)[dir] {
+	if p.Position.getPossibleDirections(level)[dir] {
 		destination := p.Position
 		destination.move(dir)
 
-		if m, ok := monstersOnMap[destination]; ok {
+		if m, ok := level.Monsters[destination]; ok {
 			p.attack(m)
 			return true
 		}
 
 		alterAreaVisibility(p.Position, visited, p.Lightsource)
 
-		if !p.InRoom && dungeon.read(destination)&room == room {
+		if !p.InRoom && level.read(destination)&room == room {
 			scanRoom(destination, lit)
 			p.InRoom = true
 		}
 
-		if p.InRoom && dungeon.read(destination)&room == room {
+		if p.InRoom && level.read(destination)&room == room {
 			setRoomState(lit)
 		}
 
-		if p.InRoom && dungeon.read(destination)&room != room {
+		if p.InRoom && level.read(destination)&room != room {
 			setRoomState(visited)
 			p.CurrentRoom.clear()
 			p.InRoom = false
@@ -53,6 +55,7 @@ func (p *player) attemptMove(dir direction) bool {
 		p.Position.move(dir)
 
 		alterAreaVisibility(p.Position, lit, p.Lightsource)
+		fmt.Println(level.read(p.Position))
 		return true
 	}
 	return false
@@ -60,9 +63,9 @@ func (p *player) attemptMove(dir direction) bool {
 
 func (p *player) pickUpItem() {
 
-	if i, ok := itemsOnMap[p.Position]; ok && len(i) == 1 {
+	if i, ok := level.Items[p.Position]; ok && len(i) == 1 {
 		p.Items.add(i[0])
-		delete(itemsOnMap, p.Position)
+		delete(level.Items, p.Position)
 		messages.push("You picked up "+i[0].Prefix+" "+i[0].Name, gameplay)
 		currentState.processTurn()
 	} else if len(i) > 1 {
@@ -89,24 +92,24 @@ func alterAreaVisibility(p point, newState byte, currentDepth int) {
 		currentPoint := p
 		currentPoint.move(dir)
 
-		if dungeon.read(currentPoint)&room == room {
-			dungeon.write(currentPoint, empty|room|newState)
+		if level.read(currentPoint)&room == room {
+			level.write(currentPoint, empty|room|newState)
 			alterAreaVisibility(currentPoint, newState, currentDepth-1)
-		} else if dungeon.read(currentPoint)&empty == empty {
-			dungeon.write(currentPoint, empty|newState)
+		} else if level.read(currentPoint)&empty == empty {
+			level.write(currentPoint, empty|newState)
 			alterAreaVisibility(currentPoint, newState, currentDepth-1)
 		} else {
-			dungeon.write(currentPoint, newState)
+			level.write(currentPoint, newState)
 		}
 	}
 }
 
 func setRoomState(newState byte) {
 	for _, p := range p.CurrentRoom.Points {
-		if dungeon.Grid[p.X][p.Y]&room == room {
-			dungeon.Grid[p.X][p.Y] = empty | room | newState
+		if level.read(p)&room == room {
+			level.write(p, empty|room|newState)
 		} else {
-			dungeon.Grid[p.X][p.Y] = empty | newState
+			level.write(p, empty|newState)
 		}
 
 	}
@@ -114,17 +117,17 @@ func setRoomState(newState byte) {
 
 func scanRoom(pos point, state byte) {
 
-	dungeon.Grid[pos.X][pos.Y] = empty | room | state
+	level.write(pos, empty|room|state)
 	for _, dir := range getAllDirections() {
 		newPoint := pos
 		newPoint.move(dir)
-		if dungeon.Grid[newPoint.X][newPoint.Y]&room == room && dungeon.Grid[newPoint.X][newPoint.Y]&state != state {
+		if level.read(newPoint)&room == room && level.read(newPoint)&state != state {
 			p.CurrentRoom.add(newPoint)
 			scanRoom(newPoint, state)
-		} else if dungeon.Grid[newPoint.X][newPoint.Y]&empty == empty {
+		} else if level.read(newPoint)&empty == empty {
 			p.CurrentRoom.add(newPoint)
-		} else if dungeon.Grid[newPoint.X][newPoint.Y] == obstacle {
-			dungeon.Grid[newPoint.X][newPoint.Y] = obstacle | visited
+		} else if level.read(newPoint) == obstacle {
+			level.write(newPoint, obstacle|visited)
 		}
 	}
 }

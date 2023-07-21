@@ -1,19 +1,38 @@
 package main
 
+
 func useStairs(direction string) {
 
-	if f, ok := featuresOnMap[p.Position]; ok {
+	if f, ok := level.Features[p.Position]; ok {
 		if f.State != direction {
-			messages.push("There are no stairs to walk " + direction + " here", gameplay)
+			messages.push("There are no stairs to walk "+direction+" here", gameplay)
 			return
 		}
 		switch direction {
 		case "up":
-			generateLevel(currentLevel - 1)
+			world.CurrentDepth--
+			if l, ok := world.Levels[world.CurrentDepth]; ok {
+				setRoomState(visited)
+				level = l
+				p.Position = level.Downstair
+				p.CurrentRoom.clear()
+				p.InRoom = false
+			} else {
+				generateLevel(world.CurrentDepth)
+			}
 			p.attemptMove(None)
 			currentState.processTurn()
 		case "down":
-			generateLevel(currentLevel + 1)
+			world.CurrentDepth++
+			if l, ok := world.Levels[world.CurrentDepth]; ok {
+				setRoomState(visited)
+				level = l
+				p.Position = level.Upstair
+				p.CurrentRoom.clear()
+				p.InRoom = false
+			} else {
+				generateLevel(world.CurrentDepth)
+			}
 			p.attemptMove(None)
 			currentState.processTurn()
 		}
@@ -28,12 +47,12 @@ func open() {
 	action := func(dir direction) bool {
 		newPosition := p.Position
 		newPosition.move(dir)
-		if f, ok := featuresOnMap[newPosition]; ok {
+		if f, ok := level.Features[newPosition]; ok {
 			if f.Name == "door" && f.State == "closed" {
 				f.State = "open"
 				f.Char = "-"
 				f.Description = "an open door"
-				dungeon.write(newPosition, empty)
+				level.write(newPosition, empty)
 				alterAreaVisibility(p.Position, lit, p.Lightsource)
 				messages.push("You opened the door", gameplay)
 				return true
@@ -55,13 +74,13 @@ func close() {
 	action := func(dir direction) bool {
 		newPosition := p.Position
 		newPosition.move(dir)
-		if f, ok := featuresOnMap[newPosition]; ok {
+		if f, ok := level.Features[newPosition]; ok {
 			if f.Name == "door" && f.State == "open" {
 				f.State = "closed"
 				f.Char = "+"
 				f.Description = "a closed door"
 				alterAreaVisibility(p.Position, visited, p.Lightsource)
-				dungeon.write(newPosition, obstacle)
+				level.write(newPosition, obstacle)
 				alterAreaVisibility(p.Position, lit, p.Lightsource)
 				messages.push("You closed the door", gameplay)
 				return true
@@ -88,21 +107,21 @@ func look() {
 
 			currentPosition.move(dir)
 
-			if dungeon.read(currentPosition)&lit != lit {
+			if level.read(currentPosition)&lit != lit {
 				break
 			}
 
-			if f, ok := featuresOnMap[currentPosition]; ok {
+			if f, ok := level.Features[currentPosition]; ok {
 				messages.push("You see "+f.Description, gameplay)
 				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
-			if m, ok := monstersOnMap[currentPosition]; ok {
+			if m, ok := level.Monsters[currentPosition]; ok {
 				messages.push("You see a "+m.Name, gameplay)
 				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
-			if i, ok := itemsOnMap[currentPosition]; ok {
+			if i, ok := level.Items[currentPosition]; ok {
 				if len(i) == 1 {
 					messages.push("You see "+i[0].Prefix+" "+i[0].Name, gameplay)
 				} else if len(i) > 1 {

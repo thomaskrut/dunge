@@ -1,6 +1,6 @@
 package main
 
-func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point][]*item, features map[point]*feature) (toPrint []rune) {
+func render(d *levelMap, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point][]*item, features map[point]*feature) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
@@ -32,7 +32,7 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit) {
+			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit || d.Grid[x][y]&empty == empty) {
 				char = f.getChar()
 			}
 
@@ -67,7 +67,7 @@ func render(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, viewp
 
 }
 
-func renderAll(d *dungeonMap, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
+func renderAll(d *levelMap, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
 
 	rowCounter := 0
 	charCounter := 0

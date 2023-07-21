@@ -48,10 +48,6 @@ func (p *persist) loadState(filename string) bool {
 		return false
 	}
 
-	monstersOnMap = make(map[point]*monster)
-	itemsOnMap = make(map[point][]*item)
-	featuresOnMap = make(map[point]*feature)
-
 	f, err := os.Open(filename)
 
 	check(err)

@@ -34,15 +34,15 @@ func createDoor(position point) (*feature, bool) {
 }
 
 func createStairs(position point, direction string) (*feature, bool) {
-	if _, ok := featuresOnMap[position]; ok || position.isInCorridor() {
+	if _, ok := level.Features[position]; ok || position.isInCorridor() {
 		return nil, false
 	}
 
 	stairs := feature{
 		Position: position,
-		Name: "staircase",
-		Prefix: "a",
-		State: direction,
+		Name:     "staircase",
+		Prefix:   "a",
+		State:    direction,
 	}
 
 	switch direction {

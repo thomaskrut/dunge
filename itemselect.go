@@ -12,7 +12,7 @@ func newItemSelect(v string) itemSelect {
 
 func (it itemSelect) processTurn() {
 	gridOverlay = nil
-	turn++
+	world.Turn++
 	moveMonsters()
 }
 

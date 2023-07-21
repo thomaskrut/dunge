@@ -10,7 +10,7 @@ type gamePlay struct {
 
 func (g gamePlay) processTurn() {
 	gridOverlay = nil
-	turn++
+	world.Turn++
 	moveMonsters()
 }
 

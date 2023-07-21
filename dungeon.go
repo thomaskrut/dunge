@@ -4,52 +4,72 @@ import (
 	"errors"
 )
 
-type dungeonMap struct {
-	Grid          [][]byte
-	Width, Height int
+type dungeon struct {
+	Levels map[int]*levelMap
+
+	Turn         int
+	CurrentDepth int
 }
 
-func newDungeon(width, height int) dungeonMap {
+type levelMap struct {
+	Grid          [][]byte
+	Upstair       point
+	Downstair     point
+	Width, Height int
+	Monsters      map[point]*monster
+	Items         map[point][]*item
+	Features      map[point]*feature
+}
+
+func newDungeon() dungeon {
+	return dungeon{
+		Levels: make(map[int]*levelMap),
+		Turn: 0,
+		CurrentDepth: 1,
+	}
+}
+
+func newLevel(width, height int) *levelMap {
 	zeroedGrid := make([][]byte, width)
 	for i := range zeroedGrid {
 		zeroedGrid[i] = make([]byte, height)
 	}
-	return dungeonMap{Grid: zeroedGrid, Width: width, Height: height}
+	return &levelMap{Grid: zeroedGrid, Width: width, Height: height}
 }
 
-func (d *dungeonMap) write(p point, value byte) {
+func (d *levelMap) write(p point, value byte) {
 	d.Grid[p.X][p.Y] = value
 }
 
-func (d *dungeonMap) read(p point) byte {
+func (d *levelMap) read(p point) byte {
 	return d.Grid[p.X][p.Y]
 }
 
-func (d *dungeonMap) getEmptyPoint() point {
+func (d *levelMap) getEmptyPoint() point {
 	for {
-		x := randomNumber(dungeon.Width)
-		y := randomNumber(dungeon.Height)
-		if dungeon.Grid[x][y] == empty {
+		x := randomNumber(level.Width)
+		y := randomNumber(level.Height)
+		if level.Grid[x][y] == empty {
 			return point{x, y}
 		}
 	}
 }
 
-func (d *dungeonMap) getPointInRoom() point {
+func (d *levelMap) getPointInRoom() point {
 	for {
-		x := randomNumber(dungeon.Width)
-		y := randomNumber(dungeon.Height)
-		if dungeon.Grid[x][y]&room == room {
+		x := randomNumber(level.Width)
+		y := randomNumber(level.Height)
+		if level.Grid[x][y]&room == room {
 			return point{x, y}
 		}
 	}
 }
 
-func (d *dungeonMap) getRandomPoint() point {
+func (d *levelMap) getRandomPoint() point {
 	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
 }
 
-func (d *dungeonMap) newCorridor(origin, destination point) {
+func (d *levelMap) newCorridor(origin, destination point) {
 	currentPosition := origin
 	//var previousPosition point
 	var newDirection direction
@@ -89,7 +109,7 @@ func (d *dungeonMap) newCorridor(origin, destination point) {
 	}
 }
 
-func (d *dungeonMap) newRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
+func (d *levelMap) newRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
 	startingPoint.move(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 5
 	roomHeight := randomNumber(maxHeight) + 5
@@ -100,7 +120,7 @@ func (d *dungeonMap) newRoom(startingPoint point, maxWidth, maxHeight int) (posi
 
 }
 
-func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center point, err error) {
+func (d *levelMap) createRoom(startingPoint point, width, height int) (center point, err error) {
 
 	for i := startingPoint.X; i < startingPoint.X+width; i++ {
 		for j := startingPoint.Y; j < startingPoint.Y+height; j++ {
@@ -121,17 +141,17 @@ func (d *dungeonMap) createRoom(startingPoint point, width, height int) (center 
 	return center, nil
 }
 
-func (d *dungeonMap) generateDoors(numberOfDoors int) {
+func (d *levelMap) generateDoors(numberOfDoors int) {
 
 	for i := 0; i < numberOfDoors; {
 
-		p := dungeon.getEmptyPoint()
+		p := level.getEmptyPoint()
 
 		if door, ok := createDoor(p); ok {
 			if door.State == "closed" {
-				dungeon.write(door.Position, obstacle)
+				level.write(door.Position, obstacle)
 			}
-			featuresOnMap[p] = door
+			level.Features[p] = door
 			i++
 		}
 
@@ -139,21 +159,20 @@ func (d *dungeonMap) generateDoors(numberOfDoors int) {
 
 }
 
-func (d *dungeonMap) generateStairs(up, down int) {
+func (d *levelMap) generateStairs() {
 
-	for i := 0; i < up; {
-		p := dungeon.getEmptyPoint()
-		if stairs, ok := createStairs(p, "up"); ok {
-			featuresOnMap[p] = stairs
-			i++
-		}
+	if world.CurrentDepth > 1 {
+		stairs, _ := createStairs(p.Position, "up")
+		level.Features[p.Position] = stairs
+		level.Upstair = p.Position
 	}
 
-	for i := 0; i < down; {
-		p := dungeon.getEmptyPoint()
-		if stairs, ok := createStairs(p, "down"); ok {
-			featuresOnMap[p] = stairs
-			i++
+	for {
+		newPoint := level.getEmptyPoint()
+		if stairs, ok := createStairs(newPoint, "down"); ok {
+			level.Features[newPoint] = stairs
+			level.Downstair = newPoint
+			break
 		}
 	}
 

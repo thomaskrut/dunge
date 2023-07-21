@@ -16,17 +16,14 @@ const (
 
 var (
 	charmap characterMapper
-	dungeon dungeonMap
+	world   dungeon
+	level   *levelMap
 	p       player
 
 	currentState keyProcessor
 	messages     messagePrompt
 	gameplay     gamePlay
 	persistance  persist
-
-	monstersOnMap map[point]*monster
-	itemsOnMap    map[point][]*item
-	featuresOnMap map[point]*feature
 
 	arrows arrowQueue
 
@@ -36,8 +33,6 @@ var (
 	menuItems    []*item
 	selectedItem int
 
-	turn         int
-	currentLevel int
 
 	seed *int
 )
@@ -56,29 +51,33 @@ func init() {
 	flag.Parse()
 	setRandomSource(*seed)
 
-	persistance.register(&p, &dungeon, &itemsOnMap, &monstersOnMap, &featuresOnMap, &turn, &currentLevel)
+	persistance.register(&p, &world)
 
 	charmap = initCharMap()
 
 	savedStateExists := persistance.loadState("save.sav")
 
 	if !savedStateExists {
-		turn = 0
 		p = newPlayer('@')
+		world = newDungeon()
 		generateLevel(1)
-
+	} else {
+		level = world.Levels[world.CurrentDepth]
 	}
 
 }
 
-func generateLevel(level int) {
-	monstersOnMap = make(map[point]*monster)
-	itemsOnMap = make(map[point][]*item)
-	featuresOnMap = make(map[point]*feature)
-	currentLevel = level
-	dungeon = newDungeon(width, height)
+func generateLevel(depth int) {
+	world.Levels[depth] = newLevel(width, height)
+	level = world.Levels[depth]
+	level.Monsters = make(map[point]*monster)
+	level.Items = make(map[point][]*item)
+	level.Features = make(map[point]*feature)
+	world.CurrentDepth = depth
 	generateDungeon()
-	p.setPosition(dungeon.getPointInRoom())
+	p.setPosition(level.getPointInRoom())
+	level.generateDoors((width + height) / 10)
+	level.generateStairs()
 	generateItems(readItemsTemplate(), 50)
 	generateMonsters(readMonsterTemplate(), 50)
 }
@@ -87,18 +86,18 @@ func moveMonsters() {
 
 	for i := 0; i < p.Speed; i++ {
 
-		for i, m := range monstersOnMap {
+		for i, m := range level.Monsters {
 
 			if m.readyToMove() {
 
-				if items, ok := itemsOnMap[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
-					if dungeon.read(m.Position)&lit == lit {
+				if items, ok := level.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
+					if level.read(m.Position)&lit == lit {
 						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
 					}
 					m.Items.add(items[len(items)-1])
-					itemsOnMap[m.Position] = itemsOnMap[m.Position][:len(itemsOnMap[m.Position])-1]
-					if len(itemsOnMap[m.Position]) == 0 {
-						delete(itemsOnMap, m.Position)
+					level.Items[m.Position] = level.Items[m.Position][:len(level.Items[m.Position])-1]
+					if len(level.Items[m.Position]) == 0 {
+						delete(level.Items, m.Position)
 					}
 					continue
 				}
@@ -116,8 +115,8 @@ func moveMonsters() {
 				for i := 0; !m.attemptMove(newDirection) && i < 10; i++ {
 					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
 				}
-				delete(monstersOnMap, i)
-				monstersOnMap[m.Position] = m
+				delete(level.Monsters, i)
+				level.Monsters[m.Position] = m
 			}
 
 		}
@@ -127,11 +126,11 @@ func moveMonsters() {
 
 func checkPosition() {
 
-	if f, ok := featuresOnMap[p.Position]; ok {
+	if f, ok := level.Features[p.Position]; ok {
 		messages.push("There is "+f.Description+" here", gameplay)
 	}
 
-	if i, ok := itemsOnMap[p.Position]; ok {
+	if i, ok := level.Items[p.Position]; ok {
 		if len(i) == 1 {
 			messages.push("There is "+i[0].Prefix+" "+i[0].Name+" here, press 5 to pick up", gameplay)
 		} else if len(i) > 1 {
@@ -149,7 +148,7 @@ func generateOverlay(menu bool, verb string) {
 
 	if verb == "pick up" {
 
-		for _, item := range itemsOnMap[p.Position] {
+		for _, item := range level.Items[p.Position] {
 			itemToAdd := item
 			menuItems = append(menuItems, itemToAdd)
 		}
@@ -184,7 +183,6 @@ func generateOverlay(menu bool, verb string) {
 	}
 
 	gridOverlay = append(gridOverlay, "_______________________________")
-	
 
 	if menu {
 		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|Select an item to "+verb+":", " |"))
@@ -218,10 +216,10 @@ func generateMonsters(list monsterList, numberOfIterations int) {
 		for _, m := range list.Monsters {
 			if rand < m.Prob {
 				newMonster := m
-				newMonster.setPosition(dungeon.getEmptyPoint())
+				newMonster.setPosition(level.getEmptyPoint())
 				newMonster.Items = newInventory()
 				newMonster.SpeedCounter = newMonster.Speed
-				monstersOnMap[newMonster.Position] = &newMonster
+				level.Monsters[newMonster.Position] = &newMonster
 			}
 		}
 	}
@@ -237,8 +235,8 @@ func generateItems(list itemList, numberOfIterations int) {
 
 			if rand < i.Prob {
 				newItem := i
-				newItem.setPosition(dungeon.getEmptyPoint())
-				itemsOnMap[newItem.Position] = append(itemsOnMap[newItem.Position], &newItem)
+				newItem.setPosition(level.getEmptyPoint())
+				level.Items[newItem.Position] = append(level.Items[newItem.Position], &newItem)
 			}
 		}
 	}
@@ -252,7 +250,7 @@ func generateDungeon() {
 	var err error
 
 	for {
-		previousRoom, err = dungeon.newRoom(dungeon.getRandomPoint(), 20, 20)
+		previousRoom, err = level.newRoom(level.getRandomPoint(), 20, 20)
 		if err != nil {
 			continue
 		}
@@ -262,32 +260,29 @@ func generateDungeon() {
 	for i := 0; i < 10; i++ {
 
 		for {
-			nextRoom, err = dungeon.newRoom(dungeon.getRandomPoint(), 20, 20)
+			nextRoom, err = level.newRoom(level.getRandomPoint(), 20, 20)
 			if err != nil {
 				continue
 			}
 			break
 		}
 
-		dungeon.newCorridor(previousRoom, nextRoom)
+		level.newCorridor(previousRoom, nextRoom)
 		previousRoom = nextRoom
 
 	}
 
-	dungeon.generateDoors((width + height) / 10)
-	dungeon.generateStairs(12, 12)
-
 }
 
 func printDungeon() {
-	gridToPrint := render(&dungeon, p, &arrows, gridOverlay, 60, 40, monstersOnMap, itemsOnMap, featuresOnMap)
+	gridToPrint := render(level, p, &arrows, gridOverlay, 60, 40, level.Monsters, level.Items, level.Features)
 	//gridToPrint := renderAll(&d, p, &arrows, gridOverlay, monstersOnMap, itemsOnMap, featuresOnMap)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))
 }
 
 func printStats() {
-	fmt.Println("HP:", p.Hp, "Turn:", turn, "Depth:", currentLevel*10)
+	fmt.Println("HP:", p.Hp, "Turn:", world.Turn, "Depth:", world.CurrentDepth*10)
 }
 
 func printMessages() {
