@@ -58,9 +58,6 @@ func init() {
 
 	persistance.register(&p, &dungeon, &itemsOnMap, &monstersOnMap, &featuresOnMap, &turn, &currentLevel)
 
-	monstersOnMap = make(map[point]*monster)
-	itemsOnMap = make(map[point][]*item)
-	featuresOnMap = make(map[point]*feature)
 	charmap = initCharMap()
 
 	savedStateExists := persistance.loadState("save.sav")
@@ -75,6 +72,9 @@ func init() {
 }
 
 func generateLevel(level int) {
+	monstersOnMap = make(map[point]*monster)
+	itemsOnMap = make(map[point][]*item)
+	featuresOnMap = make(map[point]*feature)
 	currentLevel = level
 	dungeon = newDungeon(width, height)
 	generateDungeon()
