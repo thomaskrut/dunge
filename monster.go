@@ -36,7 +36,7 @@ func (m *monster) takeDamage(damage int) {
 			m.dropAllItems()
 			messages.push("The "+m.Name+" scattered its belongings on the floor", gameplay)
 		}
-		delete(level.Monsters, m.Position)
+		delete(lev.Monsters, m.Position)
 	}
 }
 
@@ -45,15 +45,15 @@ func (m *monster) dropAllItems() {
 	for item := range m.Items.all() {
 		currentItem := item
 		newPosition := m.Position
-		for level.Items[newPosition] != nil {
+		for lev.Items[newPosition] != nil {
 
 			dir := randomDirection(None, true, true)
-			if newPosition.getPossibleDirections(level)[dir] {
+			if newPosition.getPossibleDirections(lev)[dir] {
 				newPosition.move(dir)
 			}
 		}
 		currentItem.setPosition(newPosition)
-		level.Items[currentItem.Position] = append(level.Items[currentItem.Position], currentItem)
+		lev.Items[currentItem.Position] = append(lev.Items[currentItem.Position], currentItem)
 	}
 	m.Items.clear()
 }
@@ -88,17 +88,17 @@ func (m monster) getChar() rune {
 
 func (m *monster) attemptMove(dir direction) bool {
 
-	if m.Position.getPossibleDirections(level)[dir] {
+	if m.Position.getPossibleDirections(lev)[dir] {
 
 		newPoint := m.Position
 		newPoint.move(dir)
-		if newPoint == p.Position {
+		if newPoint == pl.Position {
 			if m.Aggressive {
-				m.attack(&p)
+				m.attack(&pl)
 			}
 			return true
 		}
-		for _, m := range level.Monsters {
+		for _, m := range lev.Monsters {
 			if m.Position == newPoint {
 				return false
 			}

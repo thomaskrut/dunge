@@ -26,27 +26,27 @@ func newPlayer(char rune) player {
 }
 func (p *player) attemptMove(dir direction) bool {
 
-	if p.Position.getPossibleDirections(level)[dir] {
+	if p.Position.getPossibleDirections(lev)[dir] {
 		destination := p.Position
 		destination.move(dir)
 
-		if m, ok := level.Monsters[destination]; ok {
+		if m, ok := lev.Monsters[destination]; ok {
 			p.attack(m)
 			return true
 		}
 
 		alterAreaVisibility(p.Position, visited, p.Lightsource)
 
-		if !p.InRoom && level.read(destination)&room == room {
+		if !p.InRoom && lev.read(destination)&room == room {
 			scanRoom(destination, lit)
 			p.InRoom = true
 		}
 
-		if p.InRoom && level.read(destination)&room == room {
+		if p.InRoom && lev.read(destination)&room == room {
 			setRoomState(lit)
 		}
 
-		if p.InRoom && level.read(destination)&room != room {
+		if p.InRoom && lev.read(destination)&room != room {
 			setRoomState(visited)
 			p.CurrentRoom.clear()
 			p.InRoom = false
@@ -55,7 +55,7 @@ func (p *player) attemptMove(dir direction) bool {
 		p.Position.move(dir)
 
 		alterAreaVisibility(p.Position, lit, p.Lightsource)
-		fmt.Println(level.read(p.Position))
+		fmt.Println(lev.read(p.Position))
 		return true
 	}
 	return false
@@ -63,9 +63,9 @@ func (p *player) attemptMove(dir direction) bool {
 
 func (p *player) pickUpItem() {
 
-	if i, ok := level.Items[p.Position]; ok && len(i) == 1 {
+	if i, ok := lev.Items[p.Position]; ok && len(i) == 1 {
 		p.Items.add(i[0])
-		delete(level.Items, p.Position)
+		delete(lev.Items, p.Position)
 		messages.push("You picked up "+i[0].Prefix+" "+i[0].Name, gameplay)
 		currentState.processTurn()
 	} else if len(i) > 1 {
@@ -92,24 +92,24 @@ func alterAreaVisibility(p point, newState byte, currentDepth int) {
 		currentPoint := p
 		currentPoint.move(dir)
 
-		if level.read(currentPoint)&room == room {
-			level.write(currentPoint, empty|room|newState)
+		if lev.read(currentPoint)&room == room {
+			lev.write(currentPoint, empty|room|newState)
 			alterAreaVisibility(currentPoint, newState, currentDepth-1)
-		} else if level.read(currentPoint)&empty == empty {
-			level.write(currentPoint, empty|newState)
+		} else if lev.read(currentPoint)&empty == empty {
+			lev.write(currentPoint, empty|newState)
 			alterAreaVisibility(currentPoint, newState, currentDepth-1)
 		} else {
-			level.write(currentPoint, newState)
+			lev.write(currentPoint, newState)
 		}
 	}
 }
 
 func setRoomState(newState byte) {
-	for _, p := range p.CurrentRoom.Points {
-		if level.read(p)&room == room {
-			level.write(p, empty|room|newState)
+	for _, p := range pl.CurrentRoom.Points {
+		if lev.read(p)&room == room {
+			lev.write(p, empty|room|newState)
 		} else {
-			level.write(p, empty|newState)
+			lev.write(p, empty|newState)
 		}
 
 	}
@@ -117,17 +117,17 @@ func setRoomState(newState byte) {
 
 func scanRoom(pos point, state byte) {
 
-	level.write(pos, empty|room|state)
+	lev.write(pos, empty|room|state)
 	for _, dir := range getAllDirections() {
 		newPoint := pos
 		newPoint.move(dir)
-		if level.read(newPoint)&room == room && level.read(newPoint)&state != state {
-			p.CurrentRoom.add(newPoint)
+		if lev.read(newPoint)&room == room && lev.read(newPoint)&state != state {
+			pl.CurrentRoom.add(newPoint)
 			scanRoom(newPoint, state)
-		} else if level.read(newPoint)&empty == empty {
-			p.CurrentRoom.add(newPoint)
-		} else if level.read(newPoint) == obstacle {
-			level.write(newPoint, obstacle|visited)
+		} else if lev.read(newPoint)&empty == empty {
+			pl.CurrentRoom.add(newPoint)
+		} else if lev.read(newPoint) == obstacle {
+			lev.write(newPoint, obstacle|visited)
 		}
 	}
 }

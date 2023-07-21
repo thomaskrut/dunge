@@ -1,6 +1,6 @@
 package main
 
-func render(d *levelMap, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point][]*item, features map[point]*feature) (toPrint []rune) {
+func render(d *level, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point][]*item, features map[point]*feature) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
@@ -67,7 +67,7 @@ func render(d *levelMap, p player, arrows *arrowQueue, overlay []string, viewpor
 
 }
 
-func renderAll(d *levelMap, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
+func renderAll(d *level, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
 
 	rowCounter := 0
 	charCounter := 0

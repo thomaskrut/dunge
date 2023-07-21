@@ -4,7 +4,7 @@ type point struct {
 	X, Y int
 }
 
-func (p point) getPossibleDirections(d *levelMap) map[direction]bool {
+func (p point) getPossibleDirections(d *level) map[direction]bool {
 	directions := make(map[direction]bool)
 	for _, dir := range getAllDirections() {
 		newPoint := p
@@ -26,11 +26,11 @@ func (p *point) move(dir direction) {
 }
 
 func (p point) isOutOfBounds(margin int) bool {
-	return p.X <= margin || p.X >= len(level.Grid)-margin || p.Y <= margin || p.Y >= len(level.Grid[0])-margin
+	return p.X <= margin || p.X >= len(lev.Grid)-margin || p.Y <= margin || p.Y >= len(lev.Grid[0])-margin
 }
 
 func (p point) isInCorridor() bool {
-	possibleDirections := p.getPossibleDirections(level)
+	possibleDirections := p.getPossibleDirections(lev)
 
 	delete(possibleDirections, NorthEast)
 	delete(possibleDirections, SouthEast)

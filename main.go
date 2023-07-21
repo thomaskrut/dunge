@@ -17,8 +17,8 @@ const (
 var (
 	charmap characterMapper
 	world   dungeon
-	level   *levelMap
-	p       player
+	lev     *level
+	pl      player
 
 	currentState keyProcessor
 	messages     messagePrompt
@@ -32,7 +32,6 @@ var (
 	gridOverlay  []string
 	menuItems    []*item
 	selectedItem int
-
 
 	seed *int
 )
@@ -51,55 +50,55 @@ func init() {
 	flag.Parse()
 	setRandomSource(*seed)
 
-	persistance.register(&p, &world)
+	persistance.register(&pl, &world)
 
 	charmap = initCharMap()
 
 	savedStateExists := persistance.loadState("save.sav")
 
 	if !savedStateExists {
-		p = newPlayer('@')
+		pl = newPlayer('@')
 		world = newDungeon()
 		world.CurrentDepth = 1
 		generateLevel(world.CurrentDepth)
 	} else {
-		level = world.Levels[world.CurrentDepth]
+		lev = world.Levels[world.CurrentDepth]
 	}
 
 }
 
 func generateLevel(depth int) {
-	level = world.newLevel(depth, width, height)
-	generateDungeon()
-	p.setPosition(level.getPointInRoom())
-	level.generateDoors((width + height) / 10)
-	level.generateStairs()
-	level.generateItems(readItemsTemplate(), 50)
-	level.generateMonsters(readMonsterTemplate(), 50)
+	lev = world.newLevel(depth, width, height)
+	lev.excavate()
+	pl.setPosition(lev.getPointInRoom())
+	lev.generateDoors((width + height) / 10)
+	lev.generateStairs()
+	lev.generateItems(readItemsTemplate(), 50)
+	lev.generateMonsters(readMonsterTemplate(), 50)
 }
 
 func moveMonsters() {
 
-	for i := 0; i < p.Speed; i++ {
+	for i := 0; i < pl.Speed; i++ {
 
-		for i, m := range level.Monsters {
+		for i, m := range lev.Monsters {
 
 			if m.readyToMove() {
 
-				if items, ok := level.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
-					if level.read(m.Position)&lit == lit {
+				if items, ok := lev.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
+					if lev.read(m.Position)&lit == lit {
 						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
 					}
 					m.Items.add(items[len(items)-1])
-					level.Items[m.Position] = level.Items[m.Position][:len(level.Items[m.Position])-1]
-					if len(level.Items[m.Position]) == 0 {
-						delete(level.Items, m.Position)
+					lev.Items[m.Position] = lev.Items[m.Position][:len(lev.Items[m.Position])-1]
+					if len(lev.Items[m.Position]) == 0 {
+						delete(lev.Items, m.Position)
 					}
 					continue
 				}
 
 				var newDirection direction
-				newDirection.connect(m.getPosition(), p.getPosition())
+				newDirection.connect(m.getPosition(), pl.getPosition())
 
 				if !m.Aggressive {
 					newDirection = newDirection.opposite()
@@ -111,8 +110,8 @@ func moveMonsters() {
 				for i := 0; !m.attemptMove(newDirection) && i < 10; i++ {
 					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
 				}
-				delete(level.Monsters, i)
-				level.Monsters[m.Position] = m
+				delete(lev.Monsters, i)
+				lev.Monsters[m.Position] = m
 			}
 
 		}
@@ -122,11 +121,11 @@ func moveMonsters() {
 
 func checkPosition() {
 
-	if f, ok := level.Features[p.Position]; ok {
+	if f, ok := lev.Features[pl.Position]; ok {
 		messages.push("There is "+f.Description+" here", gameplay)
 	}
 
-	if i, ok := level.Items[p.Position]; ok {
+	if i, ok := lev.Items[pl.Position]; ok {
 		if len(i) == 1 {
 			messages.push("There is "+i[0].Prefix+" "+i[0].Name+" here, press 5 to pick up", gameplay)
 		} else if len(i) > 1 {
@@ -144,20 +143,20 @@ func generateOverlay(menu bool, verb string) {
 
 	if verb == "pick up" {
 
-		for _, item := range level.Items[p.Position] {
+		for _, item := range lev.Items[pl.Position] {
 			itemToAdd := item
 			menuItems = append(menuItems, itemToAdd)
 		}
 
 	} else {
 
-		if p.Items.count() == 0 {
+		if pl.Items.count() == 0 {
 			messages.push("Inventory empty", gameplay)
 			currentState = gameplay
 			return
 		}
 
-		for item := range p.Items.all() {
+		for item := range pl.Items.all() {
 			for _, v := range item.Verbs {
 				if v == verb {
 					itemToAdd := item
@@ -203,46 +202,15 @@ func generateOverlay(menu bool, verb string) {
 
 }
 
-func generateDungeon() {
-
-	var previousRoom point
-	var nextRoom point
-	var err error
-
-	for {
-		previousRoom, err = level.newRoom(level.getRandomPoint(), 20, 20)
-		if err != nil {
-			continue
-		}
-		break
-	}
-
-	for i := 0; i < 10; i++ {
-
-		for {
-			nextRoom, err = level.newRoom(level.getRandomPoint(), 20, 20)
-			if err != nil {
-				continue
-			}
-			break
-		}
-
-		level.newCorridor(previousRoom, nextRoom)
-		previousRoom = nextRoom
-
-	}
-
-}
-
 func printDungeon() {
-	gridToPrint := render(level, p, &arrows, gridOverlay, 60, 40, level.Monsters, level.Items, level.Features)
+	gridToPrint := render(lev, pl, &arrows, gridOverlay, 60, 40, lev.Monsters, lev.Items, lev.Features)
 	//gridToPrint := renderAll(&d, p, &arrows, gridOverlay, monstersOnMap, itemsOnMap, featuresOnMap)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))
 }
 
 func printStats() {
-	fmt.Println("HP:", p.Hp, "Turn:", world.Turn, "Depth:", world.CurrentDepth*10)
+	fmt.Println("HP:", pl.Hp, "Turn:", world.Turn, "Depth:", world.CurrentDepth*10)
 }
 
 func printMessages() {
@@ -263,7 +231,7 @@ func main() {
 
 	currentState = gameplay
 
-	p.attemptMove(None)
+	pl.attemptMove(None)
 
 	for {
 

@@ -19,7 +19,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 	var moveSuccessful bool = false
 
 	if dir, ok := keyToDirMap[char]; ok {
-		moveSuccessful = p.attemptMove(dir)
+		moveSuccessful = pl.attemptMove(dir)
 	}
 
 	switch char {
@@ -51,7 +51,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		currentState = newItemSelect("wield or wear")
 		return true
 	case restKey:
-		p.pickUpItem()
+		pl.pickUpItem()
 		return true
 	case downStairs:
 		useStairs("down")

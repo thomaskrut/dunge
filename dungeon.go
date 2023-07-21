@@ -5,12 +5,12 @@ import (
 )
 
 type dungeon struct {
-	Levels map[int]*levelMap
+	Levels       map[int]*level
 	Turn         int
 	CurrentDepth int
 }
 
-type levelMap struct {
+type level struct {
 	Grid          [][]byte
 	Upstair       point
 	Downstair     point
@@ -22,18 +22,18 @@ type levelMap struct {
 
 func newDungeon() dungeon {
 	return dungeon{
-		Levels:       make(map[int]*levelMap),
+		Levels:       make(map[int]*level),
 		Turn:         0,
 		CurrentDepth: 1,
 	}
 }
 
-func (d *dungeon) newLevel(depth, width, height int) *levelMap {
+func (d *dungeon) newLevel(depth, width, height int) *level {
 	zeroedGrid := make([][]byte, width)
 	for i := range zeroedGrid {
 		zeroedGrid[i] = make([]byte, height)
 	}
-	newLevel := levelMap{
+	newLevel := level{
 		Grid:     zeroedGrid,
 		Width:    width,
 		Height:   height,
@@ -45,39 +45,39 @@ func (d *dungeon) newLevel(depth, width, height int) *levelMap {
 	return &newLevel
 }
 
-func (d *levelMap) write(p point, value byte) {
+func (d *level) write(p point, value byte) {
 	d.Grid[p.X][p.Y] = value
 }
 
-func (d *levelMap) read(p point) byte {
+func (d *level) read(p point) byte {
 	return d.Grid[p.X][p.Y]
 }
 
-func (d *levelMap) getEmptyPoint() point {
+func (d *level) getEmptyPoint() point {
 	for {
-		x := randomNumber(level.Width)
-		y := randomNumber(level.Height)
-		if level.Grid[x][y] == empty {
+		x := randomNumber(lev.Width)
+		y := randomNumber(lev.Height)
+		if lev.Grid[x][y] == empty {
 			return point{x, y}
 		}
 	}
 }
 
-func (d *levelMap) getPointInRoom() point {
+func (d *level) getPointInRoom() point {
 	for {
-		x := randomNumber(level.Width)
-		y := randomNumber(level.Height)
-		if level.Grid[x][y]&room == room {
+		x := randomNumber(lev.Width)
+		y := randomNumber(lev.Height)
+		if lev.Grid[x][y]&room == room {
 			return point{x, y}
 		}
 	}
 }
 
-func (d *levelMap) getRandomPoint() point {
+func (d *level) getRandomPoint() point {
 	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
 }
 
-func (d *levelMap) generateItems(list itemList, numberOfIterations int) {
+func (d *level) generateItems(list itemList, numberOfIterations int) {
 
 	for i := 1; i < numberOfIterations; i++ {
 
@@ -87,7 +87,7 @@ func (d *levelMap) generateItems(list itemList, numberOfIterations int) {
 
 			if rand < i.Prob {
 				newItem := i
-				newItem.setPosition(level.getEmptyPoint())
+				newItem.setPosition(lev.getEmptyPoint())
 				d.Items[newItem.Position] = append(d.Items[newItem.Position], &newItem)
 			}
 		}
@@ -95,7 +95,7 @@ func (d *levelMap) generateItems(list itemList, numberOfIterations int) {
 
 }
 
-func (d *levelMap) generateMonsters(list monsterList, numberOfIterations int) {
+func (d *level) generateMonsters(list monsterList, numberOfIterations int) {
 
 	for i := 0; i < numberOfIterations; i++ {
 
@@ -104,7 +104,7 @@ func (d *levelMap) generateMonsters(list monsterList, numberOfIterations int) {
 		for _, m := range list.Monsters {
 			if rand < m.Prob {
 				newMonster := m
-				newMonster.setPosition(level.getEmptyPoint())
+				newMonster.setPosition(lev.getEmptyPoint())
 				newMonster.Items = newInventory()
 				newMonster.SpeedCounter = newMonster.Speed
 				d.Monsters[newMonster.Position] = &newMonster
@@ -113,7 +113,38 @@ func (d *levelMap) generateMonsters(list monsterList, numberOfIterations int) {
 	}
 }
 
-func (d *levelMap) newCorridor(origin, destination point) {
+func (l *level) excavate() {
+
+	var previousRoom point
+	var nextRoom point
+	var err error
+
+	for {
+		previousRoom, err = l.newRoom(l.getRandomPoint(), 20, 20)
+		if err != nil {
+			continue
+		}
+		break
+	}
+
+	for i := 0; i < 10; i++ {
+
+		for {
+			nextRoom, err = l.newRoom(l.getRandomPoint(), 20, 20)
+			if err != nil {
+				continue
+			}
+			break
+		}
+
+		l.newCorridor(previousRoom, nextRoom)
+		previousRoom = nextRoom
+
+	}
+
+}
+
+func (l *level) newCorridor(origin, destination point) {
 	currentPosition := origin
 	var newDirection direction
 
@@ -122,16 +153,16 @@ func (d *levelMap) newCorridor(origin, destination point) {
 		if randomNumber(2) == 0 {
 			newDirection.connect(currentPosition, destination).toNonDiagonal()
 		}
-		
+
 		currentPosition.move(newDirection)
 		if currentPosition.isOutOfBounds(2) {
 			break
 		}
 
-		if d.read(currentPosition)&room == room {
-			d.write(currentPosition, empty|room)
+		if l.read(currentPosition)&room == room {
+			l.write(currentPosition, empty|room)
 		} else {
-			d.write(currentPosition, empty)
+			l.write(currentPosition, empty)
 		}
 
 		if currentPosition == destination {
@@ -140,18 +171,18 @@ func (d *levelMap) newCorridor(origin, destination point) {
 	}
 }
 
-func (d *levelMap) newRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
+func (l *level) newRoom(startingPoint point, maxWidth, maxHeight int) (position point, err error) {
 	startingPoint.move(SouthEast)
 	roomWidth := randomNumber(maxWidth) + 5
 	roomHeight := randomNumber(maxHeight) + 5
 	if p := (point{X: startingPoint.X + roomWidth, Y: startingPoint.Y + roomHeight}); p.isOutOfBounds(2) {
 		return point{}, errors.New("room out of bounds")
 	}
-	return d.createRoom(startingPoint, roomWidth, roomHeight)
+	return l.createRoom(startingPoint, roomWidth, roomHeight)
 
 }
 
-func (d *levelMap) createRoom(startingPoint point, width, height int) (center point, err error) {
+func (l *level) createRoom(startingPoint point, width, height int) (center point, err error) {
 
 	for i := startingPoint.X; i < startingPoint.X+width; i++ {
 		for j := startingPoint.Y; j < startingPoint.Y+height; j++ {
@@ -166,15 +197,15 @@ func (d *levelMap) createRoom(startingPoint point, width, height int) (center po
 			if i == startingPoint.X {
 				newPoint := currentPoint
 				newPoint.move(West)
-				if d.read(newPoint)&empty == empty {
+				if l.read(newPoint)&empty == empty {
 					return center, errors.New("adjacent empty space")
 				}
 			}
 
-			if i == startingPoint.X+width - 1 {
+			if i == startingPoint.X+width-1 {
 				newPoint := currentPoint
 				newPoint.move(East)
-				if d.read(newPoint)&empty == empty {
+				if l.read(newPoint)&empty == empty {
 					return center, errors.New("adjacent empty space")
 				}
 			}
@@ -182,7 +213,7 @@ func (d *levelMap) createRoom(startingPoint point, width, height int) (center po
 			if j == startingPoint.Y {
 				newPoint := currentPoint
 				newPoint.move(North)
-				if d.read(newPoint)&empty == empty {
+				if l.read(newPoint)&empty == empty {
 					return center, errors.New("adjacent empty space")
 				}
 			}
@@ -190,31 +221,31 @@ func (d *levelMap) createRoom(startingPoint point, width, height int) (center po
 			if j == startingPoint.Y+height-1 {
 				newPoint := currentPoint
 				newPoint.move(South)
-				if d.read(newPoint)&empty == empty {
+				if l.read(newPoint)&empty == empty {
 					return center, errors.New("adjacent empty space")
 				}
 			}
 
-			if d.read(currentPoint) == empty {
+			if l.read(currentPoint) == empty {
 				return center, errors.New("space already empty")
 			}
-			d.write(currentPoint, empty|room)
+			l.write(currentPoint, empty|room)
 		}
 	}
 	return center, nil
 }
 
-func (d *levelMap) generateDoors(numberOfDoors int) {
+func (l *level) generateDoors(numberOfDoors int) {
 
 	for i := 0; i < numberOfDoors; {
 
-		p := level.getEmptyPoint()
+		p := lev.getEmptyPoint()
 
 		if door, ok := createDoor(p); ok {
 			if door.State == "closed" {
-				level.write(door.Position, obstacle)
+				lev.write(door.Position, obstacle)
 			}
-			level.Features[p] = door
+			lev.Features[p] = door
 			i++
 		}
 
@@ -222,19 +253,19 @@ func (d *levelMap) generateDoors(numberOfDoors int) {
 
 }
 
-func (d *levelMap) generateStairs() {
+func (l *level) generateStairs() {
 
 	if world.CurrentDepth > 1 {
-		stairs, _ := createStairs(p.Position, "up")
-		level.Features[p.Position] = stairs
-		level.Upstair = p.Position
+		stairs, _ := createStairs(pl.Position, "up")
+		lev.Features[pl.Position] = stairs
+		lev.Upstair = pl.Position
 	}
 
 	for {
-		newPoint := level.getEmptyPoint()
+		newPoint := lev.getEmptyPoint()
 		if stairs, ok := createStairs(newPoint, "down"); ok {
-			level.Features[newPoint] = stairs
-			level.Downstair = newPoint
+			lev.Features[newPoint] = stairs
+			lev.Downstair = newPoint
 			break
 		}
 	}
