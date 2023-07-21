@@ -67,40 +67,23 @@ func render(d *level, p player, arrows *arrowQueue, overlay []string, viewportWi
 
 }
 
-func renderAll(d *level, p player, arrows *arrowQueue, overlay []string, monsters map[point]*monster, items map[point]*item, features map[point]*feature) (toPrint []rune) {
+func renderAll(d *level, p player, arrows *arrowQueue, monsters map[point]*monster, items map[point][]*item, features map[point]*feature) (toPrint []rune) {
 
-	rowCounter := 0
-	charCounter := 0
-
+	
 	arrow := arrows.pop()
 
 	for y := 0; y < d.Height; y++ {
 
 		for x := 0; x < d.Width; x++ {
 
-			d.Grid[x][y] = d.Grid[x][y] | visited
-
-			if len(overlay) > rowCounter {
-				if len(overlay[rowCounter]) > charCounter {
-					toPrint = append(toPrint, rune(overlay[rowCounter][charCounter]))
-					charCounter++
-					continue
-				}
-			}
-
-			if x < 0 || x >= d.Width || y < 0 || y >= d.Height {
-				toPrint = append(toPrint, ' ')
-				continue
-			}
-
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit) {
+			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit || d.Grid[x][y]&empty == empty) {
 				char = f.getChar()
 			}
 
 			if i, ok := items[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
-				char = i.getChar()
+				char = i[len(items[point{x, y}])-1].getChar()
 			}
 
 			if m, ok := monsters[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
@@ -122,8 +105,6 @@ func renderAll(d *level, p player, arrows *arrowQueue, overlay []string, monster
 			toPrint = append(toPrint, char)
 		}
 		toPrint = append(toPrint, '\n')
-		rowCounter++
-		charCounter = 0
 	}
 
 	return toPrint

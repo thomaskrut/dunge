@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	width  = 200
-	height = 140
+	width  = 120
+	height = 80
 )
 
 var (
@@ -71,10 +71,10 @@ func generateLevel(depth int) {
 	lev = world.newLevel(depth, width, height)
 	lev.excavate()
 	pl.setPosition(lev.getPointInRoom())
-	lev.generateDoors((width + height) / 10)
+	//lev.generateDoors((width + height) / 10)
 	lev.generateStairs()
-	lev.generateItems(readItemsTemplate(), 50)
-	lev.generateMonsters(readMonsterTemplate(), 50)
+	//lev.generateItems(readItemsTemplate(), 50)
+	//lev.generateMonsters(readMonsterTemplate(), 50)
 }
 
 func moveMonsters() {
@@ -203,8 +203,8 @@ func generateOverlay(menu bool, verb string) {
 }
 
 func printDungeon() {
-	gridToPrint := render(lev, pl, &arrows, gridOverlay, 60, 40, lev.Monsters, lev.Items, lev.Features)
-	//gridToPrint := renderAll(&d, p, &arrows, gridOverlay, monstersOnMap, itemsOnMap, featuresOnMap)
+	//gridToPrint := render(lev, pl, &arrows, gridOverlay, 120,80, lev.Monsters, lev.Items, lev.Features)
+	gridToPrint := renderAll(lev, pl, &arrows, lev.Monsters, lev.Items, lev.Features)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))
 }

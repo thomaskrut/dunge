@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 )
 
 type dungeon struct {
@@ -120,27 +121,31 @@ func (l *level) excavate() {
 	var err error
 
 	for {
-		previousRoom, err = l.newRoom(l.getRandomPoint(), 20, 20)
+		previousRoom, err = l.newRoom(l.getRandomPoint(), 10, 10)
 		if err != nil {
 			continue
 		}
 		break
 	}
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 8; i++ {
 
 		for {
-			nextRoom, err = l.newRoom(l.getRandomPoint(), 20, 20)
+			nextRoom, err = l.newRoom(l.getRandomPoint(), 10, 10)
 			if err != nil {
 				continue
 			}
 			break
 		}
-
+		fmt.Println("rooms:")
+		printDungeon()
 		l.newCorridor(previousRoom, nextRoom)
+		fmt.Println("corridor:")
+		printDungeon()
 		previousRoom = nextRoom
-
+		
 	}
+
 
 }
 
@@ -178,61 +183,68 @@ func (l *level) newRoom(startingPoint point, maxWidth, maxHeight int) (position 
 	if p := (point{X: startingPoint.X + roomWidth, Y: startingPoint.Y + roomHeight}); p.isOutOfBounds(2) {
 		return point{}, errors.New("room out of bounds")
 	}
-	return l.createRoom(startingPoint, roomWidth, roomHeight)
+	newRoom, centerPoint, err := l.createRoom(startingPoint, roomWidth, roomHeight)
+	if err != nil {
+		return point{}, errors.New("room out of bounds")
+	}
+	for _, p := range newRoom {
+		l.write(p, empty|room)
+	}
+	return centerPoint, nil
 
 }
 
-func (l *level) createRoom(startingPoint point, width, height int) (center point, err error) {
+func (l *level) createRoom(startingPoint point, width, height int) (newRoom []point, centerPoint point, err error) {
 
 	for i := startingPoint.X; i < startingPoint.X+width; i++ {
 		for j := startingPoint.Y; j < startingPoint.Y+height; j++ {
 			currentPoint := point{X: i, Y: j}
 			if i == startingPoint.X+width-(width/2) {
-				center.X = i
+				centerPoint.X = i
 			}
 			if j == startingPoint.Y+height-(height/2) {
-				center.Y = j
+				centerPoint.Y = j
 			}
 
 			if i == startingPoint.X {
 				newPoint := currentPoint
 				newPoint.move(West)
-				if l.read(newPoint)&empty == empty {
-					return center, errors.New("adjacent empty space")
+				if l.read(newPoint) == empty || l.read(newPoint)&room == room {
+					return nil, centerPoint, errors.New("adjacent empty space")
 				}
 			}
 
 			if i == startingPoint.X+width-1 {
 				newPoint := currentPoint
 				newPoint.move(East)
-				if l.read(newPoint)&empty == empty {
-					return center, errors.New("adjacent empty space")
+				if l.read(newPoint) == empty || l.read(newPoint)&room == room {
+					return nil, centerPoint, errors.New("adjacent empty space")
 				}
 			}
 
 			if j == startingPoint.Y {
 				newPoint := currentPoint
 				newPoint.move(North)
-				if l.read(newPoint)&empty == empty {
-					return center, errors.New("adjacent empty space")
+				if l.read(newPoint) == empty || l.read(newPoint)&room == room {
+					return nil, centerPoint, errors.New("adjacent empty space")
 				}
 			}
 
 			if j == startingPoint.Y+height-1 {
 				newPoint := currentPoint
 				newPoint.move(South)
-				if l.read(newPoint)&empty == empty {
-					return center, errors.New("adjacent empty space")
+				if l.read(newPoint) == empty || l.read(newPoint)&room == room {
+					return nil, centerPoint, errors.New("adjacent empty space")
 				}
 			}
 
 			if l.read(currentPoint) == empty {
-				return center, errors.New("space already empty")
+				return nil, centerPoint, errors.New("space already empty")
 			}
-			l.write(currentPoint, empty|room)
+			newRoom = append(newRoom, currentPoint)
 		}
 	}
-	return center, nil
+	return newRoom, centerPoint, nil
 }
 
 func (l *level) generateDoors(numberOfDoors int) {
