@@ -68,18 +68,15 @@ func init() {
 }
 
 func generateLevel(depth int) {
-	world.Levels[depth] = newLevel(width, height)
-	level = world.Levels[depth]
-	level.Monsters = make(map[point]*monster)
-	level.Items = make(map[point][]*item)
-	level.Features = make(map[point]*feature)
+	
+	level = world.newLevel(depth, width, height)
 	world.CurrentDepth = depth
 	generateDungeon()
 	p.setPosition(level.getPointInRoom())
 	level.generateDoors((width + height) / 10)
 	level.generateStairs()
-	generateItems(readItemsTemplate(), 50)
-	generateMonsters(readMonsterTemplate(), 50)
+	level.generateItems(readItemsTemplate(), 50)
+	level.generateMonsters(readMonsterTemplate(), 50)
 }
 
 func moveMonsters() {
@@ -204,42 +201,6 @@ func generateOverlay(menu bool, verb string) {
 	}
 
 	gridOverlay = append(gridOverlay, "|______________________________|")
-
-}
-
-func generateMonsters(list monsterList, numberOfIterations int) {
-
-	for i := 0; i < numberOfIterations; i++ {
-
-		rand := randomNumber(1000)
-
-		for _, m := range list.Monsters {
-			if rand < m.Prob {
-				newMonster := m
-				newMonster.setPosition(level.getEmptyPoint())
-				newMonster.Items = newInventory()
-				newMonster.SpeedCounter = newMonster.Speed
-				level.Monsters[newMonster.Position] = &newMonster
-			}
-		}
-	}
-}
-
-func generateItems(list itemList, numberOfIterations int) {
-
-	for i := 1; i < numberOfIterations; i++ {
-
-		rand := randomNumber(1000)
-
-		for _, i := range list.Items {
-
-			if rand < i.Prob {
-				newItem := i
-				newItem.setPosition(level.getEmptyPoint())
-				level.Items[newItem.Position] = append(level.Items[newItem.Position], &newItem)
-			}
-		}
-	}
 
 }
 

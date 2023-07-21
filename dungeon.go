@@ -23,18 +23,27 @@ type levelMap struct {
 
 func newDungeon() dungeon {
 	return dungeon{
-		Levels: make(map[int]*levelMap),
-		Turn: 0,
+		Levels:       make(map[int]*levelMap),
+		Turn:         0,
 		CurrentDepth: 1,
 	}
 }
 
-func newLevel(width, height int) *levelMap {
+func (d *dungeon) newLevel(depth, width, height int) *levelMap {
 	zeroedGrid := make([][]byte, width)
 	for i := range zeroedGrid {
 		zeroedGrid[i] = make([]byte, height)
 	}
-	return &levelMap{Grid: zeroedGrid, Width: width, Height: height}
+	newLevel := levelMap{
+		Grid:     zeroedGrid,
+		Width:    width,
+		Height:   height,
+		Monsters: make(map[point]*monster),
+		Items:    make(map[point][]*item),
+		Features: make(map[point]*feature),
+	}
+	d.Levels[depth] = &newLevel
+	return &newLevel
 }
 
 func (d *levelMap) write(p point, value byte) {
@@ -67,6 +76,42 @@ func (d *levelMap) getPointInRoom() point {
 
 func (d *levelMap) getRandomPoint() point {
 	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
+}
+
+func (d *levelMap) generateItems(list itemList, numberOfIterations int) {
+
+	for i := 1; i < numberOfIterations; i++ {
+
+		rand := randomNumber(1000)
+
+		for _, i := range list.Items {
+
+			if rand < i.Prob {
+				newItem := i
+				newItem.setPosition(level.getEmptyPoint())
+				d.Items[newItem.Position] = append(d.Items[newItem.Position], &newItem)
+			}
+		}
+	}
+
+}
+
+func (d *levelMap) generateMonsters(list monsterList, numberOfIterations int) {
+
+	for i := 0; i < numberOfIterations; i++ {
+
+		rand := randomNumber(1000)
+
+		for _, m := range list.Monsters {
+			if rand < m.Prob {
+				newMonster := m
+				newMonster.setPosition(level.getEmptyPoint())
+				newMonster.Items = newInventory()
+				newMonster.SpeedCounter = newMonster.Speed
+				d.Monsters[newMonster.Position] = &newMonster
+			}
+		}
+	}
 }
 
 func (d *levelMap) newCorridor(origin, destination point) {
