@@ -6,7 +6,7 @@ type characterMapper struct {
 
 func initCharMap() characterMapper {
 	charmap := characterMapper{make(map[byte]rune)}
-	charmap.add(obstacle, 9617)
+	charmap.add(obstacle, ' ')
 	charmap.add(empty, ' ')
 	charmap.add(empty|room, ' ')
 	charmap.add(empty|room|visited, ' ')

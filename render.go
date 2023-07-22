@@ -1,6 +1,6 @@
 package main
 
-func render(d *level, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int, monsters map[point]*monster, items map[point][]*item, features map[point]*feature) (toPrint []rune) {
+func render(d *level, p player, arrows *arrowQueue, overlay []string, viewportWidth, viewportHeight int) (toPrint []rune) {
 
 	viewportHeight /= 2
 	viewportWidth /= 2
@@ -32,15 +32,15 @@ func render(d *level, p player, arrows *arrowQueue, overlay []string, viewportWi
 
 			var char rune
 
-			if f, ok := features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit || d.Grid[x][y]&empty == empty) {
+			if f, ok := lvl.Features[point{x, y}]; ok && (d.Grid[x][y]&visited == visited || d.Grid[x][y]&lit == lit) {
 				char = f.getChar()
 			}
 
-			if i, ok := items[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
-				char = i[len(items[point{x, y}])-1].getChar()
+			if i, ok := lvl.Items[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
+				char = i[len(lvl.Items[point{x, y}])-1].getChar()
 			}
 
-			if m, ok := monsters[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
+			if m, ok := lvl.Monsters[point{x, y}]; ok && d.Grid[x][y]&lit == lit {
 				char = m.getChar()
 			}
 

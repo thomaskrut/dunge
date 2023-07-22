@@ -70,53 +70,12 @@ func generateLevel(depth int) {
 	lvl = world.newLevel(depth, width, height)
 	lvl.excavate()
 	pl.setPosition(lvl.getPointInRoom())
-	//lev.generateDoors((width + height) / 10)
+	lvl.generateDoors((width + height) / 10)
 	lvl.generateStairs()
-	//lev.generateItems(readItemsTemplate(), 50)
-	//lev.generateMonsters(readMonsterTemplate(), 50)
+	lvl.generateItems(readItemsTemplate(), 50)
+	lvl.generateMonsters(readMonsterTemplate(), 50)
 }
 
-func moveMonsters() {
-
-	for i := 0; i < pl.Speed; i++ {
-
-		for i, m := range lvl.Monsters {
-
-			if m.readyToMove() {
-
-				if items, ok := lvl.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
-					if lvl.read(m.Position)&lit == lit {
-						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
-					}
-					m.Items.add(items[len(items)-1])
-					lvl.Items[m.Position] = lvl.Items[m.Position][:len(lvl.Items[m.Position])-1]
-					if len(lvl.Items[m.Position]) == 0 {
-						delete(lvl.Items, m.Position)
-					}
-					continue
-				}
-
-				var newDirection direction
-				newDirection.connect(m.getPosition(), pl.getPosition())
-
-				if !m.Aggressive {
-					newDirection = newDirection.opposite()
-				}
-
-				if !m.MovesDiagonally {
-					newDirection.toNonDiagonal()
-				}
-				for i := 0; !m.attemptMove(newDirection) && i < 10; i++ {
-					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
-				}
-				delete(lvl.Monsters, i)
-				lvl.Monsters[m.Position] = m
-			}
-
-		}
-
-	}
-}
 
 func checkPosition() {
 
@@ -202,8 +161,8 @@ func generateOverlay(menu bool, verb string) {
 }
 
 func printDungeon() {
-	//gridToPrint := render(lev, pl, &arrows, gridOverlay, 120,80, lev.Monsters, lev.Items, lev.Features)
-	gridToPrint := renderAll(lvl, pl, &arrows, lvl.Monsters, lvl.Items, lvl.Features)
+	gridToPrint := render(lvl, pl, &arrows, gridOverlay, 40, 40)
+	//gridToPrint := renderAll(lvl, pl, &arrows, lvl.Monsters, lvl.Items, lvl.Features)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))
 }

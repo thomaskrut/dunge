@@ -13,7 +13,7 @@ func newItemSelect(v string) itemSelect {
 func (it itemSelect) processTurn() {
 	gridOverlay = nil
 	world.Turn++
-	moveMonsters()
+	lvl.moveMonsters()
 }
 
 func (it itemSelect) processKey(char rune) (validKey bool) {

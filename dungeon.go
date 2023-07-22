@@ -45,15 +45,15 @@ func (d *dungeon) newLevel(depth, width, height int) *level {
 	return &newLevel
 }
 
-func (d *level) write(p point, value byte) {
-	d.Grid[p.X][p.Y] = value
+func (l *level) write(p point, value byte) {
+	l.Grid[p.X][p.Y] = value
 }
 
-func (d *level) read(p point) byte {
-	return d.Grid[p.X][p.Y]
+func (l *level) read(p point) byte {
+	return l.Grid[p.X][p.Y]
 }
 
-func (d *level) getEmptyPoint() point {
+func (l *level) getEmptyPoint() point {
 	for {
 		x := randomNumber(lvl.Width)
 		y := randomNumber(lvl.Height)
@@ -63,7 +63,7 @@ func (d *level) getEmptyPoint() point {
 	}
 }
 
-func (d *level) getPointInRoom() point {
+func (l *level) getPointInRoom() point {
 	for {
 		x := randomNumber(lvl.Width)
 		y := randomNumber(lvl.Height)
@@ -73,11 +73,11 @@ func (d *level) getPointInRoom() point {
 	}
 }
 
-func (d *level) getRandomPoint() point {
-	return point{X: randomNumber(d.Width), Y: randomNumber(d.Height)}
+func (l *level) getRandomPoint() point {
+	return point{X: randomNumber(l.Width), Y: randomNumber(l.Height)}
 }
 
-func (d *level) generateItems(list itemList, numberOfIterations int) {
+func (l *level) generateItems(list itemList, numberOfIterations int) {
 
 	for i := 1; i < numberOfIterations; i++ {
 
@@ -88,12 +88,55 @@ func (d *level) generateItems(list itemList, numberOfIterations int) {
 			if rand < i.Prob {
 				newItem := i
 				newItem.setPosition(lvl.getEmptyPoint())
-				d.Items[newItem.Position] = append(d.Items[newItem.Position], &newItem)
+				l.Items[newItem.Position] = append(l.Items[newItem.Position], &newItem)
 			}
 		}
 	}
 
 }
+
+func (l *level) moveMonsters() {
+
+	for i := 0; i < pl.Speed; i++ {
+
+		for i, m := range l.Monsters {
+
+			if m.readyToMove() {
+
+				if items, ok := l.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
+					if l.read(m.Position)&lit == lit {
+						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
+					}
+					m.Items.add(items[len(items)-1])
+					l.Items[m.Position] = l.Items[m.Position][:len(l.Items[m.Position])-1]
+					if len(l.Items[m.Position]) == 0 {
+						delete(l.Items, m.Position)
+					}
+					continue
+				}
+
+				var newDirection direction
+				newDirection.connect(m.getPosition(), pl.getPosition())
+
+				if !m.Aggressive {
+					newDirection = newDirection.opposite()
+				}
+
+				if !m.MovesDiagonally {
+					newDirection.toNonDiagonal()
+				}
+				for i := 0; !m.attemptMove(newDirection) && i < 10; i++ {
+					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
+				}
+				delete(l.Monsters, i)
+				l.Monsters[m.Position] = m
+			}
+
+		}
+
+	}
+}
+
 
 func (d *level) generateMonsters(list monsterList, numberOfIterations int) {
 

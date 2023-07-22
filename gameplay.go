@@ -11,7 +11,7 @@ type gamePlay struct {
 func (g gamePlay) processTurn() {
 	gridOverlay = nil
 	world.Turn++
-	moveMonsters()
+	lvl.moveMonsters()
 }
 
 func (g gamePlay) processKey(char rune) (validKey bool) {
