@@ -4,7 +4,7 @@
             "name": "apple",
             "prefix": "an",
             "char": "o",
-            "prob": 150,
+            "prob": 550,
             "value": 10,
             "weight": 300,
             "verbs": [
@@ -17,7 +17,7 @@
             "name": "fudge",
             "prefix": "a",
             "char": "#",
-            "prob": 110,
+            "prob": 510,
             "value": 10,
             "weight": 50,
             "verbs": [
@@ -30,7 +30,7 @@
             "name": "pebble",
             "prefix": "a",
             "char": ",",
-            "prob": 110,
+            "prob": 510,
             "value": 10,
             "weight": 100,
             "verbs": [
@@ -42,7 +42,7 @@
             "name": "knife",
             "prefix": "a",
             "char": "|",
-            "prob": 210,
+            "prob": 510,
             "value": 10,
             "weight": 200,
             "verbs": [
