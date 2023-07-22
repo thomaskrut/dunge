@@ -21,13 +21,13 @@ func wearItem(i *item) keyProcessor {
 
 func pickUpItem(i *item) keyProcessor {
 	pl.Items.add(i)
-	lev.Items[pl.Position] = append(lev.Items[pl.Position][:selectedItem], lev.Items[pl.Position][selectedItem+1:]...)
+	lvl.Items[pl.Position] = append(lvl.Items[pl.Position][:selectedItem], lvl.Items[pl.Position][selectedItem+1:]...)
 	message := "You picked up " + i.Prefix + " " + i.Name
-	if len(lev.Items[pl.Position]) == 1 {
-		message = message + ". There is " + lev.Items[pl.Position][0].Prefix + " " + lev.Items[pl.Position][0].Name + " here, press 5 to pick up"
+	if len(lvl.Items[pl.Position]) == 1 {
+		message = message + ". There is " + lvl.Items[pl.Position][0].Prefix + " " + lvl.Items[pl.Position][0].Name + " here, press 5 to pick up"
 	}
-	if len(lev.Items[pl.Position]) > 1 {
-		message = message + ". There are " + strconv.Itoa(len(lev.Items[pl.Position])) + " more things here, press 5 to examine"
+	if len(lvl.Items[pl.Position]) > 1 {
+		message = message + ". There are " + strconv.Itoa(len(lvl.Items[pl.Position])) + " more things here, press 5 to examine"
 	}
 	messages.push(message, gameplay)
 	return gameplay
@@ -42,12 +42,12 @@ func throwItem(i *item) keyProcessor {
 		newPosition := pl.Position
 
 		for count := 0; count <= distance; count++ {
-			if newPosition.getPossibleDirections(lev)[dir] {
+			if newPosition.getPossibleDirections(lvl)[dir] {
 				newPosition.move(dir)
 
-				if lev.Monsters[newPosition] != nil {
-					lev.Monsters[newPosition].takeDamage(i.Weight / 100)
-					messages.push("You hit the "+lev.Monsters[newPosition].Name+" with "+i.Prefix+" "+i.Name, gameplay)
+				if lvl.Monsters[newPosition] != nil {
+					lvl.Monsters[newPosition].takeDamage(i.Weight / 100)
+					messages.push("You hit the "+lvl.Monsters[newPosition].Name+" with "+i.Prefix+" "+i.Name, gameplay)
 					break
 				}
 			} else {
@@ -56,7 +56,7 @@ func throwItem(i *item) keyProcessor {
 		}
 
 		i.setPosition(newPosition)
-		lev.Items[newPosition] = append(lev.Items[newPosition], i)
+		lvl.Items[newPosition] = append(lvl.Items[newPosition], i)
 		pl.Items.remove(i)
 		return true
 	}
@@ -77,7 +77,7 @@ func dropItem(i *item) keyProcessor {
 	newPosition := pl.getPosition()
 
 	i.setPosition(newPosition)
-	lev.Items[i.Position] = append(lev.Items[i.Position], i)
+	lvl.Items[i.Position] = append(lvl.Items[i.Position], i)
 	pl.Items.remove(i)
 	messages.push("You dropped "+i.Prefix+" "+i.Name, gameplay)
 	return gameplay

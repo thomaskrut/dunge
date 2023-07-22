@@ -26,11 +26,11 @@ func (p *point) move(dir direction) {
 }
 
 func (p point) isOutOfBounds(margin int) bool {
-	return p.X <= margin || p.X >= len(lev.Grid)-margin || p.Y <= margin || p.Y >= len(lev.Grid[0])-margin
+	return p.X <= margin || p.X >= len(lvl.Grid)-margin || p.Y <= margin || p.Y >= len(lvl.Grid[0])-margin
 }
 
 func (p point) isInCorridor() bool {
-	possibleDirections := p.getPossibleDirections(lev)
+	possibleDirections := p.getPossibleDirections(lvl)
 
 	delete(possibleDirections, NorthEast)
 	delete(possibleDirections, SouthEast)

@@ -10,24 +10,23 @@ import (
 )
 
 const (
-	width  = 120
-	height = 80
+	width  = 80
+	height = 40
 )
 
 var (
 	charmap characterMapper
 	world   dungeon
-	lev     *level
+	lvl     *level
 	pl      player
 
 	currentState keyProcessor
 	messages     messagePrompt
 	gameplay     gamePlay
+
 	persistance  persist
 
 	arrows arrowQueue
-
-	validKeyPressed bool
 
 	gridOverlay  []string
 	menuItems    []*item
@@ -62,17 +61,17 @@ func init() {
 		world.CurrentDepth = 1
 		generateLevel(world.CurrentDepth)
 	} else {
-		lev = world.Levels[world.CurrentDepth]
+		lvl = world.Levels[world.CurrentDepth]
 	}
 
 }
 
 func generateLevel(depth int) {
-	lev = world.newLevel(depth, width, height)
-	lev.excavate()
-	pl.setPosition(lev.getPointInRoom())
+	lvl = world.newLevel(depth, width, height)
+	lvl.excavate()
+	pl.setPosition(lvl.getPointInRoom())
 	//lev.generateDoors((width + height) / 10)
-	lev.generateStairs()
+	lvl.generateStairs()
 	//lev.generateItems(readItemsTemplate(), 50)
 	//lev.generateMonsters(readMonsterTemplate(), 50)
 }
@@ -81,18 +80,18 @@ func moveMonsters() {
 
 	for i := 0; i < pl.Speed; i++ {
 
-		for i, m := range lev.Monsters {
+		for i, m := range lvl.Monsters {
 
 			if m.readyToMove() {
 
-				if items, ok := lev.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
-					if lev.read(m.Position)&lit == lit {
+				if items, ok := lvl.Items[m.Position]; ok && m.CarriesItems && randomNumber(20) > m.Speed {
+					if lvl.read(m.Position)&lit == lit {
 						messages.push("The "+m.Name+" picked up "+items[len(items)-1].Prefix+" "+items[len(items)-1].Name, gameplay)
 					}
 					m.Items.add(items[len(items)-1])
-					lev.Items[m.Position] = lev.Items[m.Position][:len(lev.Items[m.Position])-1]
-					if len(lev.Items[m.Position]) == 0 {
-						delete(lev.Items, m.Position)
+					lvl.Items[m.Position] = lvl.Items[m.Position][:len(lvl.Items[m.Position])-1]
+					if len(lvl.Items[m.Position]) == 0 {
+						delete(lvl.Items, m.Position)
 					}
 					continue
 				}
@@ -110,8 +109,8 @@ func moveMonsters() {
 				for i := 0; !m.attemptMove(newDirection) && i < 10; i++ {
 					newDirection = randomDirection(newDirection, false, m.MovesDiagonally)
 				}
-				delete(lev.Monsters, i)
-				lev.Monsters[m.Position] = m
+				delete(lvl.Monsters, i)
+				lvl.Monsters[m.Position] = m
 			}
 
 		}
@@ -121,11 +120,11 @@ func moveMonsters() {
 
 func checkPosition() {
 
-	if f, ok := lev.Features[pl.Position]; ok {
+	if f, ok := lvl.Features[pl.Position]; ok {
 		messages.push("There is "+f.Description+" here", gameplay)
 	}
 
-	if i, ok := lev.Items[pl.Position]; ok {
+	if i, ok := lvl.Items[pl.Position]; ok {
 		if len(i) == 1 {
 			messages.push("There is "+i[0].Prefix+" "+i[0].Name+" here, press 5 to pick up", gameplay)
 		} else if len(i) > 1 {
@@ -143,7 +142,7 @@ func generateOverlay(menu bool, verb string) {
 
 	if verb == "pick up" {
 
-		for _, item := range lev.Items[pl.Position] {
+		for _, item := range lvl.Items[pl.Position] {
 			itemToAdd := item
 			menuItems = append(menuItems, itemToAdd)
 		}
@@ -204,7 +203,7 @@ func generateOverlay(menu bool, verb string) {
 
 func printDungeon() {
 	//gridToPrint := render(lev, pl, &arrows, gridOverlay, 120,80, lev.Monsters, lev.Items, lev.Features)
-	gridToPrint := renderAll(lev, pl, &arrows, lev.Monsters, lev.Items, lev.Features)
+	gridToPrint := renderAll(lvl, pl, &arrows, lvl.Monsters, lvl.Items, lvl.Features)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))
 }
@@ -235,7 +234,7 @@ func main() {
 
 	for {
 
-		validKeyPressed = false
+		validKeyPressed := false
 
 		printDungeon()
 		printStats()

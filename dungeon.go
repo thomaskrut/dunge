@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 )
 
 type dungeon struct {
@@ -56,9 +55,9 @@ func (d *level) read(p point) byte {
 
 func (d *level) getEmptyPoint() point {
 	for {
-		x := randomNumber(lev.Width)
-		y := randomNumber(lev.Height)
-		if lev.Grid[x][y] == empty {
+		x := randomNumber(lvl.Width)
+		y := randomNumber(lvl.Height)
+		if lvl.Grid[x][y] == empty {
 			return point{x, y}
 		}
 	}
@@ -66,9 +65,9 @@ func (d *level) getEmptyPoint() point {
 
 func (d *level) getPointInRoom() point {
 	for {
-		x := randomNumber(lev.Width)
-		y := randomNumber(lev.Height)
-		if lev.Grid[x][y]&room == room {
+		x := randomNumber(lvl.Width)
+		y := randomNumber(lvl.Height)
+		if lvl.Grid[x][y]&room == room {
 			return point{x, y}
 		}
 	}
@@ -88,7 +87,7 @@ func (d *level) generateItems(list itemList, numberOfIterations int) {
 
 			if rand < i.Prob {
 				newItem := i
-				newItem.setPosition(lev.getEmptyPoint())
+				newItem.setPosition(lvl.getEmptyPoint())
 				d.Items[newItem.Position] = append(d.Items[newItem.Position], &newItem)
 			}
 		}
@@ -105,7 +104,7 @@ func (d *level) generateMonsters(list monsterList, numberOfIterations int) {
 		for _, m := range list.Monsters {
 			if rand < m.Prob {
 				newMonster := m
-				newMonster.setPosition(lev.getEmptyPoint())
+				newMonster.setPosition(lvl.getEmptyPoint())
 				newMonster.Items = newInventory()
 				newMonster.SpeedCounter = newMonster.Speed
 				d.Monsters[newMonster.Position] = &newMonster
@@ -121,31 +120,32 @@ func (l *level) excavate() {
 	var err error
 
 	for {
-		previousRoom, err = l.newRoom(l.getRandomPoint(), 10, 10)
+		previousRoom, err = l.newRoom(l.getRandomPoint(), 14, 14)
 		if err != nil {
 			continue
 		}
 		break
 	}
 
-	for i := 0; i < 8; i++ {
+	for i := 0; i < (width+height)/20; i++ {
 
 		for {
-			nextRoom, err = l.newRoom(l.getRandomPoint(), 10, 10)
+			nextRoom, err = l.newRoom(l.getRandomPoint(), 14, 14)
 			if err != nil {
 				continue
 			}
 			break
 		}
-		fmt.Println("rooms:")
-		printDungeon()
+
 		l.newCorridor(previousRoom, nextRoom)
-		fmt.Println("corridor:")
-		printDungeon()
+
 		previousRoom = nextRoom
-		
+
 	}
 
+	l.newCorridor(l.getEmptyPoint(), l.getEmptyPoint())
+	l.newCorridor(l.getEmptyPoint(), l.getEmptyPoint())
+	
 
 }
 
@@ -251,13 +251,13 @@ func (l *level) generateDoors(numberOfDoors int) {
 
 	for i := 0; i < numberOfDoors; {
 
-		p := lev.getEmptyPoint()
+		p := lvl.getEmptyPoint()
 
 		if door, ok := createDoor(p); ok {
 			if door.State == "closed" {
-				lev.write(door.Position, obstacle)
+				lvl.write(door.Position, obstacle)
 			}
-			lev.Features[p] = door
+			lvl.Features[p] = door
 			i++
 		}
 
@@ -269,15 +269,15 @@ func (l *level) generateStairs() {
 
 	if world.CurrentDepth > 1 {
 		stairs, _ := createStairs(pl.Position, "up")
-		lev.Features[pl.Position] = stairs
-		lev.Upstair = pl.Position
+		lvl.Features[pl.Position] = stairs
+		lvl.Upstair = pl.Position
 	}
 
 	for {
-		newPoint := lev.getEmptyPoint()
+		newPoint := lvl.getEmptyPoint()
 		if stairs, ok := createStairs(newPoint, "down"); ok {
-			lev.Features[newPoint] = stairs
-			lev.Downstair = newPoint
+			lvl.Features[newPoint] = stairs
+			lvl.Downstair = newPoint
 			break
 		}
 	}

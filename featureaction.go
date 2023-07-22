@@ -2,7 +2,7 @@ package main
 
 func useStairs(direction string) {
 
-	if f, ok := lev.Features[pl.Position]; ok {
+	if f, ok := lvl.Features[pl.Position]; ok {
 		if f.State != direction {
 			messages.push("There are no stairs to walk "+direction+" here", gameplay)
 			return
@@ -12,8 +12,8 @@ func useStairs(direction string) {
 			world.CurrentDepth--
 			if l, ok := world.Levels[world.CurrentDepth]; ok {
 				setRoomState(visited)
-				lev = l
-				pl.Position = lev.Downstair
+				lvl = l
+				pl.Position = lvl.Downstair
 				pl.CurrentRoom.clear()
 				pl.InRoom = false
 			} else {
@@ -25,8 +25,8 @@ func useStairs(direction string) {
 			world.CurrentDepth++
 			if l, ok := world.Levels[world.CurrentDepth]; ok {
 				setRoomState(visited)
-				lev = l
-				pl.Position = lev.Upstair
+				lvl = l
+				pl.Position = lvl.Upstair
 				pl.CurrentRoom.clear()
 				pl.InRoom = false
 			} else {
@@ -46,12 +46,12 @@ func open() {
 	action := func(dir direction) bool {
 		newPosition := pl.Position
 		newPosition.move(dir)
-		if f, ok := lev.Features[newPosition]; ok {
+		if f, ok := lvl.Features[newPosition]; ok {
 			if f.Name == "door" && f.State == "closed" {
 				f.State = "open"
 				f.Char = "-"
 				f.Description = "an open door"
-				lev.write(newPosition, empty)
+				lvl.write(newPosition, empty)
 				alterAreaVisibility(pl.Position, lit, pl.Lightsource)
 				messages.push("You opened the door", gameplay)
 				return true
@@ -73,13 +73,13 @@ func close() {
 	action := func(dir direction) bool {
 		newPosition := pl.Position
 		newPosition.move(dir)
-		if f, ok := lev.Features[newPosition]; ok {
+		if f, ok := lvl.Features[newPosition]; ok {
 			if f.Name == "door" && f.State == "open" {
 				f.State = "closed"
 				f.Char = "+"
 				f.Description = "a closed door"
 				alterAreaVisibility(pl.Position, visited, pl.Lightsource)
-				lev.write(newPosition, obstacle)
+				lvl.write(newPosition, obstacle)
 				alterAreaVisibility(pl.Position, lit, pl.Lightsource)
 				messages.push("You closed the door", gameplay)
 				return true
@@ -106,21 +106,21 @@ func look() {
 
 			currentPosition.move(dir)
 
-			if lev.read(currentPosition)&lit != lit {
+			if lvl.read(currentPosition)&lit != lit {
 				break
 			}
 
-			if f, ok := lev.Features[currentPosition]; ok {
+			if f, ok := lvl.Features[currentPosition]; ok {
 				messages.push("You see "+f.Description, gameplay)
 				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
-			if m, ok := lev.Monsters[currentPosition]; ok {
+			if m, ok := lvl.Monsters[currentPosition]; ok {
 				messages.push("You see a "+m.Name, gameplay)
 				arrows.push(point{currentPosition.X, currentPosition.Y + 1})
 			}
 
-			if i, ok := lev.Items[currentPosition]; ok {
+			if i, ok := lvl.Items[currentPosition]; ok {
 				if len(i) == 1 {
 					messages.push("You see "+i[0].Prefix+" "+i[0].Name, gameplay)
 				} else if len(i) > 1 {
