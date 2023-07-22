@@ -5,13 +5,13 @@ type itemSelect struct {
 }
 
 func newItemSelect(v string) itemSelect {
-	selectedItem = 0
-	generateOverlay(true, v)
+	gridOverlay.selection = 0
+	gridOverlay.generate(true, v)
 	return itemSelect{verb: v}
 }
 
 func (it itemSelect) processTurn() {
-	gridOverlay = nil
+	gridOverlay.clear()
 	world.Turn++
 	lvl.moveMonsters()
 }
@@ -21,24 +21,18 @@ func (it itemSelect) processKey(char rune) (validKey bool) {
 	switch char {
 	case 0:
 		currentState = gameplay
-		gridOverlay = nil
+		gridOverlay.clear()
 		return true
 	case northKey:
-		selectedItem--
-		if selectedItem < 0 {
-			selectedItem = len(menuItems) - 1
-		}
+		gridOverlay.cursorUp()
 	case southKey:
-		selectedItem++
-		if selectedItem > len(menuItems)-1 {
-			selectedItem = 0
-		}
+		gridOverlay.cursorDown()
 	case restKey:
-		currentState = itemActions[it.verb](menuItems[selectedItem])
+		currentState = itemActions[it.verb](gridOverlay.selectedItem())
 		currentState.processTurn()
 		return true
 	}
-	generateOverlay(true, it.verb)
+	gridOverlay.generate(true, it.verb)
 
 	return true
 }

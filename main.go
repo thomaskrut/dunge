@@ -27,9 +27,7 @@ var (
 
 	arrows arrowQueue
 
-	gridOverlay  []string
-	menuItems    []*item
-	selectedItem int
+	gridOverlay overlay
 
 	seed *int
 )
@@ -93,7 +91,7 @@ func checkPosition() {
 }
 
 func printDungeon() {
-	gridToPrint := render(lvl, pl, &arrows, gridOverlay, 40, 40)
+	gridToPrint := render(lvl, pl, &arrows, gridOverlay.menu, 40, 40)
 	//gridToPrint := renderAll(lvl, pl, &arrows, lvl.Monsters, lvl.Items, lvl.Features)
 	fmt.Println()
 	fmt.Println(string(gridToPrint))

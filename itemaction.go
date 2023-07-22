@@ -21,7 +21,7 @@ func wearItem(i *item) keyProcessor {
 
 func pickUpItem(i *item) keyProcessor {
 	pl.Items.add(i)
-	lvl.Items[pl.Position] = append(lvl.Items[pl.Position][:selectedItem], lvl.Items[pl.Position][selectedItem+1:]...)
+	lvl.Items[pl.Position] = append(lvl.Items[pl.Position][:gridOverlay.selection], lvl.Items[pl.Position][gridOverlay.selection+1:]...)
 	message := "You picked up " + i.Prefix + " " + i.Name
 	if len(lvl.Items[pl.Position]) == 1 {
 		message = message + ". There is " + lvl.Items[pl.Position][0].Prefix + " " + lvl.Items[pl.Position][0].Name + " here, press 5 to pick up"
@@ -62,7 +62,7 @@ func throwItem(i *item) keyProcessor {
 	}
 
 	messages.push("Which direction?", newDirSelect(action))
-	gridOverlay = nil
+	gridOverlay.clear()
 	return messages
 }
 

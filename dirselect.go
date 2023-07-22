@@ -27,7 +27,7 @@ func (ds dirSelect) processKey(char rune) (validKey bool) {
 	switch char {
 	case 0:
 		currentState = gameplay
-		gridOverlay = nil
+		gridOverlay.clear()
 		return true
 	}
 	

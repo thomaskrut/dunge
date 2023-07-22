@@ -9,7 +9,7 @@ type gamePlay struct {
 }
 
 func (g gamePlay) processTurn() {
-	gridOverlay = nil
+	gridOverlay.clear()
 	world.Turn++
 	lvl.moveMonsters()
 }
@@ -36,7 +36,7 @@ func (g gamePlay) processKey(char rune) (validKey bool) {
 		look()
 		return true
 	case inventoryKey:
-		generateOverlay(false, "drop")
+		gridOverlay.generate(false, "drop")
 		return true
 	case dropKey:
 		currentState = newItemSelect("drop")

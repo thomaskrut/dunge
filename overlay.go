@@ -1,22 +1,50 @@
 package main
 
 import (
-	"strconv"
-	"sort"
 	"fmt"
+	"sort"
+	"strconv"
 )
 
-func generateOverlay(menu bool, verb string) {
+type overlay struct {
+	menu      []string
+	menuItems []*item
+	selection int
+}
 
-	gridOverlay = nil
-	menuItems = nil
+func (o *overlay) selectedItem() *item {
+	return o.menuItems[o.selection]
+}
+
+func (o *overlay) clear() {
+	o.menu = nil
+}
+
+func (o *overlay) cursorUp() {
+	o.selection--
+	if o.selection < 0 {
+		o.selection = len(o.menuItems) - 1
+	}
+}
+
+func (o *overlay) cursorDown() {
+	o.selection++
+	if o.selection > len(o.menuItems)-1 {
+		o.selection = 0
+	}
+}
+
+func (o *overlay) generate(menu bool, verb string) {
+
+	o.menu = nil
+	o.menuItems = nil
 	cursor := "| "
 
 	if verb == "pick up" {
 
 		for _, item := range lvl.Items[pl.Position] {
 			itemToAdd := item
-			menuItems = append(menuItems, itemToAdd)
+			o.menuItems = append(o.menuItems, itemToAdd)
 		}
 
 	} else {
@@ -31,49 +59,49 @@ func generateOverlay(menu bool, verb string) {
 			for _, v := range item.Verbs {
 				if v == verb {
 					itemToAdd := item
-					menuItems = append(menuItems, itemToAdd)
+					o.menuItems = append(o.menuItems, itemToAdd)
 					break
 				}
 			}
 		}
 	}
 
-	sort.SliceStable(menuItems, func(i, j int) bool {
-		return menuItems[i].Name < menuItems[j].Name
+	sort.SliceStable(o.menuItems, func(i, j int) bool {
+		return o.menuItems[i].Name < o.menuItems[j].Name
 	})
 
 	sort.SliceStable(lvl.Items[pl.Position], func(i, j int) bool {
 		return lvl.Items[pl.Position][i].Name < lvl.Items[pl.Position][j].Name
 	})
 
-	if len(menuItems) == 0 {
+	if len(o.menuItems) == 0 {
 		messages.push("No items to "+verb, gameplay)
 		currentState = gameplay
 		return
 	}
 
-	gridOverlay = append(gridOverlay, "_______________________________")
+	o.menu = append(o.menu, "_______________________________")
 
 	if menu {
-		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|Select an item to "+verb+":", " |"))
+		o.menu = append(o.menu, fmt.Sprintf("%-30s%v", "|Select an item to "+verb+":", " |"))
 	} else {
-		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|Inventory", " |"))
+		o.menu = append(o.menu, fmt.Sprintf("%-30s%v", "|Inventory", " |"))
 	}
 
-	gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", "|", " |"))
+	o.menu = append(o.menu, fmt.Sprintf("%-30s%v", "|", " |"))
 
-	for index, item := range menuItems {
+	for index, item := range o.menuItems {
 		if menu {
-			if index == selectedItem {
+			if index == o.selection {
 				cursor = "| > "
 			} else {
 				cursor = "|   "
 			}
 		}
-		gridOverlay = append(gridOverlay, fmt.Sprintf("%-30s%v", cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name, " |"))
+		o.menu = append(o.menu, fmt.Sprintf("%-30s%v", cursor+strconv.Itoa(index)+": "+item.Prefix+" "+item.Name, " |"))
 	}
 
-	gridOverlay = append(gridOverlay, "|______________________________|")
+	o.menu = append(o.menu, "|______________________________|")
 
 	return
 }
